@@ -100,7 +100,7 @@ const CreateRestPlaceScreen = () => {
       deleteRestPlace(id, {
         onSuccess: () => {
           resetFields();
-          router.replace('/(admin)/destination/');
+          router.replace('/(admin)/restplace/');
         },
       });
     };
@@ -133,9 +133,11 @@ const CreateRestPlaceScreen = () => {
     }
   };
 
+console.log(destinationId)
+
   return (
     <View style={styles.contrainer}>
-      <Stack.Screen options={{ title: isUpdating ? 'Update Rest Place' : 'Create RestPlace' }} />
+      <Stack.Screen options={{ title: isUpdating ? 'Update Rest Place' : 'Create Rest Place' }} />
       <Image source={{ uri: image || DefaultImage }} style={styles.image} />
       <Text style={styles.textButton} onPress={pickImage}>
         Select Image
@@ -147,7 +149,7 @@ const CreateRestPlaceScreen = () => {
         value={title}
         onChangeText={setTitle}
         />
-      <Text style={styles.title}>Country</Text>
+      <Text style={styles.title}>Destination</Text>
       <Picker style={styles.input}
         selectedValue={destinationId}
         onValueChange={(itemValue, itemIndex) => setDestinationId(itemValue)

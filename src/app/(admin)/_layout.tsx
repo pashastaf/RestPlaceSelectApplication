@@ -36,6 +36,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="restplace"
+        options={{
+          title: 'Rest Place',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
+        }}
+      />
+      
+      <Tabs.Screen
         name="order"
         options={{
           title: 'Order',
@@ -43,6 +52,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
         }}
       />
+      
     </Tabs>
   );
 }

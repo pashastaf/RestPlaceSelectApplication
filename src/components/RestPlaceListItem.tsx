@@ -13,7 +13,7 @@ const RestPlaceListItem = ({ restPlace }: RestPlaceListItemProps) => {
   console.log(segments);
   
   return (
-  <Link href={`/destination/${restPlace.id}`} asChild>
+  <Link href={`/restplace/${restPlace.id}`} asChild>
     <Pressable style={styles.container}>
       <Image 
         style={styles.image} 

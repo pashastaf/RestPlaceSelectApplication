@@ -1,16 +1,20 @@
 import React from 'react';
-import { View, Text , Image, StyleSheet, Pressable} from 'react-native';
+import { View, Text , Image, StyleSheet, Pressable, FlatList} from 'react-native';
 import { useLocalSearchParams, Stack, Link } from 'expo-router';
 import { DefaultImage } from '@/src/components/DestinationListItem';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '@/src/constants/Colors';
 import { useDestination } from '@/src/api/destination';
+import { useRestPlacesByDestinationId } from '@/src/api/restplace';
+import RestPlaceListItem from '@/src/components/RestPlaceListItem';
+import RestPlaceScreen from '../restplace';
 
 const DestinationDetailScreen = () => {
   const { id: idSting } = useLocalSearchParams();
   const id = parseFloat(typeof idSting === 'string' ? idSting : idSting[0])
 
-  const {data: destination, error, isLoading} = useDestination(id);
+  const {data: destination} = useDestination(id);
+  const {data: restPlaces} = useRestPlacesByDestinationId(id);
 
 
   if (!destination) {
@@ -19,8 +23,6 @@ const DestinationDetailScreen = () => {
 
   return (
     <View style={styles.container}>
-
-
       <Stack.Screen 
             options={{ 
                 title: "Destination", 
@@ -46,7 +48,13 @@ const DestinationDetailScreen = () => {
         source={{ uri:DefaultImage }} 
         resizeMode='contain'
         />
-      <Text style={styles.contry}> {destination.country} </Text>
+      <Text style={styles.contry}> {destination.country_id} </Text>
+      <FlatList
+        data={restPlaces}
+        renderItem={({ item }) => <RestPlaceListItem restPlace={item} />}
+        contentContainerStyle={{ gap: 10, padding: 10 }}
+      />
+
     </View>
   );
 };

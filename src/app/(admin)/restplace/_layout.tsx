@@ -3,16 +3,17 @@ import { Pressable } from "react-native";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 import Colors from '@/src/constants/Colors';
+import { ScreenStackHeaderSearchBarView } from "react-native-screens";
 
-export default function DestinationStack() {
+export default function RestPlaceStack() {
     return (
-    <Stack > 
+        <Stack > 
         <Stack.Screen 
             name="index" 
             options={{ 
-                title: "Destinations", 
+                title: "Rest Places", 
                 headerRight: () => (
-                    <Link href="/(admin)/destination/create" asChild>
+                    <Link href="/(admin)/restplace/create" asChild>
                     <Pressable>
                         {({ pressed }) => (
                         <FontAwesome

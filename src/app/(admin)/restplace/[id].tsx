@@ -23,7 +23,7 @@ const RestPlaceDetailScreen = () => {
             options={{ 
                 title: "Rest Place", 
                 headerRight: () => (
-                    <Link href={`/(admin)/destination/restplace/create?id=${id}`} asChild>
+                    <Link href={`/(admin)/restplace/create?id=${id}`} asChild>
                     <Pressable>
                         {({ pressed }) => (
                         <FontAwesome
@@ -44,7 +44,7 @@ const RestPlaceDetailScreen = () => {
         source={{ uri:DefaultImage }} 
         resizeMode='contain'
         />
-      <Text style={styles.destinationId}> {restPlace.destination_id} </Text>
+      <Text style={styles.destinationId}> {restPlace.destination_catalogue_id} </Text>
     </View>
   );
 };

@@ -7,7 +7,6 @@ type CountryListItemProps = {
 }
 
 const CountryListItem = ({ country }: CountryListItemProps) => {
-  const segments = useSegments();
 
     return (
       <View style={styles.container}>

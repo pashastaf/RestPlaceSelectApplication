@@ -1,5 +1,5 @@
 import { supabase } from "../../lib/supabase";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useRestPlaceList = () => {
     return useQuery({
@@ -8,6 +8,22 @@ export const useRestPlaceList = () => {
         const { data, error } = await supabase
           .from('rest_place')
           .select('*')
+        if (error) {
+          throw new Error(error.message);
+        }
+        return data;
+      },
+    });
+  };
+
+  export const useRestPlacesByDestinationId = (destinationId: number) => {
+    return useQuery({
+      queryKey: ['rest_places', { destinationId }],
+      queryFn: async () => {
+        const { data, error } = await supabase
+          .from('rest_place')
+          .select('*')
+          .eq('destination_id', destinationId);
         if (error) {
           throw new Error(error.message);
         }
@@ -112,3 +128,4 @@ export const useRestPlaceList = () => {
       },
     });
   };
+
