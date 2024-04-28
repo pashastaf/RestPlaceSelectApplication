@@ -2,13 +2,19 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 import React, { ChangeEvent, useState, useEffect} from 'react';
 import Button from '@/src/components/Button';
 import Colors from '@/src/constants/Colors';
-import { Link, Stack, useLocalSearchParams } from 'expo-router';
+import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
 
 const SignInScreen = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [client, setClient] = useState(false);
+
+  const router = useRouter();
+  const EnterAdmin = () => {
+    router.replace('/(admin)/destination')
+  }
+
 
   return (
     <View style={styles.container}>
@@ -30,9 +36,10 @@ const SignInScreen = () => {
         style={styles.input}
         secureTextEntry
       />
-      <Link href='/(admin)/destination'>
-        <Button text="Sign in" />
-      </Link>
+      <Button 
+        text="Sign in" 
+        onPress={EnterAdmin}
+        />
       <Link href="/sign-up" style={styles.textButton}>
         Create an account
       </Link>

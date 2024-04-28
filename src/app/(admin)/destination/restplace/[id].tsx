@@ -4,28 +4,26 @@ import { useLocalSearchParams, Stack, Link } from 'expo-router';
 import { DefaultImage } from '@/src/components/DestinationListItem';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '@/src/constants/Colors';
-import { useDestination } from '@/src/api/destination';
-
-const DestinationDetailScreen = () => {
+import { useRestPlace } from '@/src/api/restplace';
+const RestPlaceDetailScreen = () => {
+  
   const { id: idSting } = useLocalSearchParams();
   const id = parseFloat(typeof idSting === 'string' ? idSting : idSting[0])
 
-  const {data: destination, error, isLoading} = useDestination(id);
+  const {data: restPlace, error, isLoading} = useRestPlace(id);
 
 
-  if (!destination) {
+  if (!restPlace) {
     return <Text> destination not found</Text>
   }
 
   return (
     <View style={styles.container}>
-
-
       <Stack.Screen 
             options={{ 
-                title: "Destination", 
+                title: "Rest Place", 
                 headerRight: () => (
-                    <Link href={`/(admin)/destination/create?id=${id}`} asChild>
+                    <Link href={`/(admin)/destination/restplace/create?id=${id}`} asChild>
                     <Pressable>
                         {({ pressed }) => (
                         <FontAwesome
@@ -40,13 +38,13 @@ const DestinationDetailScreen = () => {
                 ),
             }}/>   
             
-      <Stack.Screen options={{ title: destination.title }} />
+      <Stack.Screen options={{ title: restPlace.title }} />
       <Image 
         style={styles.image} 
         source={{ uri:DefaultImage }} 
         resizeMode='contain'
         />
-      <Text style={styles.contry}> {destination.country} </Text>
+      <Text style={styles.destinationId}> {restPlace.destination_id} </Text>
     </View>
   );
 };
@@ -61,11 +59,11 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1
   },
-  contry: {
+  destinationId: {
     fontSize: 18,
     fontWeight: "bold"
   }
 });
 
 
-export default DestinationDetailScreen;
+export default RestPlaceDetailScreen;

@@ -1,28 +1,26 @@
-import { ActivityIndicator, FlatList } from 'react-native';
-import EditScreenInfo from '@/src/components/EditScreenInfo';
-import { Text, View } from '@/src/components/Themed';
-import DestinationListItem from '@/src/components/DestinationListItem';
-import { useDestinationList } from '@/src/api/destination';
+import { Text, FlatList, ActivityIndicator } from 'react-native';
+import { useRestPlaceList } from '@/src/api/restplace';
+import RestPlaceListItem from '@/src/components/RestPlaceListItem';
 
-
-export default function DestinationScreen() {
-
-  const {data: destination, error, isLoading  } = useDestinationList();
+export default function RestPlaceScreen() {
+  const {
+    data: restPlaces,
+    isLoading,
+    error,
+  } = useRestPlaceList();
 
   if (isLoading) {
-    return <ActivityIndicator />
+    return <ActivityIndicator />;
+  }
+  if (error) {
+    return <Text>Failed to fetch</Text>;
   }
 
-  if (error) {
-    return <Text> Failed to fetch product </Text>
-  }
   return (
-      <FlatList
-        data={destination}
-        renderItem={({ item }) => <DestinationListItem destination={item} />}
-        numColumns={1}
-        contentContainerStyle={{ gap: 10, padding: 10}}
-        //columnWrapperStyle= {{ gap: 10}}
-      />
+    <FlatList
+      data={restPlaces}
+      renderItem={({ item }) => <RestPlaceListItem restPlace={item} />}
+      contentContainerStyle={{ gap: 10, padding: 10 }}
+    />
   );
 }

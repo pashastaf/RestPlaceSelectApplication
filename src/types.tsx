@@ -9,4 +9,8 @@ export type Country = {
     id: number;
     title: string;
   };
-  
+
+export type RestPlace = {
+  id: number;
+  title: string;
+}

@@ -5,19 +5,18 @@ import { DefaultImage } from '@/src/components/DestinationListItem';
 import Colors from '@/src/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useDeleteDestination, useDestination, useInsertDestination, useUpdateDestination } from '@/src/api/destination';
-import { useCountryList } from '@/src/api/country';
-import CountryListItem from '@/src/components/CountryListItem';
 import { Picker } from '@react-native-picker/picker';
+import { useRestPlace, useRestPlaceList, useInsertRestPlace, useUpdateRestPlace, useDeleteRestPlace } from '@/src/api/restplace';
+import { useDestinationList } from '@/src/api/destination';
 
-const CreateDestinationScreen = () => {
+const CreateRestPlaceScreen = () => {
 
     const [title, setTitle] = useState('');
-    const [countryId, setCountryId] = useState('');
+    const [destinationId, setDestinationId] = useState('');
     const [errors, setErrors] = useState('');
     const [image, setImage] = useState<string | null>(null);
 
-    const { data: countries } = useCountryList();
+    const { data: destinations } = useDestinationList();
 
 
     const { id: idString } = useLocalSearchParams();
@@ -26,24 +25,23 @@ const CreateDestinationScreen = () => {
     );
     const isUpdating = !!idString;
 
-    const {mutate: insertDestination} = useInsertDestination();
-    const {mutate: updateDestination} = useUpdateDestination();
-    const {data: updatingDestination} = useDestination(id);
-    const {mutate: deleteDestination} = useDeleteDestination();
-
+    const {mutate: insertRestPlace} = useInsertRestPlace();
+    const {mutate: updateRestPlace} = useUpdateRestPlace();
+    const {data: updatingRestPlace} = useRestPlace(id);
+    const {mutate: deleteRestPlace} = useDeleteRestPlace();
 
     useEffect(() => {
-      if(updatingDestination) {
-        setTitle(updatingDestination.title);
-        setCountryId(updatingDestination.country);
+      if(updatingRestPlace) {
+        setTitle(updatingRestPlace.title);
+        setDestinationId(updatingRestPlace.destination_id);
       }
-    }, [updatingDestination])
+    }, [updatingRestPlace])
 
     const router = useRouter();
 
     const resetFields = () => {
       setTitle('');
-      setCountryId('');
+      setDestinationId('');
     };
 
     const validateInput = () => {
@@ -52,8 +50,8 @@ const CreateDestinationScreen = () => {
         setErrors('Name is required');
         return false;
       }
-      if (!countryId) {
-        setErrors('Country ID is required');
+      if (!destinationId) {
+        setErrors('Destination ID is required');
         return false;
       }
       return true;
@@ -71,10 +69,9 @@ const CreateDestinationScreen = () => {
       if (!validateInput()) {
         return;
       }
-     console.log('Верняк', countryId)
 
-      insertDestination(
-        { title, countryId },
+      insertRestPlace(
+        { title, destinationId },
         {
           onSuccess: () => {
             resetFields();
@@ -88,8 +85,8 @@ const CreateDestinationScreen = () => {
       if (!validateInput()) {
         return;
       }
-      updateDestination(
-        { id, title, countryId },
+      updateRestPlace(
+        { id, title, destinationId },
         {
           onSuccess: () => {
             resetFields();
@@ -100,16 +97,16 @@ const CreateDestinationScreen = () => {
     };
 
     const onDelete = () => {
-      deleteDestination(id, {
+      deleteRestPlace(id, {
         onSuccess: () => {
           resetFields();
-          router.replace('/(admin)');
+          router.replace('/(admin)/destination/');
         },
       });
     };
 
     const confirmDelete = () => {
-      Alert.alert('Confirm', 'Are you sure you want to delete this product', [
+      Alert.alert('Confirm', 'Are you sure you want to delete this rest place', [
         {
           text: 'Cancel',
         },
@@ -138,24 +135,24 @@ const CreateDestinationScreen = () => {
 
   return (
     <View style={styles.contrainer}>
-      <Stack.Screen options={{ title: isUpdating ? 'Update Destination' : 'Create Destination' }} />
+      <Stack.Screen options={{ title: isUpdating ? 'Update Rest Place' : 'Create RestPlace' }} />
       <Image source={{ uri: image || DefaultImage }} style={styles.image} />
       <Text style={styles.textButton} onPress={pickImage}>
         Select Image
       </Text>
       <Text style={styles.title}>Title</Text>
       <TextInput 
-        placeholder='Destination name' 
+        placeholder='Rest place name' 
         style={styles.input} 
         value={title}
         onChangeText={setTitle}
         />
       <Text style={styles.title}>Country</Text>
       <Picker style={styles.input}
-        selectedValue={countryId}
-        onValueChange={(itemValue, itemIndex) => setCountryId(itemValue)
-        }>{countries && countries.map((country) => (
-          <Picker.Item key={country.id} label={country.title} value={country.id} />
+        selectedValue={destinationId}
+        onValueChange={(itemValue, itemIndex) => setDestinationId(itemValue)
+        }>{destinations && destinations.map((destination) => (
+          <Picker.Item key={destination.id} label={destination.title} value={destination.id} />
         ))}
       </Picker>
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
@@ -194,4 +191,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CreateDestinationScreen;
+export default CreateRestPlaceScreen;

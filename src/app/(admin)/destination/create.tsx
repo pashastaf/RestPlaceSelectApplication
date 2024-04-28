@@ -7,7 +7,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useDeleteDestination, useDestination, useInsertDestination, useUpdateDestination } from '@/src/api/destination';
 import { useCountryList } from '@/src/api/country';
-import CountryListItem from '@/src/components/CountryListItem';
 import { Picker } from '@react-native-picker/picker';
 
 const CreateDestinationScreen = () => {
@@ -30,7 +29,6 @@ const CreateDestinationScreen = () => {
     const {mutate: updateDestination} = useUpdateDestination();
     const {data: updatingDestination} = useDestination(id);
     const {mutate: deleteDestination} = useDeleteDestination();
-
 
     useEffect(() => {
       if(updatingDestination) {
@@ -71,7 +69,6 @@ const CreateDestinationScreen = () => {
       if (!validateInput()) {
         return;
       }
-     console.log('Верняк', countryId)
 
       insertDestination(
         { title, countryId },
@@ -103,7 +100,7 @@ const CreateDestinationScreen = () => {
       deleteDestination(id, {
         onSuccess: () => {
           resetFields();
-          router.replace('/(admin)');
+          router.replace('/(admin)/destination');
         },
       });
     };

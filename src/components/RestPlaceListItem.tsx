@@ -1,19 +1,19 @@
 import { StyleSheet, Image, Pressable, Text } from 'react-native';
-import { Destination } from '../types';
+import { RestPlace } from '../types';
 import { Link, useSegments } from 'expo-router';
 
 export const DefaultImage = 'https://previews.123rf.com/images/koblizeek/koblizeek2208/koblizeek220800254/190563481-no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg' 
 
-type DestinationListItemProps = {
-    destination: Destination;
+type RestPlaceListItemProps = {
+    restPlace: RestPlace;
 }
 
-const DestinationListItem = ({ destination }: DestinationListItemProps) => {
+const RestPlaceListItem = ({ restPlace }: RestPlaceListItemProps) => {
   const segments = useSegments();
   console.log(segments);
   
   return (
-  <Link href={`/destination/${destination.id}`} asChild>
+  <Link href={`/destination/${restPlace.id}`} asChild>
     <Pressable style={styles.container}>
       <Image 
         style={styles.image} 
@@ -21,14 +21,13 @@ const DestinationListItem = ({ destination }: DestinationListItemProps) => {
         resizeMode='contain'
         />
 
-      <Text style={styles.title}> {destination.title} </Text>
-      <Text style={styles.contry}> {destination.country} </Text>
+      <Text style={styles.title}> {restPlace.title} </Text>
     </Pressable>
   </Link> 
   );
 };
 
-export default DestinationListItem
+export default RestPlaceListItem
 
 const styles = StyleSheet.create({
     container: {
