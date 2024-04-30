@@ -1,22 +1,62 @@
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Button from '@/src/components/Button';
 import Colors from '@/src/constants/Colors';
 import { Link, Stack } from 'expo-router';
+import { supabase } from '@/src/lib/supabase';
 
 const SignUpScreen = () => {
-  const [login, setLogin] = useState('');
+
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [secondName, setSecondName] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const fullName = `${secondName} ${firstName}`
+
+  async function signUpWithEmail() {
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({ 
+      email, 
+      password, 
+      options: {
+        data: {
+          firstName,
+          secondName,
+          fullName
+        } 
+      }});
+
+    if (error) Alert.alert(error.message);
+    setLoading(false);
+  }
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: 'Sign up' }} />
 
+      <Text style={styles.label}>Name</Text>
+      <TextInput
+        value={firstName}
+        onChangeText={setFirstName}
+        placeholder="Jhon"
+        style={styles.input}
+      />
+
+      <Text style={styles.label}>Second Name</Text>
+      <TextInput
+        value={secondName}
+        onChangeText={setSecondName}
+        placeholder="Dou"
+        style={styles.input}
+      />
+
       <Text style={styles.label}>Email</Text>
       <TextInput
-        value={login}
-        onChangeText={setLogin}
-        placeholder="pashastaf"
+        value={email}
+        onChangeText={setEmail}
+        placeholder="pashastaf@gmail.com"
         style={styles.input}
       />
 
@@ -28,8 +68,12 @@ const SignUpScreen = () => {
         style={styles.input}
         secureTextEntry
       />
-
-      <Button text="Create account" />
+      
+      <Button
+        onPress={signUpWithEmail}
+        disabled={loading}
+        text={loading ? 'Creating account...' : 'Create account'}
+      />
       <Link href="/sign-in" style={styles.textButton}>
         Sign in
       </Link>
