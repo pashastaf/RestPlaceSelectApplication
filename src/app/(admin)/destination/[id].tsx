@@ -25,7 +25,7 @@ const DestinationDetailScreen = () => {
     <View style={styles.container}>
       <Stack.Screen 
             options={{ 
-                title: "Destination", 
+                title: destination.title, 
                 headerRight: () => (
                     <Link href={`/(admin)/destination/create?id=${id}`} asChild>
                     <Pressable>
@@ -42,7 +42,6 @@ const DestinationDetailScreen = () => {
                 ),
             }}/>   
             
-      <Stack.Screen options={{ title: destination.title }} />
       <Image 
         style={styles.image} 
         source={{ uri:DefaultImage }} 

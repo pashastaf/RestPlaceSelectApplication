@@ -1,17 +1,11 @@
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { FontAwesome, FontAwesome5, FontAwesome6, MaterialIcons }  from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
 import Colors from '@/src/constants/Colors';
 import { useColorScheme } from '@/src/components/useColorScheme';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={20} style={{ marginBottom: -3 }} {...props} />;
-}
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -20,9 +14,10 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: 'gray',
-        tabBarInactiveTintColor: 'gainsboro',
+        tabBarInactiveTintColor: 'lightgray',
         tabBarStyle: {
-          backgroundColor: Colors.light.tint,
+          backgroundColor: Colors.dark.tint,
+          height: 60
         }
       }}>
       <Tabs.Screen name="index" options={{ href: null }} />
@@ -32,7 +27,7 @@ export default function TabLayout() {
         options={{
           title: 'Destination',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="flag" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome6 name="mountain-sun" color={color} size={24} style={{ marginBottom: -3 }} />,
         }}
       />
       <Tabs.Screen
@@ -40,16 +35,16 @@ export default function TabLayout() {
         options={{
           title: 'Rest Place',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome6 name="umbrella-beach" color={color} size={24} style={{ marginBottom: -3 }}/>,
         }}
       />
       
       <Tabs.Screen
-        name="order"
+        name="manage"
         options={{
-          title: 'Order',
+          title: 'Manage',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+          tabBarIcon: ({ color }) => <MaterialIcons name="supervisor-account" color={color} size={30} style={{ marginBottom: -3 }}/>,
         }}
       />
       
