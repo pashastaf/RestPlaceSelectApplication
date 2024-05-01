@@ -24,24 +24,12 @@ export default function EditScreen() {
           <Pressable
             style={styles.container}
             onPress={() => {
-              router.replace('/(admin)/manage');
+              router.replace('/(admin)/manage/profile/');
             }}>
           {({pressed}) => (
             <View style={{ flexDirection: 'row'}}>
           <MaterialCommunityIcons name='account' size={45} style={{ opacity: pressed ? 0.5 : 1 }}/>
-          <Text style={ pressed ? styles.titlePress : styles.title }>Clients</Text>
-            </View>
-          )}
-          </Pressable>
-          <Pressable
-            style={styles.container}
-            onPress={() => {
-              router.replace('/(admin)/manage');
-            }}>
-          {({pressed}) => (
-            <View style={{ flexDirection: 'row'}}>
-          <MaterialIcons name='work' size={45} style={{ opacity: pressed ? 0.5 : 1 }}/>
-          <Text style={ pressed ? styles.titlePress : styles.title }>Employers</Text>
+          <Text style={ pressed ? styles.titlePress : styles.title }>Profiles</Text>
             </View>
           )}
           </Pressable>

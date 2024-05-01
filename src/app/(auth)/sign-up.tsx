@@ -23,6 +23,7 @@ const SignUpScreen = () => {
       options: {
         data: {
           email,
+          password,
           firstName,
           secondName,
           fullName

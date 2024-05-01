@@ -14,3 +14,14 @@ export type RestPlace = {
   id: number;
   title: string;
 }
+
+export type Profile = {
+  id: string;
+  first_name: string;
+  second_name: string;
+  email: string;
+  group: string;
+  avatar_url: string;
+  created_at: string;
+  serial_num: number;
+}

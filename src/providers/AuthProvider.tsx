@@ -17,9 +17,10 @@ const AuthContext = createContext<AuthData>({
 });
 
 interface UserProfile {
-  id: string;
+  id: number;
   email: string;
   group?: string;
+  auth_id: string;
 }
 
 
@@ -34,7 +35,7 @@ export default function AuthProvider({children}: PropsWithChildren) {
     const { data } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', userId)
+      .eq('auth_id', userId)
       .single();
     setProfile(data || null);
   };
