@@ -7,12 +7,13 @@ import { ActivityIndicator } from "react-native";
 
 const index = () => {
   
-  const { session, loading, isAdmin } = useAuth();
+  const { session, loading, isAdmin, profile } = useAuth();
 
   if(loading) {
     return<ActivityIndicator />;
   }
-  console.log(session)
+  console.log('INDEX',session)
+  console.log('INDEX',profile)
   if(!session) {
     return <Redirect href={'/sign-in'}/>  
   }
@@ -20,19 +21,9 @@ const index = () => {
   if(!isAdmin) {
     return <Redirect href={'/(user)'} />
   }
-
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-      <Link href={'/(user)'} asChild>
-        <Button text="User" />
-      </Link>
-      <Link href={'/(admin)'} asChild>
-        <Button text="Admin" />
-      </Link>
-
-      <Button onPress={() => supabase.auth.signOut()} text="Sign out" />
-    </View>
-  );
+  else {
+    return <Redirect href={'/(admin)'} />
+  }
 };
 
 export default index;
