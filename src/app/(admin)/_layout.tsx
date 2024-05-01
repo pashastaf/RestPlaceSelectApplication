@@ -1,14 +1,19 @@
 import React from 'react';
 import { FontAwesome, FontAwesome5, FontAwesome6, MaterialIcons }  from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 
 import Colors from '@/src/constants/Colors';
 import { useColorScheme } from '@/src/components/useColorScheme';
+import { useAuth } from '@/src/providers/AuthProvider';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const {isAdmin} = useAuth();
+  if(!isAdmin) {
+    return <Redirect href={'/'} />
+  }
 
   return (
     <Tabs

@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 
 import { useColorScheme } from '@/src/components/useColorScheme';
 import QueryProvider from '../providers/QueryProvider';
+import AuthProvider from '../providers/AuthProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,14 +52,16 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
     <QueryProvider>
+      <AuthProvider>
       <Stack>
-        <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(user)" options={{ headerShown: false }} />
-        <Stack.Screen name="(consultant)" options={{ headerShown: false }} />
-        <Stack.Screen name="(manager)" options={{ headerShown: false }} />
+        <Stack.Screen name="(admin)" options={{ headerShown: true }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: true }} />
+        <Stack.Screen name="(user)" options={{ headerShown: true }} />
+        <Stack.Screen name="(consultant)" options={{ headerShown: true }} />
+        <Stack.Screen name="(manager)" options={{ headerShown: true }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
+      </AuthProvider>
     </QueryProvider>
     </ThemeProvider>
   );

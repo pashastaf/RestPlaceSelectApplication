@@ -1,18 +1,29 @@
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import React, { ChangeEvent, useState, useEffect} from 'react';
 import Button from '@/src/components/Button';
 import Colors from '@/src/constants/Colors';
 import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { supabase } from '@/src/lib/supabase';
+import { useAuth } from '@/src/providers/AuthProvider';
 
 
 const SignInScreen = () => {
-  const [login, setLogin] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [client, setClient] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-  const EnterAdmin = () => {
-    router.replace('/(admin)/destination')
+  const {session} = useAuth();
+  console.log(session)
+
+  async function signInWithEmail() {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) Alert.alert(error.message);
+    setLoading(false);
   }
 
 
@@ -22,9 +33,9 @@ const SignInScreen = () => {
 
       <Text style={styles.label}>Login</Text>
       <TextInput
-        value={login}
-        onChangeText={setLogin}
-        placeholder="pashastaf"
+        value={email}
+        onChangeText={setEmail}
+        placeholder="pashastaf@gmail.com"
         style={styles.input}
       />
 
@@ -36,10 +47,11 @@ const SignInScreen = () => {
         style={styles.input}
         secureTextEntry
       />
-      <Button 
-        text="Sign in" 
-        onPress={EnterAdmin}
-        />
+      <Button
+        onPress={signInWithEmail}
+        disabled={loading}
+        text={loading ? 'Signing in...' : 'Sign in'}
+      />
       <Link href="/sign-up" style={styles.textButton}>
         Create an account
       </Link>

@@ -13,7 +13,7 @@ const DestinationListItem = ({ destination }: DestinationListItemProps) => {
   console.log(segments);
   
   return (
-  <Link href={`/destination/${destination.id}`} asChild>
+  <Link href={`/${segments[0]}/destination/${destination.id}`} asChild>
     <Pressable style={styles.container}>
       <Image 
         style={styles.image} 
