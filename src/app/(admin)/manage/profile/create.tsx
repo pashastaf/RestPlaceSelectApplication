@@ -1,13 +1,12 @@
 import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import Button from '@/src/components/Button'
-import { DefaultImage } from '@/src/components/DestinationListItem';
 import Colors from '@/src/constants/Colors';
-import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
-import { useDeleteProfile, useInsertProfile, useProfile, useUpdateProfile } from '@/src/api/profile';
+import { useProfile, useUpdateProfile } from '@/src/api/profile';
 import { supabase } from '@/src/lib/supabase';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CreateProfileScreen = () => {
 
@@ -15,10 +14,10 @@ const CreateProfileScreen = () => {
     const [firstName, setFirstName] = useState('');
     const [secondName, setSecondName] = useState('');
     const [password, setPassword] = useState('');
-    const [group, setGroup] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [group, setGroup] = useState('user');
     const [errors, setErrors] = useState('');
 
+    const queryClient = useQueryClient();
 
 
     const { id: idString } = useLocalSearchParams();
@@ -27,10 +26,8 @@ const CreateProfileScreen = () => {
     );
     const isUpdating = !!idString;
 
-    const {mutate: insertProfile} = useInsertProfile();
     const {mutate: updateProfile} = useUpdateProfile();
     const {data: updatingProfile} = useProfile(id);
-    const {mutate: deleteProfile} = useDeleteProfile();
 
     useEffect(() => {
       if(updatingProfile) {
@@ -45,10 +42,10 @@ const CreateProfileScreen = () => {
     const router = useRouter();
 
     const resetFields = () => {
-      setFirstName('');
+        setFirstName('');
         setSecondName('');
         setEmail('');
-        setGroup('');
+        setPassword('');
     };
 
     const validateInput = () => {
@@ -65,10 +62,6 @@ const CreateProfileScreen = () => {
         setErrors('Email is required');
         return false;
       }
-      if (!group) {
-        setErrors('Group is required');
-        return false;
-      }
       return true;
     };
 
@@ -82,14 +75,15 @@ const CreateProfileScreen = () => {
 
     const onCreate = async () => {
       if (!validateInput()) {
+        console.log(errors)
         return;
       }
       const fullName = `${secondName} ${firstName}`
-      const { error } = await supabase.auth.signUp({ 
+      const { error } = await supabase.auth.admin.createUser({ 
         email, 
         password, 
-        options: {
-          data: {
+        email_confirm: true,
+        user_metadata: {
             email,
             password,
             firstName,
@@ -97,13 +91,19 @@ const CreateProfileScreen = () => {
             fullName,
             group,
           } 
-        }});
-        resetFields();
-        router.back();
+        });
+        if (error) Alert.alert(error.message);
+        else {
+          queryClient.invalidateQueries({ queryKey: ['profiles'] });
+          resetFields();
+          router.back();
+        }
     };
 
     const onUpdate = async () => {
       if (!validateInput()) {
+        console.log(errors)
+        console.log(firstName, secondName)
         return;
       }
       updateProfile(
@@ -115,15 +115,33 @@ const CreateProfileScreen = () => {
           },
         }
       );
+      const fullName = `${secondName} ${firstName}`
+      const { error } = await supabase.auth.admin.updateUserById(
+        updatingProfile.auth_id,
+        {
+        email: email,
+        password: password,
+        user_metadata: {
+          email,
+          password,
+          firstName,
+          secondName,
+          fullName,
+          group,
+          } 
+      });
+      if (error) Alert.alert(error.message);
     };
 
-    const onDelete = () => {
-      deleteProfile(id, {
-        onSuccess: () => {
-          resetFields();
-          router.replace('/(admin)/manage/profile/');
-        },
-      });
+    const onDelete = async () => {
+      const { error } = await supabase.auth.admin.deleteUser(
+        updatingProfile.auth_id
+      );
+      if (error) Alert.alert(error.message);
+      else {
+        await queryClient.invalidateQueries({ queryKey: ['profiles'] });
+        router.replace('/(admin)/manage/profile/')
+      };
     };
 
     const confirmDelete = () => {
@@ -180,8 +198,9 @@ const CreateProfileScreen = () => {
         selectedValue={group}
         onValueChange={(itemValue, itemIndex) => setGroup(itemValue)
         }>
-        <Picker.Item label='admin' value='admin' />
         <Picker.Item label='user' value='user' />
+        <Picker.Item label='manager' value='manager' />
+        <Picker.Item label='consultant' value='consultant' />
         
       </Picker>
       
