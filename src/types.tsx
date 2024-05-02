@@ -32,3 +32,10 @@ export type Order = {
   service_id: number,
   sale_date: string,
 }
+
+export type Service = {
+  id: number,
+  title: string,
+  cost: number,
+  comment: string,
+}

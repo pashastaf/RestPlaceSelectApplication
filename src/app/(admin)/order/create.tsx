@@ -4,23 +4,25 @@ import Button from '@/src/components/Button'
 import Colors from '@/src/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useDeleteOrder, useOrder, useInsertOrder, useUpdateOrder, useConsultantList, useServiceList } from '@/src/api/order';
+import { useDeleteOrder, useOrder, useInsertOrder, useUpdateOrder, useConsultantList, useServiceList, useInsertServiceByOrder } from '@/src/api/order';
 import { Picker } from '@react-native-picker/picker';
 import { useProfileByGroup } from '@/src/api/profile';
 
 const CreateOrderScreen = () => {
 
-    const [profileId, setProfileId] = useState('');
-    const [consultantId, setCosultantId] = useState('');
+    const [profileId, setProfileId] = useState('1');
+    const [consultantId, setCosultantId] = useState('1');
     const [serviceId, setServiceId] = useState('');
     const [errors, setErrors] = useState('');
+    const [selectedServices, setSelectedServices] = useState<number[]>([]);
+    const [totalCost, setTotalCost] = useState(0);
 
     const { data: profiles } = useProfileByGroup('user');
     const { data: consultants } = useConsultantList();
     const { data: services } = useServiceList();
     
-    const currentDate = Date.now();
-
+    const currentDate = new Date(Date.now());
+    
 
     const { id: idString } = useLocalSearchParams();
     const id = parseFloat(
@@ -32,6 +34,7 @@ const CreateOrderScreen = () => {
     const {mutate: updateOrder} = useUpdateOrder();
     const {data: updatingOrder} = useOrder(id);
     const {mutate: deleteOrder} = useDeleteOrder();
+    const {mutate: insertServiceByOrder} = useInsertServiceByOrder();
 
     useEffect(() => {
       if(updatingOrder) {
@@ -54,12 +57,22 @@ const CreateOrderScreen = () => {
     };
 
     const onCreate = async () => {
-      
-
+      if (!profileId || !consultantId || !totalCost || !currentDate) {
+        console.log(profileId)
+        console.log(consultantId)
+        console.log(totalCost)
+        console.log(currentDate)
+        console.error("Some required values are missing.");
+        return;
+      }
       insertOrder(
-        { profileId,consultantId, serviceId, currentDate },
+        { profileId, consultantId, currentDate, totalCost },
         {
-          onSuccess: () => {
+          onSuccess: (newOrder) => {
+            const orderId = newOrder.id
+            selectedServices.forEach((serviceId) => {
+              insertServiceByOrder({ orderId, serviceId }); 
+            });
             resetFields();
             router.back();
           },
@@ -70,7 +83,7 @@ const CreateOrderScreen = () => {
     const onUpdate = async () => {
       
       updateOrder(
-        { id, profileId, consultantId, serviceId },
+        { id, profileId, consultantId, totalCost },
         {
           onSuccess: () => {
             resetFields();
@@ -102,16 +115,32 @@ const CreateOrderScreen = () => {
       ]);
     };
 
+    const toggleServiceSelection = (serviceId: number) => {
+      if (services) {
+        if (selectedServices.includes(serviceId)) {
+          const serviceCost = services.find(service => service.id === serviceId)?.cost || 0;
+          setTotalCost(prevTotalCost => prevTotalCost - serviceCost);
+          setSelectedServices(selectedServices.filter(id => id !== serviceId));
+        } else {
+          const serviceCost = services.find(service => service.id === serviceId)?.cost || 0;
+          setTotalCost(prevTotalCost => prevTotalCost + serviceCost);
+          setSelectedServices([...selectedServices, serviceId]);
+        }
+      }
+    };
+
   return (
     <View style={styles.contrainer}>
       <Stack.Screen options={{ title: isUpdating ? 'Update Order' : 'Create Order' }} />
+      <Text style={styles.title}> Client </Text>
       <Picker style={styles.input}
-        selectedValue={consultantId}
-        onValueChange={(itemValue, itemIndex) => setCosultantId(itemValue)
+        selectedValue={profileId}
+        onValueChange={(itemValue, itemIndex) => setProfileId(itemValue)
         }>{profiles && profiles.map((profile) => (
           <Picker.Item key={profile.id} label= {`${profile.first_name} ${profile.second_name} `} value={profile.id} />
         ))}
       </Picker>
+      <Text style={styles.title}> Consultant </Text>
       <Picker style={styles.input}
         selectedValue={consultantId}
         onValueChange={(itemValue, itemIndex) => setCosultantId(itemValue)
@@ -119,13 +148,24 @@ const CreateOrderScreen = () => {
           <Picker.Item key={consultant.id} label={`${consultant.first_name} ${consultant.second_name} `} value={consultant.id} />
         ))}
       </Picker>
-      <Picker style={styles.input}
-        selectedValue={serviceId}
-        onValueChange={(itemValue, itemIndex) => setServiceId(itemValue)
-        }>{services && services.map((service) => (
-          <Picker.Item key={service.id} label={service.title} value={service.id} />
-        ))}
-      </Picker>
+      
+      <Text style={styles.title}>Services </Text>
+      <FlatList
+      data={services}
+      numColumns={2}
+      renderItem={({ item }) => {
+        return (
+          <View style={styles.flatView}>
+            <TouchableOpacity 
+              style={[styles.touchView, selectedServices.includes(item.id) && { backgroundColor: 'lightgray' }]}
+              onPress={() => toggleServiceSelection(item.id)}>
+            <Text>{item.title}</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      }}>
+      </FlatList>
+      <Text style={styles.title}>Total Cost is: {totalCost} </Text>
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}
     </View>
@@ -159,6 +199,22 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       color: Colors.light.tint,
       marginVertical: 10,
+    },
+    flatView: {
+      width: '50%',
+      height: 60,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    touchView: {
+      borderWidth: 1,
+      borderRadius: 20,
+      width: '90%',
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#fff',
+      
     },
 });
 

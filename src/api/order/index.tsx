@@ -39,20 +39,23 @@ export const useOrderList = () => {
   
     return useMutation({
       async mutationFn(data: any) {
-        const { error, data: neworders } = await supabase
-          .from('orders') // Исправлена опечатка
+        const { error, data: newOrder } = await supabase
+          .from('orders')
           .insert({
-            title: data.title,
-            country_id: data.countryId,
-            is_deleted: 0,
+            profiles_id: data.profileId,
+            consultants_id: data.consultantId,
+            sale_date: data.currentDate,
+            total_cost: data.totalCost
           })
+          .select()
           .single();
   
         if (error) {
           throw new Error(error.message);
         }
-        return neworders;
+        return newOrder;
       },
+      
       async onSuccess() {
         await queryClient.invalidateQueries({ queryKey: ['orders'] });
       },
@@ -67,12 +70,11 @@ export const useOrderList = () => {
   
     return useMutation({
       async mutationFn(data: any) {
-        const { error, data: updatedorders } = await supabase
+        const { error, data: updatedOrder } = await supabase
           .from('orders')
           .update({
-            title: data.title,
-            country_id: data.country_id,
-            is_deleted: 0,
+            profiles_id: data.profileId,
+
           })
           .eq('id', data.id)
           .select()
@@ -81,7 +83,7 @@ export const useOrderList = () => {
         if (error) {
           throw new Error(error.message);
         }
-        return updatedorders;
+        return updatedOrder;
       },
       async onSuccess(_, { id }) {
         await queryClient.invalidateQueries({ queryKey: ['orders'] });
@@ -140,5 +142,33 @@ export const useOrderList = () => {
         }
         return data;
       },
+    });
+  };
+
+  
+  export const useInsertServiceByOrder = () => {
+    const queryClient = useQueryClient();
+  
+    return useMutation({
+      async mutationFn(data: any) {
+        const { error, data: newServicesByOrder } = await supabase
+          .from('services_by_order')
+          .insert({
+            orders_id: data.orderId,
+            services_id: data.serviceId,
+          })
+          .single();
+  
+        if (error) {
+          throw new Error(error.message);
+        }
+        return newServicesByOrder;
+      },
+      async onSuccess() {
+        await queryClient.invalidateQueries({ queryKey: ['services_by_order'] });
+      },
+      onError(error) {
+        console.log(error);
+      }
     });
   };

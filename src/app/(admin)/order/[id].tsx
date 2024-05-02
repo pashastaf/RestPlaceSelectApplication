@@ -20,7 +20,7 @@ const orderDetailScreen = () => {
     <View style={styles.container}>
       <Stack.Screen 
             options={{ 
-                title: order.second_name + ' ' + order.first_name, 
+                title: order.sale_date, 
                 headerRight: () => (
                     <Link href={`/(admin)/order/create?id=${id}`} asChild>
                     <Pressable>
