@@ -66,3 +66,19 @@ export const useUpdateProfile = () => {
     }
   });
 };
+
+export const useProfileByGroup = (group: string) => {
+  return useQuery({
+    queryKey: ['profiles', { group }],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('group', group);
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data;
+    },
+  });
+};

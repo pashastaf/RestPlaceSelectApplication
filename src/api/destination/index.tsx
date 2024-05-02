@@ -3,10 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const useDestinationList = () => {
     return useQuery({
-      queryKey: ['destination'],
+      queryKey: ['destinations'],
       queryFn: async () => {
         const { data, error } = await supabase
-          .from('destination')
+          .from('destinations')
           .select('*')
         if (error) {
           throw new Error(error.message);
@@ -18,10 +18,10 @@ export const useDestinationList = () => {
 
   export const useDestination = (id: number) => {
     return useQuery({
-      queryKey: ['destination', id],
+      queryKey: ['destinations', id],
       queryFn: async () => {
         const { data, error } = await supabase
-          .from('destination')
+          .from('destinations')
           .select('*')
           .eq('id', id)
           .single();
@@ -40,10 +40,10 @@ export const useDestinationList = () => {
     return useMutation({
       async mutationFn(data: any) {
         const { error, data: newDestination } = await supabase
-          .from('destination') // Исправлена опечатка
+          .from('destinations')
           .insert({
             title: data.title,
-            country_id: data.countryId,
+            countries_id: data.countryId,
             is_deleted: 0,
           })
           .single();
@@ -54,7 +54,7 @@ export const useDestinationList = () => {
         return newDestination;
       },
       async onSuccess() {
-        await queryClient.invalidateQueries({ queryKey: ['destination'] });
+        await queryClient.invalidateQueries({ queryKey: ['destinations'] });
       },
       onError(error) {
         console.log(error);
@@ -68,10 +68,10 @@ export const useDestinationList = () => {
     return useMutation({
       async mutationFn(data: any) {
         const { error, data: updatedDestination } = await supabase
-          .from('destination')
+          .from('destinations')
           .update({
             title: data.title,
-            country_id: data.country_id,
+            countries_id: data.contryId,
             is_deleted: 0,
           })
           .eq('id', data.id)
@@ -84,8 +84,8 @@ export const useDestinationList = () => {
         return updatedDestination;
       },
       async onSuccess(_, { id }) {
-        await queryClient.invalidateQueries({ queryKey: ['destination'] });
-        await queryClient.invalidateQueries({ queryKey: ['destination', id] });
+        await queryClient.invalidateQueries({ queryKey: ['destinations'] });
+        await queryClient.invalidateQueries({ queryKey: ['destinations', id] });
       },
       onError(error) {
         console.log("Mutation error:", error);
@@ -99,7 +99,7 @@ export const useDestinationList = () => {
     return useMutation({
       async mutationFn(id: number) {
         const { error } = await supabase
-        .from('destination')
+        .from('destinations')
         .delete()
         .eq('id', id);
         
@@ -108,7 +108,22 @@ export const useDestinationList = () => {
         }
       },
       async onSuccess() {
-        await queryClient.invalidateQueries({ queryKey: ['destination'] });
+        await queryClient.invalidateQueries({ queryKey: ['destinations'] });
+      },
+    });
+  };
+
+  export const useCountryList = () => {
+    return useQuery({
+      queryKey: ['countries'],
+      queryFn: async () => {
+        const { data, error } = await supabase
+          .from('countries')
+          .select('*')
+        if (error) {
+          throw new Error(error.message);
+        }
+        return data;
       },
     });
   };

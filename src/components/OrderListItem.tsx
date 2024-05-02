@@ -1,29 +1,28 @@
 import { StyleSheet, Image, Pressable, Text } from 'react-native';
-import { Profile } from '../types';
+import { Order } from '../types';
 import { Link, useSegments } from 'expo-router';
 
 
-type ProfileListItemProps = {
-    profile: Profile;
+type orderListItemProps = {
+    order: Order;
 }
 
-const ProfileListItem = ({ profile }: ProfileListItemProps) => {
+const orderListItem = ({ order }: orderListItemProps) => {
   const segments = useSegments();
   console.log(segments);
   
   return (
-  <Link href={`/${segments[0]}/profile/${profile.id}`} asChild>
+  <Link href={`/${segments[0]}/order/${order.id}`} asChild>
     <Pressable style={styles.container}>
-      <Text style={styles.title}> {profile.second_name} {profile.first_name} </Text>
-      <Text style={styles.contry}> {profile.email} </Text>
-      <Text style={styles.contry}> {profile.group} </Text>
-      <Text style={styles.contry}> {profile.created_at} </Text>
+      <Text style={styles.contry}> {order.service_id} </Text>
+      <Text style={styles.contry}> {order.profiles_id} </Text>
+      <Text style={styles.contry}> {order.sale_date} </Text>
     </Pressable>
   </Link> 
   );
 };
 
-export default ProfileListItem
+export default orderListItem
 
 const styles = StyleSheet.create({
     container: {

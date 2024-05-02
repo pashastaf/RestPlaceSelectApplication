@@ -11,9 +11,9 @@ export default function ProfileStack() {
         <Stack.Screen 
             name="index" 
             options={{ 
-                title: "Profiles", 
+                title: "Orders", 
                 headerRight: () => (
-                    <Link href="/(admin)/manage/profile/create" asChild>
+                    <Link href="/(admin)/order/create" asChild>
                     <Pressable>
                         {({ pressed }) => (
                         <FontAwesome

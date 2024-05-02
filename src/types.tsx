@@ -25,3 +25,10 @@ export type Profile = {
   created_at: string;
   serial_num: number;
 }
+
+export type Order = {
+  id: number,
+  profiles_id: number,
+  service_id: number,
+  sale_date: string,
+}

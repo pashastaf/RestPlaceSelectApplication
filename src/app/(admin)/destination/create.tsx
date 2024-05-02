@@ -5,8 +5,7 @@ import { DefaultImage } from '@/src/components/DestinationListItem';
 import Colors from '@/src/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useDeleteDestination, useDestination, useInsertDestination, useUpdateDestination } from '@/src/api/destination';
-import { useCountryList } from '@/src/api/country';
+import { useDeleteDestination, useDestination, useInsertDestination, useUpdateDestination, useCountryList } from '@/src/api/destination';
 import { Picker } from '@react-native-picker/picker';
 
 const CreateDestinationScreen = () => {
@@ -36,6 +35,8 @@ const CreateDestinationScreen = () => {
         setCountryId(updatingDestination.country);
       }
     }, [updatingDestination])
+
+    
 
     const router = useRouter();
 

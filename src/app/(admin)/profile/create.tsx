@@ -140,7 +140,7 @@ const CreateProfileScreen = () => {
       if (error) Alert.alert(error.message);
       else {
         await queryClient.invalidateQueries({ queryKey: ['profiles'] });
-        router.replace('/(admin)/manage/profile/')
+        router.replace('/(admin)/profile/')
       };
     };
 

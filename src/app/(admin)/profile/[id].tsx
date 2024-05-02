@@ -22,7 +22,7 @@ const ProfileDetailScreen = () => {
             options={{ 
                 title: profile.second_name + ' ' + profile.first_name, 
                 headerRight: () => (
-                    <Link href={`/(admin)/manage/profile/create?id=${id}`} asChild>
+                    <Link href={`/(admin)/profile/create?id=${id}`} asChild>
                     <Pressable>
                         {({ pressed }) => (
                         <FontAwesome

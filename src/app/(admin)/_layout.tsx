@@ -45,11 +45,20 @@ export default function TabLayout() {
       />
       
       <Tabs.Screen
-        name="manage"
+        name="profile"
         options={{
-          title: 'Manage',
+          title: 'Profile',
           headerShown: false,
           tabBarIcon: ({ color }) => <MaterialIcons name="supervisor-account" color={color} size={30} style={{ marginBottom: -3 }}/>,
+        }}
+      />
+
+      <Tabs.Screen
+        name="order"
+        options={{
+          title: 'Order',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <MaterialIcons name="list" color={color} size={30} style={{ marginBottom: -3 }}/>,
         }}
       />
       
