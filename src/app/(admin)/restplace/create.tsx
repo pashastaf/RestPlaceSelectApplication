@@ -1,13 +1,13 @@
-import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Image, Alert, ActivityIndicator } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import Button from '@/src/components/Button'
 import { DefaultImage } from '@/src/components/DestinationListItem';
 import Colors from '@/src/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { Picker } from '@react-native-picker/picker';
-import { useRestPlace, useRestPlaceList, useInsertRestPlace, useUpdateRestPlace, useDeleteRestPlace } from '@/src/api/restplace';
+import { useRestPlace, useInsertRestPlace, useUpdateRestPlace, useDeleteRestPlace } from '@/src/api/restplace';
 import { useDestinationList } from '@/src/api/destination';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreateRestPlaceScreen = () => {
 
@@ -33,7 +33,7 @@ const CreateRestPlaceScreen = () => {
     useEffect(() => {
       if(updatingRestPlace) {
         setTitle(updatingRestPlace.title);
-        setDestinationId(updatingRestPlace.destination_id);
+        setDestinationId(updatingRestPlace.destinations_id);
       }
     }, [updatingRestPlace])
 
@@ -133,7 +133,16 @@ const CreateRestPlaceScreen = () => {
     }
   };
 
-console.log(destinationId)
+  if (!destinations) {
+    return <ActivityIndicator />;
+  }
+
+  const itemsDestination = destinations.map((destination) => ({
+    label: destination.title,
+    value: destination.id.toString(), 
+  }));
+
+  const [openDestination, setOpenDestination] = useState(false);
 
   return (
     <View style={styles.contrainer}>
@@ -150,13 +159,18 @@ console.log(destinationId)
         onChangeText={setTitle}
         />
       <Text style={styles.title}>Destination</Text>
-      <Picker style={styles.input}
-        selectedValue={destinationId}
-        onValueChange={(itemValue, itemIndex) => setDestinationId(itemValue)
-        }>{destinations && destinations.map((destination) => (
-          <Picker.Item key={destination.id} label={destination.title} value={destination.id} />
-        ))}
-      </Picker>
+      <DropDownPicker
+        placeholder={isUpdating ?
+          `${destinations.find(destination => destination.id === destinationId)?.title || 'error'}`
+          : 'Select new item'
+        }
+        open={openDestination}
+        value={destinationId}
+        items={itemsDestination}
+        setOpen={setOpenDestination}
+        setValue={setDestinationId}
+        setItems={() => {}} 
+      />
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}
     </View>

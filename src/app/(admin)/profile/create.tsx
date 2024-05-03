@@ -3,10 +3,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import Button from '@/src/components/Button'
 import Colors from '@/src/constants/Colors';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { Picker } from '@react-native-picker/picker';
 import { useProfile, useUpdateProfile } from '@/src/api/profile';
 import { supabase } from '@/src/lib/supabase';
 import { useQueryClient } from '@tanstack/react-query';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreateProfileScreen = () => {
 
@@ -14,7 +14,7 @@ const CreateProfileScreen = () => {
     const [firstName, setFirstName] = useState('');
     const [secondName, setSecondName] = useState('');
     const [password, setPassword] = useState('');
-    const [group, setGroup] = useState('user');
+    const [group, setGroup] = useState('');
     const [errors, setErrors] = useState('');
 
     const queryClient = useQueryClient();
@@ -34,8 +34,8 @@ const CreateProfileScreen = () => {
         setFirstName(updatingProfile.first_name);
         setSecondName(updatingProfile.second_name);
         setEmail(updatingProfile.email);
-        setGroup(updatingProfile.group);
         setPassword(updatingProfile.password);
+        setGroup(updatingProfile.group);
       }
     }, [updatingProfile])
 
@@ -157,6 +157,14 @@ const CreateProfileScreen = () => {
       ]);
     };
 
+    const [openGroup, setOpenGroup] = useState(false);
+    const [items, setItems] = useState([
+      {label: 'user', value: 'user'},
+      {label: 'consultant', value: 'consultant'},
+      {label: 'manager', value: 'manager'},
+      {label: 'admin', value: 'admin'},
+    ]);
+
   return (
       <View style={styles.container}>
       <Stack.Screen options={{ title: isUpdating ? 'Update Profile' : 'Create Profile' }} />
@@ -194,15 +202,19 @@ const CreateProfileScreen = () => {
         secureTextEntry
       />
 
-        <Picker style={styles.input}
-        selectedValue={group}
-        onValueChange={(itemValue, itemIndex) => setGroup(itemValue)
-        }>
-        <Picker.Item label='user' value='user' />
-        <Picker.Item label='manager' value='manager' />
-        <Picker.Item label='consultant' value='consultant' />
-        
-      </Picker>
+      <DropDownPicker
+        style={{ zIndex: openGroup ? 1 : 0,}}
+        placeholder={isUpdating ?
+          `${items.find((item) => item.value === group)?.label || 'error'}`
+          : 'Select new item'
+        }
+        open={openGroup}
+        value={group}
+        items={items}
+        setOpen={setOpenGroup}
+        setValue={setGroup}
+        setItems={setItems} 
+      />
       
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}

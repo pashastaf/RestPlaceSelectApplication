@@ -7,6 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useDeleteDestination, useDestination, useInsertDestination, useUpdateDestination, useCountryList } from '@/src/api/destination';
 import { Picker } from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreateDestinationScreen = () => {
 
@@ -134,6 +135,17 @@ const CreateDestinationScreen = () => {
     }
   };
 
+  if (!countries) {
+    return <ActivityIndicator />;
+  }
+
+  const itemsCountry = countries.map((country) => ({
+    label: country.title,
+    value: country.id.toString(), 
+  }));
+
+  const [openCountry, setOpenCountry] = useState(false);
+
   return (
     <View style={styles.contrainer}>
       <Stack.Screen options={{ title: isUpdating ? 'Update Destination' : 'Create Destination' }} />
@@ -156,6 +168,18 @@ const CreateDestinationScreen = () => {
           <Picker.Item key={country.id} label={country.title} value={country.id} />
         ))}
       </Picker>
+      <DropDownPicker
+        placeholder={isUpdating ?
+          `${countries.find(country => country.id === countryId)?.title || 'error'}`
+          : 'Select new item'
+        }
+        open={openCountry}
+        value={countryId}
+        items={itemsCountry}
+        setOpen={setOpenCountry}
+        setValue={setCountryId}
+        setItems={() => {}} 
+      />
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}
     </View>
