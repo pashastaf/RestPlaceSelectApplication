@@ -7,8 +7,7 @@ import Colors from '@/src/constants/Colors';
 import { useColorScheme } from '@/src/components/useColorScheme';
 import { useClientOnlyValue } from '@/src/components/useClientOnlyValue';
 import { useAuth } from '@/src/providers/AuthProvider';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { supabase } from '@/src/lib/supabase';
+import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -20,11 +19,11 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const {session, isAdmin} = useAuth();
+  const {session, isAdmin, isConsultant, isManager} = useAuth();
   if(!session) {
     return <Redirect href={'/'} />
   }
-  if(isAdmin) {
+  if(isAdmin || isConsultant || isManager) {
     return <Redirect href={'/'} />
   }
 
@@ -36,46 +35,21 @@ export default function TabLayout() {
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
       }}>
+      <Tabs.Screen name="index" options={{ href: null }} />
       <Tabs.Screen
-        name="index"
+        name="destination"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <View style={{ flexDirection: 'row' }}>
-                <Pressable>
-                  {({ pressed }) => (
-                    <MaterialCommunityIcons
-                      name="logout"
-                      size={25}
-                      color={Colors[colorScheme ?? 'light'].text}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                      onPress={() => supabase.auth.signOut()}
-                    />
-                  )}
-                </Pressable>
-              <Link href="/sign-up" asChild>
-                <Pressable>
-                  {({ pressed }) => (
-                    <FontAwesome
-                      name="info-circle"
-                      size={25}
-                      color={Colors[colorScheme ?? 'light'].text}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                    />
-                  )}
-                </Pressable>
-              </Link>
-            </View>
-            
-          ),
+          title: 'Destination',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <FontAwesome6 name="mountain-sun" color={color} size={24} style={{ marginBottom: -3 }} />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="restplace"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Rest Place',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <FontAwesome6 name="umbrella-beach" color={color} size={24} style={{ marginBottom: -3 }}/>,
         }}
       />
     </Tabs>

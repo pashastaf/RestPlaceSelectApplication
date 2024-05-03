@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, FlatList, ActivityIndicator, ScrollView } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@/src/components/Button'
 import Colors from '@/src/constants/Colors';
@@ -192,7 +192,7 @@ const CreateOrderScreen = () => {
    
 
   return (
-    <View style={styles.contrainer}>
+    <ScrollView style={styles.contrainer}>
       <Stack.Screen options={{ title: isUpdating ? `Update Order #${id}` : 'Create Order' }} />
       <Text style={styles.title}> Consultant </Text>
       <DropDownPicker
@@ -227,31 +227,30 @@ const CreateOrderScreen = () => {
       
       <Text style={styles.title}>Services </Text>
       <FlatList
-      data={services}
-      numColumns={2}
-      renderItem={({ item }) => {
-        return (
-          <View style={styles.flatView}>
-            <TouchableOpacity 
-              style={[styles.touchView, selectedServices.includes(item.id) && { backgroundColor: 'lightgray' }]}
-              onPress={() => toggleServiceSelection(item.id)}>
-            <Text>{item.title}</Text>
-            </TouchableOpacity>
-          </View>
-        )
-      }}>
+        data={services}
+        numColumns={2}
+        renderItem={({ item }) => {
+          return (
+            <View style={styles.flatView}>
+              <TouchableOpacity 
+                style={[styles.touchView, selectedServices.includes(item.id) && { backgroundColor: 'lightgray' }]}
+                onPress={() => toggleServiceSelection(item.id)}>
+              <Text>{item.title}</Text>
+              </TouchableOpacity>
+            </View>
+          )}}
+      >
       </FlatList>
       <Text style={styles.title}>Total Cost is: {totalCost} </Text>
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
     contrainer: {
         flex: 1,
-        justifyContent: 'center',
         padding: 10,
     },
     title: {

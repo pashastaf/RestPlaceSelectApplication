@@ -2,6 +2,8 @@ import { StyleSheet, Image, Pressable, Text } from 'react-native';
 import { Order } from '../types';
 import { Link, useSegments } from 'expo-router';
 import { format } from 'date-fns';
+import { useProfileList } from '../api/profile';
+import { useConsultantList } from '../api/order';
 
 
 type orderListItemProps = {
@@ -9,14 +11,21 @@ type orderListItemProps = {
 }
 
 const orderListItem = ({ order }: orderListItemProps) => {
+
+  const {data: profiles} = useProfileList();
+  const {data: consultants} = useConsultantList();
   
   return (
   <Link href={`/(admin)/order/create?id=${order.id}`} asChild>
     <Pressable style={styles.container}>
-      <Text style={styles.contry}> Consultant: {order.consultants_id} </Text>
-      <Text style={styles.contry}> Client: {order.profiles_id} </Text>
-      <Text style={styles.contry}> Sale date: {format(new Date(order.sale_date), 'dd.MM.yyyy HH:mm:ss')} </Text>
-      <Text style={styles.contry}> Order cost: {order.total_cost} </Text>
+      <Text style={styles.contry}> 
+        Consultant: {consultants?.find(consultant => consultant.id === order.consultants_id).first_name} {consultants?.find(consultant => consultant.id === order.consultants_id).second_name}
+      </Text>
+      <Text style={styles.contry}> 
+        Client: {profiles?.find(profile => profile.id === order.profiles_id).first_name} {profiles?.find(profile => profile.id === order.profiles_id).second_name} 
+      </Text>
+      <Text style={styles.contry}>Sale date: {format(new Date(order.sale_date), 'dd.MM.yyyy HH:mm:ss')} </Text>
+      <Text style={styles.contry}>Order cost: {order.total_cost} </Text>
     </Pressable>
   </Link> 
   );

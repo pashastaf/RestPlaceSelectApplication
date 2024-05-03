@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, FlatList, ActivityIndicator, ScrollView } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import Button from '@/src/components/Button'
 import { DefaultImage } from '@/src/components/DestinationListItem';
@@ -149,7 +149,7 @@ const CreateDestinationScreen = () => {
   const [openCountry, setOpenCountry] = useState(false);
 
   return (
-    <View style={styles.contrainer}>
+    <ScrollView style={styles.contrainer}>
       <Stack.Screen options={{ title: isUpdating ? 'Update Destination' : 'Create Destination' }} />
       <Image source={{ uri: image || DefaultImage }} style={styles.image} />
       <Text style={styles.textButton} onPress={pickImage}>
@@ -177,14 +177,13 @@ const CreateDestinationScreen = () => {
       />
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
     contrainer: {
         flex: 1,
-        justifyContent: 'center',
         padding: 10,
     },
     title: {

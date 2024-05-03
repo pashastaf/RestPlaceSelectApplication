@@ -7,7 +7,7 @@ import { ActivityIndicator } from "react-native";
 
 const index = () => {
   
-  const { session, loading, isAdmin, profile } = useAuth();
+  const { session, loading, isAdmin, isManager, isConsultant, profile } = useAuth();
 
   if(loading) {
     return<ActivityIndicator />;
@@ -18,11 +18,17 @@ const index = () => {
     return <Redirect href={'/sign-in'}/>  
   }
 
-  if(!isAdmin) {
-    return <Redirect href={'/(user)'} />
+  if(isAdmin) {
+    return <Redirect href={'/(admin)'} />
+  }
+  else if(isManager) {
+    return <Redirect href={'/(manager)'} />
+  }
+  else if(isConsultant) {
+    return <Redirect href={'/(consultant)'} />
   }
   else {
-    return <Redirect href={'/(admin)'} />
+    return <Redirect href={'/(user)'} />
   }
 };
 

@@ -7,6 +7,8 @@ type AuthData = {
   profile: any,
   loading: boolean,
   isAdmin: boolean,
+  isConsultant: boolean,
+  isManager: boolean
 }
 
 const AuthContext = createContext<AuthData>({
@@ -14,6 +16,8 @@ const AuthContext = createContext<AuthData>({
   profile: null,
   loading: true,
   isAdmin: false,
+  isConsultant: false,
+  isManager: false
 });
 
 interface UserProfile {
@@ -67,7 +71,10 @@ export default function AuthProvider({children}: PropsWithChildren) {
   console.log('PROVIDER',session)
     console.log('PROVIDER',profile)
 
-  return (<AuthContext.Provider value={{session, profile, loading, isAdmin: profile?.group === 'admin'}}>{children}</AuthContext.Provider>)
+  return (<AuthContext.Provider 
+    value={{session, profile, loading, isAdmin: profile?.group === 'admin', isConsultant: profile?.group === 'consultant', isManager: profile?.group === 'manager'}}>
+      {children}
+    </AuthContext.Provider>)
 }
 
 export const useAuth = () => useContext(AuthContext);

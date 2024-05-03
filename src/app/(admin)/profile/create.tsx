@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, FlatList, ActivityIndicator, ScrollView } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import Button from '@/src/components/Button'
 import Colors from '@/src/constants/Colors';
@@ -137,7 +137,7 @@ const CreateProfileScreen = () => {
       const { error } = await supabase.auth.admin.deleteUser(
         updatingProfile.auth_id
       );
-      if (error) Alert.alert(error.message);
+      if (error) Alert.alert(error.message, updatingProfile.auth_id);
       else {
         await queryClient.invalidateQueries({ queryKey: ['profiles'] });
         router.replace('/(admin)/profile/')
@@ -166,7 +166,7 @@ const CreateProfileScreen = () => {
     ]);
 
   return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
       <Stack.Screen options={{ title: isUpdating ? 'Update Profile' : 'Create Profile' }} />
 
       <Text style={styles.label}>Name</Text>
@@ -201,12 +201,12 @@ const CreateProfileScreen = () => {
         style={styles.input}
         secureTextEntry
       />
-
+      <Text style={styles.label}>Group</Text>
       <DropDownPicker
         style={{ zIndex: openGroup ? 1 : 0,}}
         placeholder={isUpdating ?
           `${items.find((item) => item.value === group)?.label || 'error'}`
-          : 'Select new item'
+          : 'Select group'
         }
         open={openGroup}
         value={group}
@@ -218,14 +218,13 @@ const CreateProfileScreen = () => {
       
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    justifyContent: 'center',
     flex: 1,
   },
   label: {

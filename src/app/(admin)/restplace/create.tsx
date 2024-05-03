@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Image, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Image, Alert, ActivityIndicator, ScrollView } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import Button from '@/src/components/Button'
 import { DefaultImage } from '@/src/components/DestinationListItem';
@@ -145,7 +145,7 @@ const CreateRestPlaceScreen = () => {
   const [openDestination, setOpenDestination] = useState(false);
 
   return (
-    <View style={styles.contrainer}>
+    <ScrollView style={styles.contrainer}>
       <Stack.Screen options={{ title: isUpdating ? 'Update Rest Place' : 'Create Rest Place' }} />
       <Image source={{ uri: image || DefaultImage }} style={styles.image} />
       <Text style={styles.textButton} onPress={pickImage}>
@@ -173,7 +173,7 @@ const CreateRestPlaceScreen = () => {
       />
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}
-    </View>
+    </ScrollView>
   )
 }
 
