@@ -10,7 +10,6 @@ type RestPlaceListItemProps = {
 
 const RestPlaceListItem = ({ restPlace }: RestPlaceListItemProps) => {
   const segments = useSegments();
-  console.log(segments);
   
   return (
   <Link href={`/${segments[0]}/restplace/${restPlace.id}`} asChild>

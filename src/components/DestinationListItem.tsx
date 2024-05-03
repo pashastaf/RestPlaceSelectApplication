@@ -10,7 +10,6 @@ type DestinationListItemProps = {
 
 const DestinationListItem = ({ destination }: DestinationListItemProps) => {
   const segments = useSegments();
-  console.log(segments);
   
   return (
   <Link href={`/${segments[0]}/destination/${destination.id}`} asChild>

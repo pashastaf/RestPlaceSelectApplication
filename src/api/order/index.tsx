@@ -172,3 +172,20 @@ export const useOrderList = () => {
       }
     });
   };
+
+  export const useServicesByOrder = (id: number) => {
+    return useQuery({
+      queryKey: ['services_by_order', id],
+      queryFn: async () => {
+        const { data, error } = await supabase
+          .from('services_by_order')
+          .select('*')
+          .eq('orders_id', id)
+  
+        if (error) {
+          throw new Error(error.message);
+        }
+        return data;
+      },
+    });
+  };

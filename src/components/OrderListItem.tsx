@@ -1,6 +1,7 @@
 import { StyleSheet, Image, Pressable, Text } from 'react-native';
 import { Order } from '../types';
 import { Link, useSegments } from 'expo-router';
+import { format } from 'date-fns';
 
 
 type orderListItemProps = {
@@ -8,15 +9,14 @@ type orderListItemProps = {
 }
 
 const orderListItem = ({ order }: orderListItemProps) => {
-  const segments = useSegments();
-  console.log(segments);
   
   return (
-  <Link href={`/${segments[0]}/order/${order.id}`} asChild>
+  <Link href={`/(admin)/order/create?id=${order.id}`} asChild>
     <Pressable style={styles.container}>
-      <Text style={styles.contry}> {order.service_id} </Text>
-      <Text style={styles.contry}> {order.profiles_id} </Text>
-      <Text style={styles.contry}> {order.sale_date} </Text>
+      <Text style={styles.contry}> Consultant: {order.consultants_id} </Text>
+      <Text style={styles.contry}> Client: {order.profiles_id} </Text>
+      <Text style={styles.contry}> Sale date: {format(new Date(order.sale_date), 'dd.MM.yyyy HH:mm:ss')} </Text>
+      <Text style={styles.contry}> Order cost: {order.total_cost} </Text>
     </Pressable>
   </Link> 
   );

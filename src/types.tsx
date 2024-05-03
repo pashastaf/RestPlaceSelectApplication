@@ -29,8 +29,9 @@ export type Profile = {
 export type Order = {
   id: number,
   profiles_id: number,
-  service_id: number,
+  consultants_id: number,
   sale_date: string,
+  total_cost: number,
 }
 
 export type Service = {

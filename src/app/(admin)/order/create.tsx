@@ -1,19 +1,24 @@
 import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '@/src/components/Button'
 import Colors from '@/src/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useDeleteOrder, useOrder, useInsertOrder, useUpdateOrder, useConsultantList, useServiceList, useInsertServiceByOrder } from '@/src/api/order';
+import { useDeleteOrder, useOrder, useInsertOrder, useUpdateOrder, useConsultantList, useServiceList, useInsertServiceByOrder, useServicesByOrder } from '@/src/api/order';
 import { Picker } from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { useProfileByGroup } from '@/src/api/profile';
 
 const CreateOrderScreen = () => {
 
-    const [profileId, setProfileId] = useState('1');
-    const [consultantId, setCosultantId] = useState('1');
-    const [serviceId, setServiceId] = useState('');
-    const [errors, setErrors] = useState('');
+  interface ServiceByOrderItem {
+    id: number;
+    services_id: number;
+    order_id: number;
+  }
+
+    const [profileId, setProfileId] = useState();
+    const [consultantId, setConsultantId] = useState();
     const [selectedServices, setSelectedServices] = useState<number[]>([]);
     const [totalCost, setTotalCost] = useState(0);
 
@@ -33,14 +38,41 @@ const CreateOrderScreen = () => {
     const {mutate: insertOrder} = useInsertOrder();
     const {mutate: updateOrder} = useUpdateOrder();
     const {data: updatingOrder} = useOrder(id);
+    const {data: serviceByOrder} = useServicesByOrder(id) as {data: ServiceByOrderItem[] };
     const {mutate: deleteOrder} = useDeleteOrder();
     const {mutate: insertServiceByOrder} = useInsertServiceByOrder();
 
+    if(updatingOrder) {
+      console.log(updatingOrder.id, updatingOrder.profiles_id, updatingOrder.consultants_id)
+      console.log(serviceByOrder)
+    }
+    
+    const initializeSelectedServices = (serviceByOrder: ServiceByOrderItem[]) => {
+      let initialSelectedServices: number[] = [];
+      let initialTotalCost = 0;
+    
+      // Проверяем каждый сервис из списка сервисов, полученного из базы данных
+      if (serviceByOrder) {
+        serviceByOrder.forEach(service => {
+          initialSelectedServices.push(service.services_id);
+            if (services) {
+              const serviceCost = services.find(s => s.id === service.services_id)?.cost || 0;
+              initialTotalCost += serviceCost;
+              
+            }});
+          }
+      
+      setSelectedServices(initialSelectedServices);
+      setTotalCost(initialTotalCost);
+    }
+    
     useEffect(() => {
-      if(updatingOrder) {
-        
+      if(updatingOrder && serviceByOrder) {
+        setProfileId(updatingOrder.profiles_id);
+        setConsultantId(updatingOrder.consultants_id);
+        initializeSelectedServices(serviceByOrder);
       }
-    }, [updatingOrder])
+    }, [updatingOrder, serviceByOrder])
 
     const router = useRouter();
 
@@ -129,25 +161,69 @@ const CreateOrderScreen = () => {
       }
     };
 
+    const [openConsultants, setOpenConsultants] = useState(false);
+    const [openProfiles, setOpenProfiles] = useState(false);
+
+    const onProfilesOpen = useCallback(() => {
+      setOpenConsultants(false);
+    }, []);
+  
+    const onConsultantsOpen = useCallback(() => {
+      setOpenProfiles(false);
+    }, []);
+
+    if (!consultants) {
+      return <ActivityIndicator />; 
+    }
+
+    if (!profiles) {
+      return <ActivityIndicator />;
+    }
+  
+    const itemsConsultant = consultants.map((consultant) => ({
+      label: `${consultant.first_name} ${consultant.second_name}`,
+      value: consultant.id.toString(), 
+    }));
+
+    const itemsProfiles = profiles.map((profile) => ({
+      label: `${profile.first_name} ${profile.second_name}`,
+      value: profile.id.toString(), 
+    }));
+   
+
   return (
     <View style={styles.contrainer}>
-      <Stack.Screen options={{ title: isUpdating ? 'Update Order' : 'Create Order' }} />
-      <Text style={styles.title}> Client </Text>
-      <Picker style={styles.input}
-        selectedValue={profileId}
-        onValueChange={(itemValue, itemIndex) => setProfileId(itemValue)
-        }>{profiles && profiles.map((profile) => (
-          <Picker.Item key={profile.id} label= {`${profile.first_name} ${profile.second_name} `} value={profile.id} />
-        ))}
-      </Picker>
+      <Stack.Screen options={{ title: isUpdating ? `Update Order #${id}` : 'Create Order' }} />
       <Text style={styles.title}> Consultant </Text>
-      <Picker style={styles.input}
-        selectedValue={consultantId}
-        onValueChange={(itemValue, itemIndex) => setCosultantId(itemValue)
-        }>{consultants && consultants.map((consultant) => (
-          <Picker.Item key={consultant.id} label={`${consultant.first_name} ${consultant.second_name} `} value={consultant.id} />
-        ))}
-      </Picker>
+      <DropDownPicker
+        style={{ zIndex: openConsultants ? 1 : 0,}}
+        placeholder={isUpdating ?
+          `${consultants.find(consultant => consultant.id === consultantId)?.first_name || 'error'} ${consultants.find(consultant => consultant.id === consultantId)?.second_name || 'fetch'}`
+          : 'Select new item'
+        }
+        open={openConsultants}
+        onOpen={onConsultantsOpen}
+        value={consultantId}
+        items={itemsConsultant}
+        setOpen={setOpenConsultants}
+        setValue={setConsultantId}
+        setItems={() => {}} 
+      />
+      <Text style={styles.title}> Client </Text>
+      <DropDownPicker
+        style={{ zIndex: openProfiles ? 1 : 0,}}
+        placeholder={isUpdating ?
+          `${profiles.find(profile => profile.id === profileId)?.first_name || 'error'} ${profiles.find(profile => profile.id === profileId)?.second_name || 'fetch'}`
+          : 'Select new item'
+        }
+        open={openProfiles}
+        onOpen={onProfilesOpen}
+        value={profileId}
+        items={itemsProfiles}
+        setOpen={setOpenProfiles}
+        setValue={setProfileId} 
+        setItems={() => {}}
+      />
       
       <Text style={styles.title}>Services </Text>
       <FlatList
@@ -180,13 +256,13 @@ const styles = StyleSheet.create({
     },
     title: {
         color: 'gray',
-        fontSize: 16,
+        fontSize: 20,
     },
     input: {
         backgroundColor: 'white',
         padding: 10,
-        borderRadius: 5,
-        marginTop: 5,
+        borderRadius: 20,
+        marginTop: 10,
         marginBottom: 20,
     },
     image: {

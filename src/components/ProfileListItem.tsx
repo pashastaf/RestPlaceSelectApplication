@@ -9,7 +9,6 @@ type ProfileListItemProps = {
 
 const ProfileListItem = ({ profile }: ProfileListItemProps) => {
   const segments = useSegments();
-  console.log(segments);
   
   return (
   <Link href={`/${segments[0]}/profile/${profile.id}`} asChild>
