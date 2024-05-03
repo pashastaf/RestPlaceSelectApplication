@@ -6,7 +6,6 @@ import Colors from '@/src/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useDeleteDestination, useDestination, useInsertDestination, useUpdateDestination, useCountryList } from '@/src/api/destination';
-import { Picker } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 const CreateDestinationScreen = () => {
@@ -17,6 +16,10 @@ const CreateDestinationScreen = () => {
     const [image, setImage] = useState<string | null>(null);
 
     const { data: countries } = useCountryList();
+
+    if (!countries) {
+      return <ActivityIndicator />;
+    }
 
 
     const { id: idString } = useLocalSearchParams();
@@ -33,7 +36,7 @@ const CreateDestinationScreen = () => {
     useEffect(() => {
       if(updatingDestination) {
         setTitle(updatingDestination.title);
-        setCountryId(updatingDestination.country);
+        setCountryId(updatingDestination.countries_id);
       }
     }, [updatingDestination])
 
@@ -135,15 +138,14 @@ const CreateDestinationScreen = () => {
     }
   };
 
-  if (!countries) {
-    return <ActivityIndicator />;
-  }
+  
 
   const itemsCountry = countries.map((country) => ({
     label: country.title,
     value: country.id.toString(), 
   }));
 
+  console.log(countryId)
   const [openCountry, setOpenCountry] = useState(false);
 
   return (
@@ -161,13 +163,6 @@ const CreateDestinationScreen = () => {
         onChangeText={setTitle}
         />
       <Text style={styles.title}>Country</Text>
-      <Picker style={styles.input}
-        selectedValue={countryId}
-        onValueChange={(itemValue, itemIndex) => setCountryId(itemValue)
-        }>{countries && countries.map((country) => (
-          <Picker.Item key={country.id} label={country.title} value={country.id} />
-        ))}
-      </Picker>
       <DropDownPicker
         placeholder={isUpdating ?
           `${countries.find(country => country.id === countryId)?.title || 'error'}`
