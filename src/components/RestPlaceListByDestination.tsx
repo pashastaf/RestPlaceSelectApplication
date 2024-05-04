@@ -2,8 +2,6 @@ import { Link, useSegments } from "expo-router";
 import { Image, Pressable, StyleSheet, Text } from "react-native";
 import type { RestPlace } from "../types";
 
-export const DefaultImage =
-	"https://previews.123rf.com/images/koblizeek/koblizeek2208/koblizeek220800254/190563481-no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg";
 
 type RestPlaceListItemProps = {
 	restPlace: RestPlace;
@@ -15,9 +13,7 @@ const RestPlaceListItem = ({ restPlace }: RestPlaceListItemProps) => {
 	return (
 		<Link href={`/${segments[0]}/restplace/${restPlace.id}`} asChild>
 			<Pressable style={styles.container}>
-				<Image style={styles.image} source={{ uri: DefaultImage }} resizeMode="contain" />
-
-				<Text style={styles.title}> {restPlace.title} </Text>
+				<Text style={styles.title}>{restPlace.id}. {restPlace.title} </Text>
 			</Pressable>
 		</Link>
 	);
@@ -30,6 +26,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		padding: 10,
 		borderRadius: 20,
+		borderWidth: 1,
 		flex: 1,
 	},
 	title: {
