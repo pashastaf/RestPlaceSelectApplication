@@ -214,6 +214,7 @@ const CreateProfileScreen = () => {
         setOpen={setOpenGroup}
         setValue={setGroup}
         setItems={setItems} 
+        listMode='MODAL'
       />
       
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>

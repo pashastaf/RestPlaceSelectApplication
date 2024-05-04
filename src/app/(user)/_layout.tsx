@@ -52,6 +52,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <FontAwesome6 name="umbrella-beach" color={color} size={24} style={{ marginBottom: -3 }}/>,
         }}
       />
+      <Tabs.Screen
+        name="select"
+        options={{
+          title: 'Select',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <FontAwesome6 name="location-arrow" color={color} size={24} style={{ marginBottom: -3 }}/>,
+        }}
+      />
     </Tabs>
   );
 }

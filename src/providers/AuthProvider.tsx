@@ -68,7 +68,7 @@ export default function AuthProvider({children}: PropsWithChildren) {
     
     
   }, []);
-  console.log('PROVIDER',session)
+    console.log('PROVIDER',session)
     console.log('PROVIDER',profile)
 
   return (<AuthContext.Provider 

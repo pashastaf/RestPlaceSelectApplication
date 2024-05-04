@@ -170,6 +170,7 @@ const CreateRestPlaceScreen = () => {
         setOpen={setOpenDestination}
         setValue={setDestinationId}
         setItems={() => {}} 
+        listMode='MODAL'
       />
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}
@@ -180,7 +181,6 @@ const CreateRestPlaceScreen = () => {
 const styles = StyleSheet.create({
     contrainer: {
         flex: 1,
-        justifyContent: 'center',
         padding: 10,
     },
     title: {

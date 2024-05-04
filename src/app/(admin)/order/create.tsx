@@ -192,7 +192,7 @@ const CreateOrderScreen = () => {
    
 
   return (
-    <ScrollView style={styles.contrainer}>
+    <View style={styles.contrainer}>
       <Stack.Screen options={{ title: isUpdating ? `Update Order #${id}` : 'Create Order' }} />
       <Text style={styles.title}> Consultant </Text>
       <DropDownPicker
@@ -244,7 +244,7 @@ const CreateOrderScreen = () => {
       <Text style={styles.title}>Total Cost is: {totalCost} </Text>
       <Button text={isUpdating ? 'Update' : 'Create'} onPress={(onSubmit)}/>
       { isUpdating && <Text onPress={confirmDelete} style={styles.textButton}> Delete </Text>}
-    </ScrollView>
+    </View>
   )
 }
 
