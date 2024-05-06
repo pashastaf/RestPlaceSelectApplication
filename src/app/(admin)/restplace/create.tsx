@@ -1,12 +1,26 @@
 import { useDestinationList } from "@/src/api/destination";
-import { useDeleteRestPlace, useInsertRestPlace, useRestPlace, useUpdateRestPlace } from "@/src/api/restplace";
+import {
+	useDeleteRestPlace,
+	useInsertRestPlace,
+	useRestPlace,
+	useUpdateRestPlace,
+} from "@/src/api/restplace";
 import Button from "@/src/components/Button";
 import { DefaultImage } from "@/src/components/DestinationListItem";
 import Colors from "@/src/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+	ActivityIndicator,
+	Alert,
+	Image,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+} from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 const CreateRestPlaceScreen = () => {
@@ -18,7 +32,9 @@ const CreateRestPlaceScreen = () => {
 	const { data: destinations } = useDestinationList();
 
 	const { id: idString } = useLocalSearchParams();
-	const id = Number.parseFloat(typeof idString === "string" ? idString : idString?.[0]);
+	const id = Number.parseFloat(
+		typeof idString === "string" ? idString : idString?.[0],
+	);
 	const isUpdating = !!idString;
 
 	const { mutate: insertRestPlace } = useInsertRestPlace();
@@ -102,16 +118,20 @@ const CreateRestPlaceScreen = () => {
 	};
 
 	const confirmDelete = () => {
-		Alert.alert("Confirm", "Are you sure you want to delete this rest place", [
-			{
-				text: "Cancel",
-			},
-			{
-				text: "Delete",
-				style: "destructive",
-				onPress: onDelete,
-			},
-		]);
+		Alert.alert(
+			"Confirm",
+			"Are you sure you want to delete this rest place",
+			[
+				{
+					text: "Cancel",
+				},
+				{
+					text: "Delete",
+					style: "destructive",
+					onPress: onDelete,
+				},
+			],
+		);
 	};
 
 	const pickImage = async () => {
@@ -144,18 +164,36 @@ const CreateRestPlaceScreen = () => {
 		<ScrollView style={styles.contrainer}>
 			<Stack.Screen
 				options={{
-					title: isUpdating ? "Update Rest Place" : "Create Rest Place",
+					title: isUpdating
+						? "Update Rest Place"
+						: "Create Rest Place",
 				}}
 			/>
-			<Image source={{ uri: image || DefaultImage }} style={styles.image} />
+			<Image
+				source={{ uri: image || DefaultImage }}
+				style={styles.image}
+			/>
 			<Text style={styles.textButton} onPress={pickImage}>
 				Select Image
 			</Text>
 			<Text style={styles.title}>Title</Text>
-			<TextInput placeholder="Rest place name" style={styles.input} value={title} onChangeText={setTitle} />
+			<TextInput
+				placeholder="Rest place name"
+				style={styles.input}
+				value={title}
+				onChangeText={setTitle}
+			/>
 			<Text style={styles.title}>Destination</Text>
 			<DropDownPicker
-				placeholder={isUpdating ? `${destinations.find((destination) => destination.id === destinationId)?.title || "error"}` : "Select new item"}
+				placeholder={
+					isUpdating
+						? `${
+								destinations.find(
+									(destination) => destination.id === destinationId,
+								)?.title || "error"
+							}`
+						: "Select new item"
+				}
 				open={openDestination}
 				value={destinationId}
 				items={itemsDestination}
@@ -164,7 +202,10 @@ const CreateRestPlaceScreen = () => {
 				setItems={() => {}}
 				listMode="MODAL"
 			/>
-			<Button text={isUpdating ? "Update" : "Create"} onPress={onSubmit} />
+			<Button
+				text={isUpdating ? "Update" : "Create"}
+				onPress={onSubmit}
+			/>
 			{isUpdating && (
 				<Text onPress={confirmDelete} style={styles.textButton}>
 					{" "}

@@ -4,10 +4,18 @@ import Colors from "@/src/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+	Image,
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+} from "react-native";
 const RestPlaceDetailScreen = () => {
 	const { id: idSting } = useLocalSearchParams();
-	const id = Number.parseFloat(typeof idSting === "string" ? idSting : idSting[0]);
+	const id = Number.parseFloat(
+		typeof idSting === "string" ? idSting : idSting[0],
+	);
 
 	const { data: restPlace, error, isLoading } = useRestPlace(id);
 
@@ -24,7 +32,15 @@ const RestPlaceDetailScreen = () => {
 						<Link href={`/(admin)/restplace/create?id=${id}`} asChild>
 							<Pressable>
 								{({ pressed }) => (
-									<FontAwesome name="pencil" size={25} color={Colors.light.tint} style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }} />
+									<FontAwesome
+										name="pencil"
+										size={25}
+										color={Colors.light.tint}
+										style={{
+											marginRight: 15,
+											opacity: pressed ? 0.5 : 1,
+										}}
+									/>
 								)}
 							</Pressable>
 						</Link>
@@ -33,8 +49,15 @@ const RestPlaceDetailScreen = () => {
 			/>
 
 			<Stack.Screen options={{ title: restPlace.title }} />
-			<Image style={styles.image} source={{ uri: DefaultImage }} resizeMode="contain" />
-			<Text style={styles.destinationId}> {restPlace.destination_catalogue_id} </Text>
+			<Image
+				style={styles.image}
+				source={{ uri: DefaultImage }}
+				resizeMode="contain"
+			/>
+			<Text style={styles.destinationId}>
+				{" "}
+				{restPlace.destination_catalogue_id}{" "}
+			</Text>
 		</View>
 	);
 };

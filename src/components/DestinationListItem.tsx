@@ -9,16 +9,24 @@ type DestinationListItemProps = {
 	destination: Destination;
 };
 
-const DestinationListItem = ({ destination }: DestinationListItemProps) => {
+const DestinationListItem = ({
+	destination,
+}: DestinationListItemProps) => {
 	const segments = useSegments();
 
 	return (
-		<Link href={`/${segments[0]}/destination/${destination.id}`} asChild>
+		<Link
+			href={`/${segments[0]}/destination/${destination.id}`}
+			asChild
+		>
 			<Pressable style={styles.container}>
-				<Image style={styles.image} source={{ uri: DefaultImage }} resizeMode="contain" />
+				{/* <Image style={styles.image} source={{ uri: DefaultImage }} resizeMode="contain" /> */}
 
 				<Text style={styles.title}> {destination.title} </Text>
-				<Text style={styles.contry}> {destination.country} </Text>
+				<Text style={styles.contry}>
+					{" "}
+					{destination.countries_id}{" "}
+				</Text>
 			</Pressable>
 		</Link>
 	);

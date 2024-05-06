@@ -10,7 +10,10 @@ const ProfileListItem = ({ profile }: ProfileListItemProps) => {
 	const segments = useSegments();
 
 	return (
-		<Link href={`/${segments[0]}/profile/create?id=${profile.id}`} asChild>
+		<Link
+			href={`/${segments[0]}/profile/create?id=${profile.id}`}
+			asChild
+		>
 			<Pressable style={styles.container}>
 				<Text style={styles.title}>
 					{" "}

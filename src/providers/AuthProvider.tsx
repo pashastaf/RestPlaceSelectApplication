@@ -1,5 +1,11 @@
 import type { Session } from "@supabase/supabase-js";
-import { type PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
+import {
+	type PropsWithChildren,
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 import { supabase } from "../lib/supabase";
 
 type AuthData = {
@@ -27,13 +33,19 @@ interface UserProfile {
 	auth_id: string;
 }
 
-export default function AuthProvider({ children }: PropsWithChildren) {
+export default function AuthProvider({
+	children,
+}: PropsWithChildren) {
 	const [session, setSession] = useState<Session | null>(null);
 	const [profile, setProfile] = useState<UserProfile | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	const fetchProfile = async (userId: string) => {
-		const { data } = await supabase.from("profiles").select("*").eq("auth_id", userId).single();
+		const { data } = await supabase
+			.from("profiles")
+			.select("*")
+			.eq("auth_id", userId)
+			.single();
 		setProfile(data || null);
 	};
 

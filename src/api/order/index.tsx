@@ -1,11 +1,17 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase";
 
 export const useOrderList = () => {
 	return useQuery({
 		queryKey: ["orders"],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("orders").select("*");
+			const { data, error } = await supabase
+				.from("orders")
+				.select("*");
 			if (error) {
 				throw new Error(error.message);
 			}
@@ -18,7 +24,11 @@ export const useOrder = (id: number) => {
 	return useQuery({
 		queryKey: ["orders", id],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("orders").select("*").eq("id", id).single();
+			const { data, error } = await supabase
+				.from("orders")
+				.select("*")
+				.eq("id", id)
+				.single();
 
 			if (error) {
 				throw new Error(error.message);
@@ -80,7 +90,9 @@ export const useUpdateOrder = () => {
 		},
 		async onSuccess(_, { id }) {
 			await queryClient.invalidateQueries({ queryKey: ["orders"] });
-			await queryClient.invalidateQueries({ queryKey: ["orders", id] });
+			await queryClient.invalidateQueries({
+				queryKey: ["orders", id],
+			});
 		},
 		onError(error) {
 			console.log("Mutation error:", error);
@@ -93,7 +105,10 @@ export const useDeleteOrder = () => {
 
 	return useMutation({
 		async mutationFn(id: number) {
-			const { error } = await supabase.from("orders").delete().eq("id", id);
+			const { error } = await supabase
+				.from("orders")
+				.delete()
+				.eq("id", id);
 
 			if (error) {
 				throw new Error(error.message);
@@ -109,7 +124,9 @@ export const useConsultantList = () => {
 	return useQuery({
 		queryKey: ["consultants"],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("consultants").select("*");
+			const { data, error } = await supabase
+				.from("consultants")
+				.select("*");
 			if (error) {
 				throw new Error(error.message);
 			}
@@ -122,7 +139,9 @@ export const useServiceList = () => {
 	return useQuery({
 		queryKey: ["services"],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("services").select("*");
+			const { data, error } = await supabase
+				.from("services")
+				.select("*");
 			if (error) {
 				throw new Error(error.message);
 			}
@@ -150,7 +169,9 @@ export const useInsertServiceByOrder = () => {
 			return newServicesByOrder;
 		},
 		async onSuccess() {
-			await queryClient.invalidateQueries({ queryKey: ["services_by_order"] });
+			await queryClient.invalidateQueries({
+				queryKey: ["services_by_order"],
+			});
 		},
 		onError(error) {
 			console.log(error);
@@ -162,7 +183,10 @@ export const useServicesByOrder = (id: number) => {
 	return useQuery({
 		queryKey: ["services_by_order", id],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("services_by_order").select("*").eq("orders_id", id);
+			const { data, error } = await supabase
+				.from("services_by_order")
+				.select("*")
+				.eq("orders_id", id);
 
 			if (error) {
 				throw new Error(error.message);

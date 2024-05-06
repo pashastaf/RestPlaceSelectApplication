@@ -1,11 +1,18 @@
-import { UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	UseQueryResult,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase";
 
 export const useProfileList = () => {
 	return useQuery({
 		queryKey: ["profiles"],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("profiles").select("*");
+			const { data, error } = await supabase
+				.from("profiles")
+				.select("*");
 			if (error) {
 				throw new Error(error.message);
 			}
@@ -18,7 +25,11 @@ export const useProfile = (id: number) => {
 	return useQuery({
 		queryKey: ["profiles", id],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("profiles").select("*").eq("id", id).single();
+			const { data, error } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("id", id)
+				.single();
 
 			if (error) {
 				throw new Error(error.message);
@@ -53,7 +64,9 @@ export const useUpdateProfile = () => {
 		},
 		async onSuccess(_, { id }) {
 			await queryClient.invalidateQueries({ queryKey: ["profiles"] });
-			await queryClient.invalidateQueries({ queryKey: ["profiles", id] });
+			await queryClient.invalidateQueries({
+				queryKey: ["profiles", id],
+			});
 		},
 		onError(error) {
 			console.log("Mutation error:", error);
@@ -65,7 +78,10 @@ export const useProfileByGroup = (group: string) => {
 	return useQuery({
 		queryKey: ["profiles", { group }],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("profiles").select("*").eq("group", group);
+			const { data, error } = await supabase
+				.from("profiles")
+				.select("*")
+				.eq("group", group);
 			if (error) {
 				throw new Error(error.message);
 			}

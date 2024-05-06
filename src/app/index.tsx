@@ -6,7 +6,14 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../providers/AuthProvider";
 
 const index = () => {
-	const { session, loading, isAdmin, isManager, isConsultant, profile } = useAuth();
+	const {
+		session,
+		loading,
+		isAdmin,
+		isManager,
+		isConsultant,
+		profile,
+	} = useAuth();
 
 	if (loading) {
 		return <ActivityIndicator />;

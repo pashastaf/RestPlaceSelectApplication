@@ -6,11 +6,20 @@ import Colors from "@/src/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+	FlatList,
+	Image,
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+} from "react-native";
 
 const DestinationDetailScreen = () => {
 	const { id: idSting } = useLocalSearchParams();
-	const id = Number.parseFloat(typeof idSting === "string" ? idSting : idSting[0]);
+	const id = Number.parseFloat(
+		typeof idSting === "string" ? idSting : idSting[0],
+	);
 
 	const { data: destination } = useDestination(id);
 	const { data: restPlaces } = useRestPlacesByDestinationId(id);
@@ -25,10 +34,21 @@ const DestinationDetailScreen = () => {
 				options={{
 					title: destination.title,
 					headerRight: () => (
-						<Link href={`/(admin)/destination/create?id=${id}`} asChild>
+						<Link
+							href={`/(admin)/destination/create?id=${id}`}
+							asChild
+						>
 							<Pressable>
 								{({ pressed }) => (
-									<FontAwesome name="pencil" size={25} color={Colors.light.tint} style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }} />
+									<FontAwesome
+										name="pencil"
+										size={25}
+										color={Colors.light.tint}
+										style={{
+											marginRight: 15,
+											opacity: pressed ? 0.5 : 1,
+										}}
+									/>
 								)}
 							</Pressable>
 						</Link>
@@ -36,11 +56,17 @@ const DestinationDetailScreen = () => {
 				}}
 			/>
 
-			<Image style={styles.image} source={{ uri: DefaultImage }} resizeMode="contain" />
+			<Image
+				style={styles.image}
+				source={{ uri: DefaultImage }}
+				resizeMode="contain"
+			/>
 			<Text style={styles.contry}> {destination.country_id} </Text>
 			<FlatList
 				data={restPlaces}
-				renderItem={({ item }) => <RestPlaceListByDestination restPlace={item} />}
+				renderItem={({ item }) => (
+					<RestPlaceListByDestination restPlace={item} />
+				)}
 				contentContainerStyle={{ gap: 10, padding: 10 }}
 			/>
 		</View>

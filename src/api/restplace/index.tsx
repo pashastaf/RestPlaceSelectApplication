@@ -1,11 +1,17 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase";
 
 export const useRestPlaceList = () => {
 	return useQuery({
 		queryKey: ["rest_places"],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("rest_places").select("*");
+			const { data, error } = await supabase
+				.from("rest_places")
+				.select("*");
 			if (error) {
 				throw new Error(error.message);
 			}
@@ -14,11 +20,16 @@ export const useRestPlaceList = () => {
 	});
 };
 
-export const useRestPlacesByDestinationId = (destinationId: number) => {
+export const useRestPlacesByDestinationId = (
+	destinationId: number,
+) => {
 	return useQuery({
 		queryKey: ["rest_places", { destinationId }],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("rest_places").select("*").eq("destinations_id", destinationId);
+			const { data, error } = await supabase
+				.from("rest_places")
+				.select("*")
+				.eq("destinations_id", destinationId);
 			if (error) {
 				throw new Error(error.message);
 			}
@@ -31,7 +42,11 @@ export const useRestPlace = (id: number) => {
 	return useQuery({
 		queryKey: ["rest_places", id],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("rest_places").select("*").eq("id", id).single();
+			const { data, error } = await supabase
+				.from("rest_places")
+				.select("*")
+				.eq("id", id)
+				.single();
 
 			if (error) {
 				throw new Error(error.message);
@@ -61,7 +76,9 @@ export const useInsertRestPlace = () => {
 			return newRestPlace;
 		},
 		async onSuccess() {
-			await queryClient.invalidateQueries({ queryKey: ["rest_places"] });
+			await queryClient.invalidateQueries({
+				queryKey: ["rest_places"],
+			});
 		},
 		onError(error) {
 			console.log(error);
@@ -91,8 +108,12 @@ export const useUpdateRestPlace = () => {
 			return updatedRestPlace;
 		},
 		async onSuccess(_, { id }) {
-			await queryClient.invalidateQueries({ queryKey: ["rest_places"] });
-			await queryClient.invalidateQueries({ queryKey: ["rest_places", id] });
+			await queryClient.invalidateQueries({
+				queryKey: ["rest_places"],
+			});
+			await queryClient.invalidateQueries({
+				queryKey: ["rest_places", id],
+			});
 		},
 		onError(error) {
 			console.log("Mutation error:", error);
@@ -105,14 +126,34 @@ export const useDeleteRestPlace = () => {
 
 	return useMutation({
 		async mutationFn(id: number) {
-			const { error } = await supabase.from("rest_places").delete().eq("id", id);
+			const { error } = await supabase
+				.from("rest_places")
+				.delete()
+				.eq("id", id);
 
 			if (error) {
 				throw new Error(error.message);
 			}
 		},
 		async onSuccess() {
-			await queryClient.invalidateQueries({ queryKey: ["rest_places"] });
+			await queryClient.invalidateQueries({
+				queryKey: ["rest_places"],
+			});
+		},
+	});
+};
+
+export const useFeatures = () => {
+	return useQuery({
+		queryKey: ["features_preferences"],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("features_preferences")
+				.select("*");
+			if (error) {
+				throw new Error(error.message);
+			}
+			return data;
 		},
 	});
 };

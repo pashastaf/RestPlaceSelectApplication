@@ -17,15 +17,41 @@ const orderListItem = ({ order }: orderListItemProps) => {
 		<Link href={`/(admin)/order/create?id=${order.id}`} asChild>
 			<Pressable style={styles.container}>
 				<Text style={styles.contry}>
-					Consultant: {consultants?.find((consultant) => consultant.id === order.consultants_id).first_name}{" "}
-					{consultants?.find((consultant) => consultant.id === order.consultants_id).second_name}
+					Consultant:{" "}
+					{
+						consultants?.find(
+							(consultant) => consultant.id === order.consultants_id,
+						).first_name
+					}{" "}
+					{
+						consultants?.find(
+							(consultant) => consultant.id === order.consultants_id,
+						).second_name
+					}
 				</Text>
 				<Text style={styles.contry}>
-					Client: {profiles?.find((profile) => profile.id === order.profiles_id).first_name}{" "}
-					{profiles?.find((profile) => profile.id === order.profiles_id).second_name}
+					Client:{" "}
+					{
+						profiles?.find(
+							(profile) => profile.id === order.profiles_id,
+						).first_name
+					}{" "}
+					{
+						profiles?.find(
+							(profile) => profile.id === order.profiles_id,
+						).second_name
+					}
 				</Text>
-				<Text style={styles.contry}>Sale date: {format(new Date(order.sale_date), "dd.MM.yyyy HH:mm:ss")} </Text>
-				<Text style={styles.contry}>Order cost: {order.total_cost} </Text>
+				<Text style={styles.contry}>
+					Sale date:{" "}
+					{format(
+						new Date(order.sale_date),
+						"dd.MM.yyyy HH:mm:ss",
+					)}{" "}
+				</Text>
+				<Text style={styles.contry}>
+					Order cost: {order.total_cost}{" "}
+				</Text>
 			</Pressable>
 		</Link>
 	);

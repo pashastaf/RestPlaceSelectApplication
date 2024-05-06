@@ -13,6 +13,12 @@ export default function RestPlaceScreen() {
 	}
 
 	return (
-		<FlatList data={restPlaces} renderItem={({ item }) => <RestPlaceListItem restPlace={item} />} contentContainerStyle={{ gap: 10, padding: 10 }} />
+		<FlatList
+			data={restPlaces}
+			renderItem={({ item }) => (
+				<RestPlaceListItem restPlace={item} />
+			)}
+			contentContainerStyle={{ gap: 10, padding: 10 }}
+		/>
 	);
 }

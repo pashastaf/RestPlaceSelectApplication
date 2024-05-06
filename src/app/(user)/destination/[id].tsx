@@ -4,14 +4,26 @@ import { DefaultImage } from "@/src/components/DestinationListItem";
 import RestPlaceListByDestination from "@/src/components/RestPlaceListByDestination";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+	FontAwesome,
+	MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+	FlatList,
+	Image,
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+} from "react-native";
 
 const DestinationDetailScreen = () => {
 	const { id: idSting } = useLocalSearchParams();
-	const id = Number.parseFloat(typeof idSting === "string" ? idSting : idSting[0]);
+	const id = Number.parseFloat(
+		typeof idSting === "string" ? idSting : idSting[0],
+	);
 
 	const { data: destination } = useDestination(id);
 	const { data: restPlaces } = useRestPlacesByDestinationId(id);
@@ -33,7 +45,10 @@ const DestinationDetailScreen = () => {
 										name="logout"
 										size={25}
 										color={Colors.light.tint}
-										style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+										style={{
+											marginRight: 15,
+											opacity: pressed ? 0.5 : 1,
+										}}
 										onPress={() => supabase.auth.signOut()}
 									/>
 								)}
@@ -41,7 +56,15 @@ const DestinationDetailScreen = () => {
 							<Link href="/sign-up" asChild>
 								<Pressable>
 									{({ pressed }) => (
-										<FontAwesome name="cog" size={25} color={Colors.light.tint} style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }} />
+										<FontAwesome
+											name="cog"
+											size={25}
+											color={Colors.light.tint}
+											style={{
+												marginRight: 15,
+												opacity: pressed ? 0.5 : 1,
+											}}
+										/>
 									)}
 								</Pressable>
 							</Link>
@@ -50,11 +73,17 @@ const DestinationDetailScreen = () => {
 				}}
 			/>
 
-			<Image style={styles.image} source={{ uri: DefaultImage }} resizeMode="contain" />
+			<Image
+				style={styles.image}
+				source={{ uri: DefaultImage }}
+				resizeMode="contain"
+			/>
 			<Text style={styles.contry}> {destination.country_id} </Text>
 			<FlatList
 				data={restPlaces}
-				renderItem={({ item }) => <RestPlaceListByDestination restPlace={item} />}
+				renderItem={({ item }) => (
+					<RestPlaceListByDestination restPlace={item} />
+				)}
 				contentContainerStyle={{ gap: 10, padding: 10 }}
 			/>
 		</View>

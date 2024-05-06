@@ -1,7 +1,7 @@
 export type Destination = {
 	id: number;
 	title: string;
-	country: number;
+	countries_id: number;
 	is_deleted: boolean;
 };
 

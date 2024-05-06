@@ -7,7 +7,7 @@
 		"indentStyle": "tab",
 		"indentWidth": 2,
 		"lineEnding": "lf",
-		"lineWidth": 150
+		"lineWidth": 70
 	  },
 	"$schema": "https://biomejs.dev/schemas/1.7.2/schema.json",
 	"organizeImports": {

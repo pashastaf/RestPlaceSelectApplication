@@ -7,14 +7,19 @@ import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
 import { useColorScheme } from "@/src/components/useColorScheme";
 import Colors from "@/src/constants/Colors";
 import { useAuth } from "@/src/providers/AuthProvider";
-import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+	FontAwesome6,
+	MaterialCommunityIcons,
+} from "@expo/vector-icons";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
 	name: React.ComponentProps<typeof FontAwesome>["name"];
 	color: string;
 }) {
-	return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+	return (
+		<FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />
+	);
 }
 
 export default function TabLayout() {
@@ -42,7 +47,14 @@ export default function TabLayout() {
 				options={{
 					title: "Destination",
 					headerShown: false,
-					tabBarIcon: ({ color }) => <FontAwesome6 name="mountain-sun" color={color} size={24} style={{ marginBottom: -3 }} />,
+					tabBarIcon: ({ color }) => (
+						<FontAwesome6
+							name="mountain-sun"
+							color={color}
+							size={24}
+							style={{ marginBottom: -3 }}
+						/>
+					),
 				}}
 			/>
 			<Tabs.Screen
@@ -50,7 +62,14 @@ export default function TabLayout() {
 				options={{
 					title: "Rest Place",
 					headerShown: false,
-					tabBarIcon: ({ color }) => <FontAwesome6 name="umbrella-beach" color={color} size={24} style={{ marginBottom: -3 }} />,
+					tabBarIcon: ({ color }) => (
+						<FontAwesome6
+							name="umbrella-beach"
+							color={color}
+							size={24}
+							style={{ marginBottom: -3 }}
+						/>
+					),
 				}}
 			/>
 			<Tabs.Screen
@@ -58,7 +77,14 @@ export default function TabLayout() {
 				options={{
 					title: "Select",
 					headerShown: false,
-					tabBarIcon: ({ color }) => <FontAwesome6 name="location-arrow" color={color} size={24} style={{ marginBottom: -3 }} />,
+					tabBarIcon: ({ color }) => (
+						<FontAwesome6
+							name="location-arrow"
+							color={color}
+							size={24}
+							style={{ marginBottom: -3 }}
+						/>
+					),
 				}}
 			/>
 		</Tabs>

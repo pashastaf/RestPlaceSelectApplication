@@ -14,8 +14,24 @@ import Colors from "@/src/constants/Colors";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, {
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+import {
+	ActivityIndicator,
+	Alert,
+	FlatList,
+	Image,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 const CreateOrderScreen = () => {
@@ -27,7 +43,9 @@ const CreateOrderScreen = () => {
 
 	const [profileId, setProfileId] = useState();
 	const [consultantId, setConsultantId] = useState();
-	const [selectedServices, setSelectedServices] = useState<number[]>([]);
+	const [selectedServices, setSelectedServices] = useState<number[]>(
+		[],
+	);
 	const [totalCost, setTotalCost] = useState(0);
 
 	const { data: profiles } = useProfileByGroup("user");
@@ -37,7 +55,9 @@ const CreateOrderScreen = () => {
 	const currentDate = new Date(Date.now());
 
 	const { id: idString } = useLocalSearchParams();
-	const id = Number.parseFloat(typeof idString === "string" ? idString : idString?.[0]);
+	const id = Number.parseFloat(
+		typeof idString === "string" ? idString : idString?.[0],
+	);
 	const isUpdating = !!idString;
 
 	const { mutate: insertOrder } = useInsertOrder();
@@ -50,20 +70,27 @@ const CreateOrderScreen = () => {
 	const { mutate: insertServiceByOrder } = useInsertServiceByOrder();
 
 	if (updatingOrder) {
-		console.log(updatingOrder.id, updatingOrder.profiles_id, updatingOrder.consultants_id);
+		console.log(
+			updatingOrder.id,
+			updatingOrder.profiles_id,
+			updatingOrder.consultants_id,
+		);
 		console.log(serviceByOrder);
 	}
 
-	const initializeSelectedServices = (serviceByOrder: ServiceByOrderItem[]) => {
+	const initializeSelectedServices = (
+		serviceByOrder: ServiceByOrderItem[],
+	) => {
 		const initialSelectedServices: number[] = [];
 		let initialTotalCost = 0;
 
-		// Проверяем каждый сервис из списка сервисов, полученного из базы данных
 		if (serviceByOrder) {
 			serviceByOrder.forEach((service) => {
 				initialSelectedServices.push(service.services_id);
 				if (services) {
-					const serviceCost = services.find((s) => s.id === service.services_id)?.cost || 0;
+					const serviceCost =
+						services.find((s) => s.id === service.services_id)
+							?.cost || 0;
 					initialTotalCost += serviceCost;
 				}
 			});
@@ -139,26 +166,36 @@ const CreateOrderScreen = () => {
 	};
 
 	const confirmDelete = () => {
-		Alert.alert("Confirm", "Are you sure you want to delete this product", [
-			{
-				text: "Cancel",
-			},
-			{
-				text: "Delete",
-				style: "destructive",
-				onPress: onDelete,
-			},
-		]);
+		Alert.alert(
+			"Confirm",
+			"Are you sure you want to delete this product",
+			[
+				{
+					text: "Cancel",
+				},
+				{
+					text: "Delete",
+					style: "destructive",
+					onPress: onDelete,
+				},
+			],
+		);
 	};
 
 	const toggleServiceSelection = (serviceId: number) => {
 		if (services) {
 			if (selectedServices.includes(serviceId)) {
-				const serviceCost = services.find((service) => service.id === serviceId)?.cost || 0;
+				const serviceCost =
+					services.find((service) => service.id === serviceId)
+						?.cost || 0;
 				setTotalCost((prevTotalCost) => prevTotalCost - serviceCost);
-				setSelectedServices(selectedServices.filter((id) => id !== serviceId));
+				setSelectedServices(
+					selectedServices.filter((id) => id !== serviceId),
+				);
 			} else {
-				const serviceCost = services.find((service) => service.id === serviceId)?.cost || 0;
+				const serviceCost =
+					services.find((service) => service.id === serviceId)
+						?.cost || 0;
 				setTotalCost((prevTotalCost) => prevTotalCost + serviceCost);
 				setSelectedServices([...selectedServices, serviceId]);
 			}
@@ -196,14 +233,24 @@ const CreateOrderScreen = () => {
 
 	return (
 		<View style={styles.contrainer}>
-			<Stack.Screen options={{ title: isUpdating ? `Update Order #${id}` : "Create Order" }} />
+			<Stack.Screen
+				options={{
+					title: isUpdating ? `Update Order #${id}` : "Create Order",
+				}}
+			/>
 			<Text style={styles.title}> Consultant </Text>
 			<DropDownPicker
 				style={{ zIndex: openConsultants ? 1 : 0 }}
 				placeholder={
 					isUpdating
-						? `${consultants.find((consultant) => consultant.id === consultantId)?.first_name || "error"} ${
-								consultants.find((consultant) => consultant.id === consultantId)?.second_name || "fetch"
+						? `${
+								consultants.find(
+									(consultant) => consultant.id === consultantId,
+								)?.first_name || "error"
+							} ${
+								consultants.find(
+									(consultant) => consultant.id === consultantId,
+								)?.second_name || "fetch"
 							}`
 						: "Select new item"
 				}
@@ -220,8 +267,12 @@ const CreateOrderScreen = () => {
 				style={{ zIndex: openProfiles ? 1 : 0 }}
 				placeholder={
 					isUpdating
-						? `${profiles.find((profile) => profile.id === profileId)?.first_name || "error"} ${
-								profiles.find((profile) => profile.id === profileId)?.second_name || "fetch"
+						? `${
+								profiles.find((profile) => profile.id === profileId)
+									?.first_name || "error"
+							} ${
+								profiles.find((profile) => profile.id === profileId)
+									?.second_name || "fetch"
 							}`
 						: "Select new item"
 				}
@@ -255,9 +306,12 @@ const CreateOrderScreen = () => {
 						</View>
 					);
 				}}
-			></FlatList>
+			/>
 			<Text style={styles.title}>Total Cost is: {totalCost} </Text>
-			<Button text={isUpdating ? "Update" : "Create"} onPress={onSubmit} />
+			<Button
+				text={isUpdating ? "Update" : "Create"}
+				onPress={onSubmit}
+			/>
 			{isUpdating && (
 				<Text onPress={confirmDelete} style={styles.textButton}>
 					{" "}

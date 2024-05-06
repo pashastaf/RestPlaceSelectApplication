@@ -15,7 +15,7 @@ const RestPlaceListItem = ({ restPlace }: RestPlaceListItemProps) => {
 	return (
 		<Link href={`/${segments[0]}/restplace/${restPlace.id}`} asChild>
 			<Pressable style={styles.container}>
-				<Image style={styles.image} source={{ uri: DefaultImage }} resizeMode="contain" />
+				{/* <Image style={styles.image} source={{ uri: DefaultImage }} resizeMode="contain" /> */}
 
 				<Text style={styles.title}> {restPlace.title} </Text>
 			</Pressable>

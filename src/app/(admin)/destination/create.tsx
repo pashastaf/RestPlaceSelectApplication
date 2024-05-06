@@ -1,17 +1,35 @@
-import { useCountryList, useDeleteDestination, useDestination, useInsertDestination, useUpdateDestination } from "@/src/api/destination";
+import {
+	useCountryList,
+	useDeleteDestination,
+	useDestination,
+	useInsertDestination,
+	useUpdateDestination,
+} from "@/src/api/destination";
 import Button from "@/src/components/Button";
 import { DefaultImage } from "@/src/components/DestinationListItem";
 import Colors from "@/src/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+	ActivityIndicator,
+	Alert,
+	Image,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 const CreateDestinationScreen = () => {
 	const router = useRouter();
 	const { id: idString } = useLocalSearchParams();
-	const id = Number.parseFloat(typeof idString === "string" ? idString : idString?.[0]);
+	const id = Number.parseFloat(
+		typeof idString === "string" ? idString : idString?.[0],
+	);
 
 	const { data: countries } = useCountryList();
 	const { mutate: insertDestination } = useInsertDestination();
@@ -105,16 +123,20 @@ const CreateDestinationScreen = () => {
 	};
 
 	const confirmDelete = () => {
-		Alert.alert("Confirm", "Are you sure you want to delete this product", [
-			{
-				text: "Cancel",
-			},
-			{
-				text: "Delete",
-				style: "destructive",
-				onPress: onDelete,
-			},
-		]);
+		Alert.alert(
+			"Confirm",
+			"Are you sure you want to delete this product",
+			[
+				{
+					text: "Cancel",
+				},
+				{
+					text: "Delete",
+					style: "destructive",
+					onPress: onDelete,
+				},
+			],
+		);
 	};
 
 	const pickImage = async () => {
@@ -139,18 +161,35 @@ const CreateDestinationScreen = () => {
 		<View style={styles.container}>
 			<Stack.Screen
 				options={{
-					title: isUpdating ? "Update Destination" : "Create Destination",
+					title: isUpdating
+						? "Update Destination"
+						: "Create Destination",
 				}}
 			/>
-			<Image source={{ uri: image || DefaultImage }} style={styles.image} />
+			<Image
+				source={{ uri: image || DefaultImage }}
+				style={styles.image}
+			/>
 			<Text style={styles.textButton} onPress={pickImage}>
 				Select Image
 			</Text>
 			<Text style={styles.title}>Title</Text>
-			<TextInput placeholder="Destination name" style={styles.input} value={title} onChangeText={setTitle} />
+			<TextInput
+				placeholder="Destination name"
+				style={styles.input}
+				value={title}
+				onChangeText={setTitle}
+			/>
 			<Text style={styles.title}>Country</Text>
 			<DropDownPicker
-				placeholder={isUpdating ? `${countries.find((country) => country.id === countryId)?.title || "error"}` : "Select new item"}
+				placeholder={
+					isUpdating
+						? `${
+								countries.find((country) => country.id === countryId)
+									?.title || "error"
+							}`
+						: "Select new item"
+				}
 				open={openCountry}
 				value={countryId}
 				items={itemsCountry}
@@ -161,7 +200,10 @@ const CreateDestinationScreen = () => {
 				searchable={true}
 				searchPlaceholder="Search..."
 			/>
-			<Button text={isUpdating ? "Update" : "Create"} onPress={onSubmit} />
+			<Button
+				text={isUpdating ? "Update" : "Create"}
+				onPress={onSubmit}
+			/>
 			{isUpdating && (
 				<Text onPress={confirmDelete} style={styles.textButton}>
 					{" "}

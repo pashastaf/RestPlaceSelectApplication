@@ -2,9 +2,20 @@ import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
 import { useAuth } from "@/src/providers/AuthProvider";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import {
+	Link,
+	Stack,
+	useLocalSearchParams,
+	useRouter,
+} from "expo-router";
 import React, { ChangeEvent, useState, useEffect } from "react";
-import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+	Alert,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+} from "react-native";
 
 const SignInScreen = () => {
 	const [email, setEmail] = useState("");
@@ -27,11 +38,26 @@ const SignInScreen = () => {
 			<Stack.Screen options={{ title: "Sign in" }} />
 
 			<Text style={styles.label}>Login</Text>
-			<TextInput value={email} onChangeText={setEmail} placeholder="pashastaf@gmail.com" style={styles.input} />
+			<TextInput
+				value={email}
+				onChangeText={setEmail}
+				placeholder="pashastaf@gmail.com"
+				style={styles.input}
+			/>
 
 			<Text style={styles.label}>Password</Text>
-			<TextInput value={password} onChangeText={setPassword} placeholder="" style={styles.input} secureTextEntry />
-			<Button onPress={signInWithEmail} disabled={loading} text={loading ? "Signing in..." : "Sign in"} />
+			<TextInput
+				value={password}
+				onChangeText={setPassword}
+				placeholder=""
+				style={styles.input}
+				secureTextEntry
+			/>
+			<Button
+				onPress={signInWithEmail}
+				disabled={loading}
+				text={loading ? "Signing in..." : "Sign in"}
+			/>
 			<Link href="/sign-up" style={styles.textButton}>
 				Create an account
 			</Link>

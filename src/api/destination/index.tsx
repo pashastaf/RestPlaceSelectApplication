@@ -1,11 +1,17 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase";
 
 export const useDestinationList = () => {
 	return useQuery({
 		queryKey: ["destinations"],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("destinations").select("*");
+			const { data, error } = await supabase
+				.from("destinations")
+				.select("*");
 			if (error) {
 				throw new Error(error.message);
 			}
@@ -18,7 +24,11 @@ export const useDestination = (id: number) => {
 	return useQuery({
 		queryKey: ["destinations", id],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("destinations").select("*").eq("id", id).single();
+			const { data, error } = await supabase
+				.from("destinations")
+				.select("*")
+				.eq("id", id)
+				.single();
 
 			if (error) {
 				throw new Error(error.message);
@@ -48,7 +58,9 @@ export const useInsertDestination = () => {
 			return newDestination;
 		},
 		async onSuccess() {
-			await queryClient.invalidateQueries({ queryKey: ["destinations"] });
+			await queryClient.invalidateQueries({
+				queryKey: ["destinations"],
+			});
 		},
 		onError(error) {
 			console.log(error);
@@ -78,8 +90,12 @@ export const useUpdateDestination = () => {
 			return updatedDestination;
 		},
 		async onSuccess(_, { id }) {
-			await queryClient.invalidateQueries({ queryKey: ["destinations"] });
-			await queryClient.invalidateQueries({ queryKey: ["destinations", id] });
+			await queryClient.invalidateQueries({
+				queryKey: ["destinations"],
+			});
+			await queryClient.invalidateQueries({
+				queryKey: ["destinations", id],
+			});
 		},
 		onError(error) {
 			console.log("Mutation error:", error);
@@ -92,14 +108,19 @@ export const useDeleteDestination = () => {
 
 	return useMutation({
 		async mutationFn(id: number) {
-			const { error } = await supabase.from("destinations").delete().eq("id", id);
+			const { error } = await supabase
+				.from("destinations")
+				.delete()
+				.eq("id", id);
 
 			if (error) {
 				throw new Error(error.message);
 			}
 		},
 		async onSuccess() {
-			await queryClient.invalidateQueries({ queryKey: ["destinations"] });
+			await queryClient.invalidateQueries({
+				queryKey: ["destinations"],
+			});
 		},
 	});
 };
@@ -108,7 +129,9 @@ export const useCountryList = () => {
 	return useQuery({
 		queryKey: ["countries"],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("countries").select("*");
+			const { data, error } = await supabase
+				.from("countries")
+				.select("*");
 			if (error) {
 				throw new Error(error.message);
 			}

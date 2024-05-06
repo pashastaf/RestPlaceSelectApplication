@@ -2,7 +2,6 @@ import { Link, useSegments } from "expo-router";
 import { Image, Pressable, StyleSheet, Text } from "react-native";
 import type { RestPlace } from "../types";
 
-
 type RestPlaceListItemProps = {
 	restPlace: RestPlace;
 };
@@ -13,7 +12,9 @@ const RestPlaceListItem = ({ restPlace }: RestPlaceListItemProps) => {
 	return (
 		<Link href={`/${segments[0]}/restplace/${restPlace.id}`} asChild>
 			<Pressable style={styles.container}>
-				<Text style={styles.title}>{restPlace.id}. {restPlace.title} </Text>
+				<Text style={styles.title}>
+					{restPlace.id}. {restPlace.title}{" "}
+				</Text>
 			</Pressable>
 		</Link>
 	);

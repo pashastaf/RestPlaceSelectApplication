@@ -33,7 +33,14 @@ export default function TabLayout() {
 				options={{
 					title: "Destination",
 					headerShown: false,
-					tabBarIcon: ({ color }) => <FontAwesome6 name="mountain-sun" color={color} size={24} style={{ marginBottom: -3 }} />,
+					tabBarIcon: ({ color }) => (
+						<FontAwesome6
+							name="mountain-sun"
+							color={color}
+							size={24}
+							style={{ marginBottom: -3 }}
+						/>
+					),
 				}}
 			/>
 			<Tabs.Screen
@@ -41,7 +48,14 @@ export default function TabLayout() {
 				options={{
 					title: "Rest Place",
 					headerShown: false,
-					tabBarIcon: ({ color }) => <FontAwesome6 name="umbrella-beach" color={color} size={24} style={{ marginBottom: -3 }} />,
+					tabBarIcon: ({ color }) => (
+						<FontAwesome6
+							name="umbrella-beach"
+							color={color}
+							size={24}
+							style={{ marginBottom: -3 }}
+						/>
+					),
 				}}
 			/>
 
@@ -50,7 +64,14 @@ export default function TabLayout() {
 				options={{
 					title: "Profile",
 					headerShown: false,
-					tabBarIcon: ({ color }) => <MaterialIcons name="supervisor-account" color={color} size={30} style={{ marginBottom: -3 }} />,
+					tabBarIcon: ({ color }) => (
+						<MaterialIcons
+							name="supervisor-account"
+							color={color}
+							size={30}
+							style={{ marginBottom: -3 }}
+						/>
+					),
 				}}
 			/>
 
@@ -59,7 +80,14 @@ export default function TabLayout() {
 				options={{
 					title: "Order",
 					headerShown: false,
-					tabBarIcon: ({ color }) => <MaterialIcons name="list" color={color} size={30} style={{ marginBottom: -3 }} />,
+					tabBarIcon: ({ color }) => (
+						<MaterialIcons
+							name="list"
+							color={color}
+							size={30}
+							style={{ marginBottom: -3 }}
+						/>
+					),
 				}}
 			/>
 		</Tabs>

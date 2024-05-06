@@ -21,7 +21,10 @@ export default function DestinationStack() {
 										name="logout"
 										size={25}
 										color={Colors.light.tint}
-										style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+										style={{
+											marginRight: 15,
+											opacity: pressed ? 0.5 : 1,
+										}}
 										onPress={() => supabase.auth.signOut()}
 									/>
 								)}
@@ -29,7 +32,15 @@ export default function DestinationStack() {
 							<Link href="/sign-in" asChild>
 								<Pressable>
 									{({ pressed }) => (
-										<FontAwesome name="cog" size={25} color={Colors.light.tint} style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }} />
+										<FontAwesome
+											name="cog"
+											size={25}
+											color={Colors.light.tint}
+											style={{
+												marginRight: 15,
+												opacity: pressed ? 0.5 : 1,
+											}}
+										/>
 									)}
 								</Pressable>
 							</Link>
