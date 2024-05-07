@@ -6,14 +6,12 @@ import { supabase } from "@/src/lib/supabase";
 import { Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
+	ActivityIndicator,
+	FlatList,
+	Pressable,
+	StyleSheet,
+	Text,
+	TextInput
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
@@ -23,40 +21,42 @@ export default function RestPlaceScreen() {
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState([]);
 	const [hideView, setHideView] = useState(false);
+	const [inputValue, setInputValue] = useState('');
 	const [filterQuery, setFilterQuery] = useState(restPlaces);
-	const [searchQuery, setSearchQuery] = useState(filterQuery);
+	const [searchQuery, setSearchQuery] = useState(restPlaces);
 
-  console.log(value)
-  console.log(filterQuery)
+	console.log(value)
+	console.log('FILTER', filterQuery)
+	console.log('SEACRH', searchQuery)
 
 	useEffect(() => {
-		if (restPlaces) {
+		if (filterQuery) {
 			setSearchQuery(filterQuery);
-			setFilterQuery(restPlaces);
+			setInputValue('');
 		}
-	}, [restPlaces]);
+	}, [filterQuery])
 
 	useEffect(() => {
 		async function fetchData() {
 			if (value.length > 0) {
 				const { data, error } = await supabase.rpc('filter_rest_places', { selected_features_id: value });
 				if (error) {
-					// Обработка ошибки
 					console.error('Ошибка при выполнении запроса:', error.message);
 				} else {
 					setFilterQuery(data);
 				}
 			}
-      else {
-        setFilterQuery(searchQuery)
-      }
+			else {
+				setFilterQuery(restPlaces)
+			}
 		}
 		fetchData();
-	}, [value]);
+	}, [value, restPlaces]);
 
 	async function handleFilter(search: string) {
+		setInputValue(search)
 		if (filterQuery) {
-			setFilterQuery(
+			setSearchQuery(
 				filterQuery.filter((item) =>
 					item.title.toLowerCase().includes(search.toLowerCase()),
 				),
@@ -70,10 +70,10 @@ export default function RestPlaceScreen() {
 	if (error) {
 		return <Text>Failed to fetch</Text>;
 	}
-
 	if (!features) {
 		return <ActivityIndicator />;
 	}
+
 	const itemsFeatures = features.map((feature) => ({
 		label: feature.title,
 		value: feature.id.toString(),
@@ -87,6 +87,7 @@ export default function RestPlaceScreen() {
 					clearButtonMode="always"
 					style={styles.searchBox}
 					autoCapitalize="none"
+					value={inputValue}
 					autoCorrect={false}
 					onChangeText={handleFilter}
 				/>
@@ -115,13 +116,13 @@ export default function RestPlaceScreen() {
 			{hideView && (
 				<DropDownPicker
 					style={{ marginTop: 60, width: "90%", alignSelf: "center" }}
-          dropDownContainerStyle={{ marginTop: 60, width: "90%", alignSelf: "center"}}
+					dropDownContainerStyle={{ marginTop: 60, width: "90%", alignSelf: "center" }}
 					open={open}
 					value={value}
 					items={itemsFeatures}
 					setOpen={setOpen}
 					setValue={setValue}
-					setItems={() => {}}
+					setItems={() => { }}
 					multiple={true}
 					mode="BADGE"
 					badgeDotColors={[
@@ -136,7 +137,7 @@ export default function RestPlaceScreen() {
 				/>
 			)}
 			<FlatList
-				data={filterQuery}
+				data={searchQuery}
 				style={{ marginTop: 50 }}
 				renderItem={({ item }) => (
 					<RestPlaceListItem restPlace={item} />
