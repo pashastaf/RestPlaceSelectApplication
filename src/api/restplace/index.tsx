@@ -143,13 +143,14 @@ export const useDeleteRestPlace = () => {
 	});
 };
 
-export const useFeatures = () => {
+export const useFeaturesForPlaces = () => {
 	return useQuery({
-		queryKey: ["features_preferences"],
+		queryKey: ["features"],
 		queryFn: async () => {
 			const { data, error } = await supabase
-				.from("features_preferences")
-				.select("*");
+				.from("features")
+				.select("*")
+				.eq('features_type_id', 2);
 			if (error) {
 				throw new Error(error.message);
 			}

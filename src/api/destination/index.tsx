@@ -139,3 +139,19 @@ export const useCountryList = () => {
 		},
 	});
 };
+
+export const useFeaturesForDestinations = () => {
+	return useQuery({
+		queryKey: ["features"],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("features")
+				.select("*")
+				.eq('features_type_id', 1);
+			if (error) {
+				throw new Error(error.message);
+			}
+			return data;
+		},
+	});
+};

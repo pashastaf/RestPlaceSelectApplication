@@ -1,4 +1,4 @@
-import { useFeatures, useRestPlaceList } from "@/src/api/restplace";
+import { useFeaturesForPlaces, useRestPlaceList } from "@/src/api/restplace";
 import RestPlaceListItem from "@/src/components/RestPlaceListItem";
 import { View } from "@/src/components/Themed";
 import Colors from "@/src/constants/Colors";
@@ -17,17 +17,13 @@ import DropDownPicker from "react-native-dropdown-picker";
 
 export default function RestPlaceScreen() {
 	const { data: restPlaces, isLoading, error } = useRestPlaceList();
-	const { data: features } = useFeatures();
+	const { data: features } = useFeaturesForPlaces();
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState([]);
 	const [hideView, setHideView] = useState(false);
 	const [inputValue, setInputValue] = useState('');
 	const [filterQuery, setFilterQuery] = useState(restPlaces);
 	const [searchQuery, setSearchQuery] = useState(restPlaces);
-
-	console.log(value)
-	console.log('FILTER', filterQuery)
-	console.log('SEACRH', searchQuery)
 
 	useEffect(() => {
 		if (filterQuery) {
@@ -81,7 +77,7 @@ export default function RestPlaceScreen() {
 
 	return (
 		<View style={{ backgroundColor: "white" }}>
-			<View style={styles.filterBlock}>
+			<View style={styles.seacrhButton}>
 				<TextInput
 					placeholder="Search"
 					clearButtonMode="always"
@@ -104,9 +100,6 @@ export default function RestPlaceScreen() {
 								color={Colors.light.tint}
 								style={{
 									opacity: pressed ? 0.5 : 1,
-									marginTop: 17,
-									marginLeft: 15,
-									height: 40,
 								}}
 							/>
 						)}
@@ -115,8 +108,10 @@ export default function RestPlaceScreen() {
 			</View>
 			{hideView && (
 				<DropDownPicker
-					style={{ marginTop: 60, width: "90%", alignSelf: "center" }}
-					dropDownContainerStyle={{ marginTop: 60, width: "90%", alignSelf: "center" }}
+					style={[styles.filterBox, {paddingHorizontal: 20 }]}
+					dropDownContainerStyle={styles.filterBox}
+					placeholder="Select filter"
+					placeholderStyle={{ color: 'gray'}}
 					open={open}
 					value={value}
 					items={itemsFeatures}
@@ -138,7 +133,6 @@ export default function RestPlaceScreen() {
 			)}
 			<FlatList
 				data={searchQuery}
-				style={{ marginTop: 50 }}
 				renderItem={({ item }) => (
 					<RestPlaceListItem restPlace={item} />
 				)}
@@ -155,13 +149,19 @@ const styles = StyleSheet.create({
 		borderColor: "#ccc",
 		borderWidth: 1,
 		borderRadius: 8,
-		marginTop: 10,
 		width: "90%",
-		height: 40,
 	},
-	filterBlock: {
-		flex: 1,
-		marginHorizontal: 20,
+	seacrhButton: {
+		marginHorizontal: 15,
+		marginVertical: 15,
 		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: 'center'
 	},
+	filterBox: {
+		alignSelf: "center", 
+		borderColor: '#ccc',
+		borderRadius: 8,
+		width: '93%'
+	}
 });

@@ -11,26 +11,20 @@ import {
 import { useProfileByGroup } from "@/src/api/profile";
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
-import { Picker } from "@react-native-picker/picker";
-import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, {
 	useCallback,
 	useEffect,
-	useRef,
-	useState,
+	useState
 } from "react";
 import {
 	ActivityIndicator,
 	Alert,
 	FlatList,
-	Image,
-	ScrollView,
 	StyleSheet,
 	Text,
-	TextInput,
 	TouchableOpacity,
-	View,
+	View
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
