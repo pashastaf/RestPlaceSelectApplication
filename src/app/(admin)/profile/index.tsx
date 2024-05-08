@@ -30,7 +30,8 @@ export default function ProfileScreen() {
 		if (profile) {
 			setSearchQuery(
 				profile.filter((item) =>
-					item.title.toLowerCase().includes(search.toLowerCase()),
+					item.first_name.toLowerCase().includes(search.toLowerCase()) ||
+					item.second_name.toLowerCase().includes(search.toLowerCase())
 				),
 			);
 		}
@@ -39,21 +40,21 @@ export default function ProfileScreen() {
 	return (
 		<View>
 			<TextInput
-					placeholder="Search"
-					clearButtonMode="always"
-					style={styles.searchBox}
-					autoCapitalize="none"
-					value={inputValue}
-					autoCorrect={false}
-					onChangeText={handleFilter}
-				/>
-		<FlatList
-			data={profile}
-			renderItem={({ item }) => <ProfileListItem profile={item} />}
-			numColumns={1}
-			contentContainerStyle={{ gap: 10, padding: 10 }}
+				placeholder="Search"
+				clearButtonMode="always"
+				style={styles.searchBox}
+				autoCapitalize="none"
+				value={inputValue}
+				autoCorrect={false}
+				onChangeText={handleFilter}
+			/>
+			<FlatList
+				data={searchQuery}
+				renderItem={({ item }) => <ProfileListItem profile={item} />}
+				numColumns={1}
+				contentContainerStyle={{ gap: 10, padding: 10 }}
 			//columnWrapperStyle= {{ gap: 10}}
-		/>
+			/>
 		</View>
 	);
 }
