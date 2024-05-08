@@ -37,9 +37,7 @@ const CreateOrderScreen = () => {
 
 	const [profileId, setProfileId] = useState();
 	const [consultantId, setConsultantId] = useState();
-	const [selectedServices, setSelectedServices] = useState<number[]>(
-		[],
-	);
+	const [selectedServices, setSelectedServices] = useState<number[]>([],);
 	const [totalCost, setTotalCost] = useState(0);
 
 	const { data: profiles } = useProfileByGroup("user");
@@ -104,7 +102,7 @@ const CreateOrderScreen = () => {
 
 	const router = useRouter();
 
-	const resetFields = () => {};
+	const resetFields = () => { };
 
 	const onSubmit = () => {
 		if (isUpdating) {
@@ -128,6 +126,7 @@ const CreateOrderScreen = () => {
 			{
 				onSuccess: (newOrder) => {
 					const orderId = newOrder.id;
+					// biome-ignore lint/complexity/noForEach: <explanation>
 					selectedServices.forEach((serviceId) => {
 						insertServiceByOrder({ orderId, serviceId });
 					});
@@ -237,15 +236,13 @@ const CreateOrderScreen = () => {
 				style={{ zIndex: openConsultants ? 1 : 0 }}
 				placeholder={
 					isUpdating
-						? `${
-								consultants.find(
-									(consultant) => consultant.id === consultantId,
-								)?.first_name || "error"
-							} ${
-								consultants.find(
-									(consultant) => consultant.id === consultantId,
-								)?.second_name || "fetch"
-							}`
+						? `${consultants.find(
+							(consultant) => consultant.id === consultantId,
+						)?.first_name || "error"
+						} ${consultants.find(
+							(consultant) => consultant.id === consultantId,
+						)?.second_name || "fetch"
+						}`
 						: "Select new item"
 				}
 				open={openConsultants}
@@ -254,20 +251,18 @@ const CreateOrderScreen = () => {
 				items={itemsConsultant}
 				setOpen={setOpenConsultants}
 				setValue={setConsultantId}
-				setItems={() => {}}
+				setItems={() => { }}
 			/>
 			<Text style={styles.title}> Client </Text>
 			<DropDownPicker
 				style={{ zIndex: openProfiles ? 1 : 0 }}
 				placeholder={
 					isUpdating
-						? `${
-								profiles.find((profile) => profile.id === profileId)
-									?.first_name || "error"
-							} ${
-								profiles.find((profile) => profile.id === profileId)
-									?.second_name || "fetch"
-							}`
+						? `${profiles.find((profile) => profile.id === profileId)
+							?.first_name || "error"
+						} ${profiles.find((profile) => profile.id === profileId)
+							?.second_name || "fetch"
+						}`
 						: "Select new item"
 				}
 				open={openProfiles}
@@ -276,7 +271,7 @@ const CreateOrderScreen = () => {
 				items={itemsProfiles}
 				setOpen={setOpenProfiles}
 				setValue={setProfileId}
-				setItems={() => {}}
+				setItems={() => { }}
 			/>
 
 			<Text style={styles.title}>Services </Text>
