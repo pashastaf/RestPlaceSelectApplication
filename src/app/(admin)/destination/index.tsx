@@ -75,7 +75,7 @@ export default function DestinationScreen() {
 	}));
 
 	return (
-		<View style={{ backgroundColor: "white" }}>
+		<View style={{ flex: 1}}>
 			<View style={styles.seacrhButton}>
 				<TextInput
 					placeholder="Search"

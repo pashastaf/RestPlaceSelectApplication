@@ -50,6 +50,7 @@ export const useInsertOrder = () => {
 					consultants_id: data.consultantId,
 					sale_date: data.currentDate,
 					total_cost: data.totalCost,
+					status: 'In process',
 				})
 				.select()
 				.single();

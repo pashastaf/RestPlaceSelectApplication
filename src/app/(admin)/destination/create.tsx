@@ -42,6 +42,7 @@ const CreateDestinationScreen = () => {
 	const [errors, setErrors] = useState("");
 	const [image, setImage] = useState<string | null>(null);
 	const [openCountry, setOpenCountry] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		if (updatingDestination) {
@@ -86,7 +87,7 @@ const CreateDestinationScreen = () => {
 		if (!validateInput()) {
 			return;
 		}
-
+		setIsLoading(true);
 		insertDestination(
 			{ title, countryId },
 			{
@@ -102,6 +103,7 @@ const CreateDestinationScreen = () => {
 		if (!validateInput()) {
 			return;
 		}
+		setIsLoading(true);
 		updateDestination(
 			{ id, title, countryId },
 			{
@@ -114,6 +116,7 @@ const CreateDestinationScreen = () => {
 	};
 
 	const onDelete = () => {
+		setIsLoading(true);
 		deleteDestination(id, {
 			onSuccess: () => {
 				resetFields();
@@ -166,50 +169,53 @@ const CreateDestinationScreen = () => {
 						: "Create Destination",
 				}}
 			/>
-			<Image
-				source={{ uri: image || DefaultImage }}
-				style={styles.image}
-			/>
-			<Text style={styles.textButton} onPress={pickImage}>
-				Select Image
-			</Text>
-			<Text style={styles.title}>Title</Text>
-			<TextInput
-				placeholder="Destination name"
-				style={styles.input}
-				value={title}
-				onChangeText={setTitle}
-			/>
-			<Text style={styles.title}>Country</Text>
-			<DropDownPicker
-				placeholder={
-					isUpdating
-						? `${
-								countries.find((country) => country.id === countryId)
-									?.title || "error"
-							}`
-						: "Select new item"
-				}
-				open={openCountry}
-				value={countryId}
-				items={itemsCountry}
-				setOpen={setOpenCountry}
-				setValue={setCountryId}
-				setItems={() => {}}
-				listMode="MODAL"
-				searchable={true}
-				searchPlaceholder="Search..."
-			/>
-			<Button
-				text={isUpdating ? "Update" : "Create"}
-				onPress={onSubmit}
-			/>
-			{isUpdating && (
-				<Text onPress={confirmDelete} style={styles.textButton}>
-					{" "}
-					Delete{" "}
+			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
+				<Image
+					source={{ uri: image || DefaultImage }}
+					style={styles.image}
+				/>
+				<Text style={styles.textButton} onPress={pickImage}>
+					Select Image
 				</Text>
-			)}
+				<Text style={styles.title}>Title</Text>
+				<TextInput
+					placeholder="Destination name"
+					style={styles.input}
+					value={title}
+					onChangeText={setTitle}
+				/>
+				<Text style={styles.title}>Country</Text>
+				<DropDownPicker
+					placeholder={
+						isUpdating
+							? `${countries.find((country) => country.id === countryId)
+								?.title || "error"
+							}`
+							: "Select new item"
+					}
+					open={openCountry}
+					value={countryId}
+					items={itemsCountry}
+					setOpen={setOpenCountry}
+					setValue={setCountryId}
+					setItems={() => { }}
+					listMode="MODAL"
+					searchable={true}
+					searchPlaceholder="Search..."
+				/>
+				<Button
+					text={isUpdating ? "Update" : "Create"}
+					onPress={onSubmit}
+				/>
+				{isUpdating && (
+					<Text onPress={confirmDelete} style={styles.textButton}>
+						{" "}
+						Delete{" "}
+					</Text>
+				)}
+			</View>
+			{isLoading && (
+				<ActivityIndicator size={80} color='gray' style={styles.activityIndicatorContainer} />)}
 		</View>
 	);
 };
@@ -240,6 +246,14 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		color: Colors.light.tint,
 		marginVertical: 10,
+	},
+	activityIndicatorContainer: {
+		position: 'absolute',
+		top: 0,
+		bottom: 0,
+		left: 0,
+		right: 0,
+		justifyContent: 'center',
 	},
 });
 

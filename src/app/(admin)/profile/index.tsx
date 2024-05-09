@@ -38,7 +38,7 @@ export default function ProfileScreen() {
 	}
 
 	return (
-		<View>
+		<View style={{flex: 1}}>
 			<TextInput
 				placeholder="Search"
 				clearButtonMode="always"

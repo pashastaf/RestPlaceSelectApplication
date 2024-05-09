@@ -39,6 +39,7 @@ const CreateOrderScreen = () => {
 	const [consultantId, setConsultantId] = useState();
 	const [selectedServices, setSelectedServices] = useState<number[]>([],);
 	const [totalCost, setTotalCost] = useState(0);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const { data: profiles } = useProfileByGroup("user");
 	const { data: consultants } = useConsultantList();
@@ -121,12 +122,12 @@ const CreateOrderScreen = () => {
 			console.error("Some required values are missing.");
 			return;
 		}
+		setIsLoading(true);
 		insertOrder(
 			{ profileId, consultantId, currentDate, totalCost },
 			{
 				onSuccess: (newOrder) => {
 					const orderId = newOrder.id;
-					// biome-ignore lint/complexity/noForEach: <explanation>
 					selectedServices.forEach((serviceId) => {
 						insertServiceByOrder({ orderId, serviceId });
 					});
@@ -149,8 +150,9 @@ const CreateOrderScreen = () => {
 		);
 	};
 
-	const onDelete = () => {
-		deleteOrder(id, {
+	const onDelete = async () => {
+		setIsLoading(true);
+		await deleteOrder(id, {
 			onSuccess: () => {
 				resetFields();
 				router.replace("/(admin)/order");
@@ -224,95 +226,100 @@ const CreateOrderScreen = () => {
 		value: profile.id.toString(),
 	}));
 
+
 	return (
-		<View style={styles.contrainer}>
+		<View style={styles.container}>
 			<Stack.Screen
 				options={{
 					title: isUpdating ? `Update Order #${id}` : "Create Order",
 				}}
 			/>
-			<Text style={styles.title}> Consultant </Text>
-			<DropDownPicker
-				style={{ zIndex: openConsultants ? 1 : 0 }}
-				placeholder={
-					isUpdating
-						? `${consultants.find(
-							(consultant) => consultant.id === consultantId,
-						)?.first_name || "error"
-						} ${consultants.find(
-							(consultant) => consultant.id === consultantId,
-						)?.second_name || "fetch"
-						}`
-						: "Select new item"
-				}
-				open={openConsultants}
-				onOpen={onConsultantsOpen}
-				value={consultantId}
-				items={itemsConsultant}
-				setOpen={setOpenConsultants}
-				setValue={setConsultantId}
-				setItems={() => { }}
-			/>
-			<Text style={styles.title}> Client </Text>
-			<DropDownPicker
-				style={{ zIndex: openProfiles ? 1 : 0 }}
-				placeholder={
-					isUpdating
-						? `${profiles.find((profile) => profile.id === profileId)
-							?.first_name || "error"
-						} ${profiles.find((profile) => profile.id === profileId)
-							?.second_name || "fetch"
-						}`
-						: "Select new item"
-				}
-				open={openProfiles}
-				onOpen={onProfilesOpen}
-				value={profileId}
-				items={itemsProfiles}
-				setOpen={setOpenProfiles}
-				setValue={setProfileId}
-				setItems={() => { }}
-			/>
+			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none': 'auto' }]}>
+				<Text style={styles.title}> Consultant </Text>
+				<DropDownPicker
+					style={{ zIndex: openConsultants ? 1 : 0 }}
+					placeholder={
+						isUpdating
+							? `${consultants.find(
+								(consultant) => consultant.id === consultantId,
+							)?.first_name || "error"
+							} ${consultants.find(
+								(consultant) => consultant.id === consultantId,
+							)?.second_name || "fetch"
+							}`
+							: "Select new item"
+					}
+					open={openConsultants}
+					onOpen={onConsultantsOpen}
+					value={consultantId}
+					items={itemsConsultant}
+					setOpen={setOpenConsultants}
+					setValue={setConsultantId}
+					setItems={() => { }}
+				/>
+				<Text style={styles.title}> Client </Text>
+				<DropDownPicker
+					style={{ zIndex: openProfiles ? 1 : 0 }}
+					placeholder={
+						isUpdating
+							? `${profiles.find((profile) => profile.id === profileId)
+								?.first_name || "error"
+							} ${profiles.find((profile) => profile.id === profileId)
+								?.second_name || "fetch"
+							}`
+							: "Select new item"
+					}
+					open={openProfiles}
+					onOpen={onProfilesOpen}
+					value={profileId}
+					items={itemsProfiles}
+					setOpen={setOpenProfiles}
+					setValue={setProfileId}
+					setItems={() => { }}
+				/>
 
-			<Text style={styles.title}>Services </Text>
-			<FlatList
-				data={services}
-				numColumns={2}
-				renderItem={({ item }) => {
-					return (
-						<View style={styles.flatView}>
-							<TouchableOpacity
-								style={[
-									styles.touchView,
-									selectedServices.includes(item.id) && {
-										backgroundColor: "lightgray",
-									},
-								]}
-								onPress={() => toggleServiceSelection(item.id)}
-							>
-								<Text>{item.title}</Text>
-							</TouchableOpacity>
-						</View>
-					);
-				}}
-			/>
-			<Text style={styles.title}>Total Cost is: {totalCost} </Text>
-			<Button
-				text={isUpdating ? "Update" : "Create"}
-				onPress={onSubmit}
-			/>
-			{isUpdating && (
-				<Text onPress={confirmDelete} style={styles.textButton}>
-					{" "}
-					Delete{" "}
-				</Text>
-			)}
+				<Text style={styles.title}>Services </Text>
+				<FlatList
+					data={services}
+					numColumns={2}
+					renderItem={({ item }) => {
+						return (
+							<View style={styles.flatView}>
+								<TouchableOpacity
+									style={[
+										styles.touchView,
+										selectedServices.includes(item.id) && {
+											backgroundColor: "lightgray",
+										},
+									]}
+									onPress={() => toggleServiceSelection(item.id)}
+								>
+									<Text>{item.title}</Text>
+								</TouchableOpacity>
+							</View>
+						);
+					}}
+				/>
+				<Text style={styles.title}>Total Cost is: {totalCost} </Text>
+				<Button
+					text={isUpdating ? "Update" : "Create"}
+					onPress={onSubmit}
+				/>
+				{isUpdating && (
+					<Text onPress={confirmDelete} style={styles.textButton}>
+						Delete
+					</Text>
+
+				)}
+			</View>
+			{isLoading && (
+				<ActivityIndicator size={80} color='gray' style={styles.activityIndicatorContainer} />)}
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-	contrainer: {
+	container: {
 		flex: 1,
 		padding: 10,
 	},
@@ -353,6 +360,14 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		backgroundColor: "#fff",
 	},
+	activityIndicatorContainer: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        justifyContent: 'center',
+    },
 });
 
 export default CreateOrderScreen;
