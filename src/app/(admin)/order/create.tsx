@@ -62,15 +62,6 @@ const CreateOrderScreen = () => {
 	const { mutate: deleteOrder } = useDeleteOrder();
 	const { mutate: insertServiceByOrder } = useInsertServiceByOrder();
 
-	if (updatingOrder) {
-		console.log(
-			updatingOrder.id,
-			updatingOrder.profiles_id,
-			updatingOrder.consultants_id,
-		);
-		console.log(serviceByOrder);
-	}
-
 	const initializeSelectedServices = (
 		serviceByOrder: ServiceByOrderItem[],
 	) => {

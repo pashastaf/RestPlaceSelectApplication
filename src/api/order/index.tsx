@@ -186,7 +186,7 @@ export const useServicesByOrder = (id: number) => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("services_by_order")
-				.select("*")
+				.select("*, services(id, title)")
 				.eq("orders_id", id);
 
 			if (error) {

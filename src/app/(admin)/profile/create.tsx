@@ -4,18 +4,14 @@ import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Alert,
-	FlatList,
-	Image,
-	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
-	TouchableOpacity,
-	View,
+	View
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
@@ -24,8 +20,9 @@ const CreateProfileScreen = () => {
 	const [firstName, setFirstName] = useState("");
 	const [secondName, setSecondName] = useState("");
 	const [password, setPassword] = useState("");
-	const [group, setGroup] = useState("");
+	const [group, setGroup] = useState("user");
 	const [errors, setErrors] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 
 	const queryClient = useQueryClient();
 
@@ -75,6 +72,7 @@ const CreateProfileScreen = () => {
 	};
 
 	const onSubmit = () => {
+		setIsLoading(true)
 		if (isUpdating) {
 			onUpdate();
 		} else {
@@ -141,9 +139,15 @@ const CreateProfileScreen = () => {
 			},
 		);
 		if (error) Alert.alert(error.message);
+		else {
+			queryClient.invalidateQueries({ queryKey: ["profiles"] });
+			resetFields();
+			router.back();
+		}
 	};
 
 	const onDelete = async () => {
+		setIsLoading(true)
 		const { error } = await supabase.auth.admin.deleteUser(
 			updatingProfile.auth_id,
 		);
@@ -180,76 +184,78 @@ const CreateProfileScreen = () => {
 	]);
 
 	return (
-		<ScrollView style={styles.container}>
+		<View style={styles.container}>
 			<Stack.Screen
 				options={{
 					title: isUpdating ? "Update Profile" : "Create Profile",
 				}}
 			/>
+			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
+				<Text style={styles.label}>Name</Text>
+				<TextInput
+					value={firstName}
+					onChangeText={setFirstName}
+					placeholder="Jhon"
+					style={styles.input}
+				/>
 
-			<Text style={styles.label}>Name</Text>
-			<TextInput
-				value={firstName}
-				onChangeText={setFirstName}
-				placeholder="Jhon"
-				style={styles.input}
-			/>
+				<Text style={styles.label}>Second Name</Text>
+				<TextInput
+					value={secondName}
+					onChangeText={setSecondName}
+					placeholder="Dou"
+					style={styles.input}
+				/>
 
-			<Text style={styles.label}>Second Name</Text>
-			<TextInput
-				value={secondName}
-				onChangeText={setSecondName}
-				placeholder="Dou"
-				style={styles.input}
-			/>
+				<Text style={styles.label}>Email</Text>
+				<TextInput
+					value={email}
+					onChangeText={setEmail}
+					placeholder="pashastaf@gmail.com"
+					style={styles.input}
+				/>
 
-			<Text style={styles.label}>Email</Text>
-			<TextInput
-				value={email}
-				onChangeText={setEmail}
-				placeholder="pashastaf@gmail.com"
-				style={styles.input}
-			/>
-
-			<Text style={styles.label}>Password</Text>
-			<TextInput
-				value={password}
-				onChangeText={setPassword}
-				placeholder=""
-				style={styles.input}
-				secureTextEntry
-			/>
-			<Text style={styles.label}>Group</Text>
-			<DropDownPicker
-				style={{ zIndex: openGroup ? 1 : 0 }}
-				placeholder={
-					isUpdating
-						? `${
-								items.find((item) => item.value === group)?.label ||
-								"error"
+				<Text style={styles.label}>Password</Text>
+				<TextInput
+					value={password}
+					onChangeText={setPassword}
+					placeholder=""
+					style={styles.input}
+					secureTextEntry
+				/>
+				<Text style={styles.label}>Group</Text>
+				<DropDownPicker
+					style={{ zIndex: openGroup ? 1 : 0 }}
+					placeholder={
+						isUpdating
+							? `${items.find((item) => item.value === group)?.label ||
+							"error"
 							}`
-						: "Select group"
-				}
-				open={openGroup}
-				value={group}
-				items={items}
-				setOpen={setOpenGroup}
-				setValue={setGroup}
-				setItems={setItems}
-				listMode="MODAL"
-			/>
+							: "Select group"
+					}
+					open={openGroup}
+					value={group}
+					items={items}
+					setOpen={setOpenGroup}
+					setValue={setGroup}
+					setItems={setItems}
+				/>
 
-			<Button
-				text={isUpdating ? "Update" : "Create"}
-				onPress={onSubmit}
-			/>
-			{isUpdating && (
-				<Text onPress={confirmDelete} style={styles.textButton}>
-					{" "}
-					Delete{" "}
-				</Text>
+				<Button
+					text={isUpdating ? "Update" : "Create"}
+					onPress={onSubmit}
+				/>
+				{isUpdating && (
+					<Text onPress={confirmDelete} style={styles.textButton}>
+						{" "}
+						Delete{" "}
+					</Text>
+				)}
+			</View>
+			{isLoading && (
+				<ActivityIndicator size={80} color='gray' style={styles.activityIndicatorContainer} />
 			)}
-		</ScrollView>
+		</View>
 	);
 };
 
@@ -275,6 +281,24 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		color: Colors.light.tint,
 		marginVertical: 10,
+	},
+	activityIndicatorContainer: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		bottom: 0,
+		right: 0,
+		justifyContent: 'center'
+	},
+	flatView: {
+		height: 60,
+	},
+	touchView: {
+		borderWidth: 1,
+		borderRadius: 20,
+		width: "90%",
+		height: 50,
+		backgroundColor: "#fff",
 	},
 });
 

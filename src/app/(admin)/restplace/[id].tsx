@@ -19,8 +19,8 @@ const RestPlaceDetailScreen = () => {
 		features_id: number;
 		rest_places_id: number;
 		features: {
-			id: number,
-			title: string,
+			id: number;
+			title: string;
 		}
 	}
 
@@ -28,10 +28,8 @@ const RestPlaceDetailScreen = () => {
 	const id = Number.parseFloat(
 		typeof idSting === "string" ? idSting : idSting[0],
 	);
-	const [selectedServices, setSelectedServices] = useState<number[]>([],);
 
 	const { data: restPlace, error, isLoading } = useRestPlace(id);
-	// const { data: features } = useFeaturesForPlaces();
 	const { data: featuresByPlaceId } = useFeaturesByPlacesId(id) as {
 		data: FeaturesByRestPlace[];
 	};

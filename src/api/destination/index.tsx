@@ -147,7 +147,24 @@ export const useFeaturesForDestinations = () => {
 			const { data, error } = await supabase
 				.from("features")
 				.select("*")
-				.eq('features_type_id', 1);
+				.eq('features_type_id', 2);
+			if (error) {
+				throw new Error(error.message);
+			}
+			return data;
+		},
+	});
+};
+
+export const useFeaturesByDestinationId = (id: number) => {
+	return useQuery({
+		queryKey: ["destinations_features", id],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("destinations_features")
+				.select("*, features(id, title)")
+				.eq("destinations_id", id);
+
 			if (error) {
 				throw new Error(error.message);
 			}

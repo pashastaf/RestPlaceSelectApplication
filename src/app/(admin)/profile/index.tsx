@@ -38,7 +38,7 @@ export default function ProfileScreen() {
 	}
 
 	return (
-		<View style={{flex: 1}}>
+		<View style={{ flex: 1, marginTop: 10 }}>
 			<TextInput
 				placeholder="Search"
 				clearButtonMode="always"
@@ -66,5 +66,6 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 8,
 		width: "90%",
+		alignSelf: 'center'
 	},
 })
