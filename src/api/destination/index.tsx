@@ -49,6 +49,7 @@ export const useInsertDestination = () => {
 					title: data.title,
 					countries_id: data.countryId,
 					is_deleted: 0,
+					image_path: data.imagePath,
 				})
 				.single();
 

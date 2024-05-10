@@ -1,8 +1,10 @@
 import { useDestination, useFeaturesByDestinationId } from "@/src/api/destination";
 import { useRestPlacesByDestinationId } from "@/src/api/restplace";
 import { DefaultImage } from "@/src/components/DestinationListItem";
+import RemoteImage from "@/src/components/RemoteImage";
 import RestPlaceListByDestination from "@/src/components/RestPlaceListByDestination";
 import Colors from "@/src/constants/Colors";
+import { supabase } from "@/src/lib/supabase";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
@@ -42,7 +44,9 @@ const DestinationDetailScreen = () => {
 		return <Text> destination not found</Text>;
 	}
 
-	console.log(featuresByDestinationId)
+	// supabase.storage.from('destination_images').copy('ee589a14-ad8d-472c-9a47-91e35c933d70.png', 'avats')
+	console.log(destination.image_path)
+
 
 	return (
 		<View style={styles.container}>
@@ -71,11 +75,13 @@ const DestinationDetailScreen = () => {
 					),
 				}}
 			/>
-			<Image
-				style={styles.image}
-				source={{ uri: DefaultImage }}
-				resizeMode="contain"
-			/>
+			<Text>{}</Text>
+			<RemoteImage
+        path='95b081b6-cdd7-4ff8-a01a-d7e448417d18.png'
+        fallback={DefaultImage}
+        style={styles.image}
+      />
+      <Text>{destination?.image_path}</Text>
 			<View style={{flexDirection: 'row', flex: 1}}>
 			<FlatList
 				data={restPlaces}

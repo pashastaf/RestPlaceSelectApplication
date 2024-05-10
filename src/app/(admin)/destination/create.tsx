@@ -15,14 +15,16 @@ import {
 	ActivityIndicator,
 	Alert,
 	Image,
-	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
-	TouchableOpacity,
-	View,
+	View
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import * as FileSystem from "expo-file-system"
+import { randomUUID } from "expo-crypto";
+import { supabase } from "@/src/lib/supabase";
+import { decode } from "base64-arraybuffer";
 
 const CreateDestinationScreen = () => {
 	const router = useRouter();
@@ -44,10 +46,12 @@ const CreateDestinationScreen = () => {
 	const [openCountry, setOpenCountry] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
+
 	useEffect(() => {
 		if (updatingDestination) {
 			setTitle(updatingDestination.title);
 			setCountryId(updatingDestination.countries_id);
+			setImage(updatingDestination.image_path);
 		}
 	}, [updatingDestination]);
 
@@ -87,9 +91,10 @@ const CreateDestinationScreen = () => {
 		if (!validateInput()) {
 			return;
 		}
+		const imagePath = await uploadImage();
 		setIsLoading(true);
 		insertDestination(
-			{ title, countryId },
+			{ title, countryId, imagePath },
 			{
 				onSuccess: () => {
 					resetFields();
@@ -152,6 +157,33 @@ const CreateDestinationScreen = () => {
 
 		if (!result.canceled) {
 			setImage(result.assets[0].uri);
+		}
+	};
+
+	const uploadImage = async () => {
+		if (!image?.startsWith('file://')) {
+			return console.log('1IF', image)
+		}
+
+		const base64 = await FileSystem.readAsStringAsync(image, {
+			encoding: 'base64',
+		});
+		const filePath = `${randomUUID()}.png`;
+		const contentType = 'image/png';
+		const { data, error } = await supabase.storage
+			.from('destination-images')
+			.upload(filePath, decode(base64), { contentType });
+
+		if (error) {
+			console.error('Error uploading image:', error);
+			return null; // Возвращаем null в случае ошибки
+		}
+
+		if (data) {
+			console.log('2IF', image)
+			console.log('2IF', data.path)
+
+			return data.path;
 		}
 	};
 
