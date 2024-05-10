@@ -1,6 +1,7 @@
 import {
 	useConsultantList,
 	useDeleteOrder,
+	useDeleteServiceByOrder,
 	useInsertOrder,
 	useInsertServiceByOrder,
 	useOrder,
@@ -61,6 +62,7 @@ const CreateOrderScreen = () => {
 	};
 	const { mutate: deleteOrder } = useDeleteOrder();
 	const { mutate: insertServiceByOrder } = useInsertServiceByOrder();
+	const { mutate: deleteServiceByOrder } = useDeleteServiceByOrder();
 
 	const initializeSelectedServices = (
 		serviceByOrder: ServiceByOrderItem[],
@@ -94,9 +96,8 @@ const CreateOrderScreen = () => {
 
 	const router = useRouter();
 
-	const resetFields = () => { };
-
 	const onSubmit = () => {
+		setIsLoading(true);
 		if (isUpdating) {
 			onUpdate();
 		} else {
@@ -113,7 +114,6 @@ const CreateOrderScreen = () => {
 			console.error("Some required values are missing.");
 			return;
 		}
-		setIsLoading(true);
 		insertOrder(
 			{ profileId, consultantId, currentDate, totalCost },
 			{
@@ -122,19 +122,27 @@ const CreateOrderScreen = () => {
 					selectedServices.forEach((serviceId) => {
 						insertServiceByOrder({ orderId, serviceId });
 					});
-					resetFields();
 					router.back();
 				},
 			},
 		);
 	};
 
+	console.log('Изначально', selectedServices)
+	console.log("Заказ", id)
+
 	const onUpdate = async () => {
+		deleteServiceByOrder(id);
 		updateOrder(
 			{ id, profileId, consultantId, totalCost },
 			{
-				onSuccess: () => {
-					resetFields();
+				onSuccess: async () => {
+					const orderId = id;
+					selectedServices.forEach((serviceId) => {
+						insertServiceByOrder({ orderId, serviceId });
+						console.log('Временный', selectedServices);
+            console.log("Добавлено ", orderId, serviceId);
+					});
 					router.back();
 				},
 			},
@@ -145,7 +153,6 @@ const CreateOrderScreen = () => {
 		setIsLoading(true);
 		await deleteOrder(id, {
 			onSuccess: () => {
-				resetFields();
 				router.replace("/(admin)/order");
 			},
 		});
@@ -225,7 +232,7 @@ const CreateOrderScreen = () => {
 					title: isUpdating ? `Update Order #${id}` : "Create Order",
 				}}
 			/>
-			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none': 'auto' }]}>
+			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
 				<Text style={styles.title}> Consultant </Text>
 				<DropDownPicker
 					style={{ zIndex: openConsultants ? 1 : 0 }}
@@ -352,13 +359,13 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 	},
 	activityIndicatorContainer: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        justifyContent: 'center',
-    },
+		position: 'absolute',
+		top: 0,
+		bottom: 0,
+		left: 0,
+		right: 0,
+		justifyContent: 'center',
+	},
 });
 
 export default CreateOrderScreen;

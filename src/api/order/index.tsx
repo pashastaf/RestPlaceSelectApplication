@@ -79,6 +79,9 @@ export const useUpdateOrder = () => {
 				.from("orders")
 				.update({
 					profiles_id: data.profileId,
+					consultants_id: data.consultantId,
+					total_cost: data.totalCost,
+					status: 'On progress'
 				})
 				.eq("id", data.id)
 				.select()
@@ -179,6 +182,28 @@ export const useInsertServiceByOrder = () => {
 		},
 	});
 };
+
+export const useDeleteServiceByOrder = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		async mutationFn(id: number) {
+			const { error } = await supabase
+				.from("services_by_order")
+				.delete()
+				.eq("orders_id", id);
+
+			if (error) {
+				throw new Error(error.message);
+			}
+		},
+		async onSuccess() {
+			await queryClient.invalidateQueries({ queryKey: ["services_by_order"] });
+		},
+	});
+};
+
+
 
 export const useServicesByOrder = (id: number) => {
 	return useQuery({

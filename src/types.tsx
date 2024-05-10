@@ -32,6 +32,7 @@ export type Order = {
 	consultants_id: number;
 	sale_date: string;
 	total_cost: number;
+	status: string;
 };
 
 export type Service = {

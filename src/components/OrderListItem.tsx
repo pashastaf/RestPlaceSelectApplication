@@ -52,6 +52,9 @@ const orderListItem = ({ order }: orderListItemProps) => {
 				<Text style={styles.contry}>
 					Order cost: {order.total_cost}{" "}
 				</Text>
+				<Text style={styles.contry}>
+					Status: {order.status}{" "}
+				</Text>
 			</Pressable>
 		</Link>
 	);
