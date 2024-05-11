@@ -11,8 +11,9 @@ export const useRestPlaceList = () => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("rest_places")
-				.select("*");
-			if (error) {
+				.select("*")
+				.order("id");
+				if (error) {
 				throw new Error(error.message);
 			}
 			return data;
@@ -29,7 +30,8 @@ export const useRestPlacesByDestinationId = (
 			const { data, error } = await supabase
 				.from("rest_places")
 				.select("*")
-				.eq("destinations_id", destinationId);
+				.eq("destinations_id", destinationId)
+				.order("id");
 			if (error) {
 				throw new Error(error.message);
 			}

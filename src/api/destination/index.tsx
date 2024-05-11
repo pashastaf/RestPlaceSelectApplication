@@ -11,7 +11,8 @@ export const useDestinationList = () => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("destinations")
-				.select("*");
+				.select("*")
+				.order("id");
 			if (error) {
 				throw new Error(error.message);
 			}
@@ -166,6 +167,24 @@ export const useFeaturesByDestinationId = (id: number) => {
 				.from("destinations_features")
 				.select("*, features(id, title)")
 				.eq("destinations_id", id);
+
+			if (error) {
+				throw new Error(error.message);
+			}
+			return data;
+		},
+	});
+};
+
+export const useDestinationsRate = (id: number) => {
+	return useQuery({
+		queryKey: ["destinations_rate", id],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("destinations_rate")
+				.select("*")
+				.eq("destinations_id", id)
+				.single();
 
 			if (error) {
 				throw new Error(error.message);

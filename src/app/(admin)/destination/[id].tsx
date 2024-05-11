@@ -81,7 +81,7 @@ const DestinationDetailScreen = () => {
         fallback={DefaultImage}
         style={styles.image}
       />
-      <Text>{destination?.image_path}</Text>
+      <Text>{destination?.description}</Text>
 			<View style={{flexDirection: 'row', flex: 1}}>
 			<FlatList
 				data={restPlaces}

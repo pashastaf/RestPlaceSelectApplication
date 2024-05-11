@@ -307,90 +307,95 @@ const CreateRestPlaceScreen = () => {
 			</View>
 		</View>
 	);
-	};
-	
-	const Colors = {
-		primary: '#DB4437', // Красный
-		secondary: '#4285F4', // Синий
-		background: '#F5F5F5', // Светло-серый
-		textPrimary: '#333333', // Темно-серый
-		textSecondary: '#757575', // Серый
-		inputBackground: '#FFFFFF', // Белый
-		buttonBackground: '#4CAF50', // Зеленый
-		buttonTextColor: '#FFFFFF', // Белый
-		deleteButtonBackground: '#FF5733', // Оранжевый (такой же, как и основной)
-	};
-	
-	const styles = StyleSheet.create({
-		container: {
-			flex: 1,
-			backgroundColor: Colors.background,
-		},
-		content: {
-			flex: 1,
-			paddingHorizontal: 20,
-			paddingTop: 20,
-		},
-		image: {
-			width: '100%',
-			aspectRatio: 16 / 9,
-			marginBottom: 20,
-			borderRadius: 15,
-		},
-		selectImageButton: {
-			alignSelf: 'flex-start',
-			marginBottom: 10,
-		},
-		selectImageText: {
-			color: Colors.primary,
-			fontWeight: 'bold',
-		},
-		label: {
-			fontSize: 16,
-			color: Colors.textSecondary,
-			marginBottom: 5,
-		},
-		input: {
-			backgroundColor: Colors.inputBackground,
-			paddingVertical: 15,
-			paddingHorizontal: 20,
-			borderRadius: 25,
-			marginBottom: 20,
-			color: Colors.textPrimary,
-			fontSize: 16,
-		},
-		dropdown: {
-			marginTop: 5,
-			marginBottom: 20,
-		},
-		button: {
-			backgroundColor: Colors.buttonBackground,
-			paddingVertical: 15,
-			borderRadius: 25,
-			marginBottom: 10,
-		},
-		buttonText: {
-			color: Colors.buttonTextColor,
-			textAlign: 'center',
-			fontWeight: 'bold',
-		},
-		deleteButton: {
-			backgroundColor: Colors.deleteButtonBackground,
-			paddingVertical: 15,
-			borderRadius: 25,
-			marginBottom: 10,
-		},
-		deleteButtonText: {
-			color: Colors.buttonTextColor,
-			textAlign: 'center',
-			fontWeight: 'bold',
-		},
-		activityIndicator: {
-			marginTop: 20,
-		},
-	});
-	
-	
+};
+
+const Colors = {
+	primary: '#DB4437', // Красный
+	secondary: '#4285F4', // Синий
+	background: '#F5F5F5', // Светло-серый
+	textPrimary: '#333333', // Темно-серый
+	textSecondary: '#757575', // Серый
+	inputBackground: '#FFFFFF', // Белый
+	buttonBackground: '#4CAF50', // Зеленый
+	buttonTextColor: '#FFFFFF', // Белый
+	deleteButtonBackground: '#FF5733', // Оранжевый (такой же, как и основной)
+};
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: Colors.background,
+	},
+	content: {
+		flex: 1,
+		paddingHorizontal: 20,
+		paddingTop: 20,
+	},
+	image: {
+		width: '100%',
+		aspectRatio: 16 / 9,
+		marginBottom: 20,
+		borderRadius: 15,
+	},
+	selectImageButton: {
+		alignSelf: 'flex-start',
+		marginBottom: 10,
+	},
+	selectImageText: {
+		color: Colors.primary,
+		fontWeight: 'bold',
+	},
+	label: {
+		fontSize: 16,
+		color: Colors.textSecondary,
+		marginBottom: 5,
+	},
+	input: {
+		backgroundColor: Colors.inputBackground,
+		paddingVertical: 15,
+		paddingHorizontal: 20,
+		borderRadius: 25,
+		marginBottom: 20,
+		color: Colors.textPrimary,
+		fontSize: 16,
+	},
+	dropdown: {
+		marginTop: 5,
+		marginBottom: 20,
+	},
+	button: {
+		backgroundColor: Colors.buttonBackground,
+		paddingVertical: 15,
+		borderRadius: 25,
+		marginBottom: 10,
+	},
+	buttonText: {
+		color: Colors.buttonTextColor,
+		textAlign: 'center',
+		fontWeight: 'bold',
+	},
+	deleteButton: {
+		backgroundColor: Colors.deleteButtonBackground,
+		paddingVertical: 15,
+		borderRadius: 25,
+		marginBottom: 10,
+	},
+	deleteButtonText: {
+		color: Colors.buttonTextColor,
+		textAlign: 'center',
+		fontWeight: 'bold',
+	},
+	activityIndicator: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		bottom: 0,
+		right: 0,
+		justifyContent: 'center'
+	},
+});
+
+
 
 
 export default CreateRestPlaceScreen;
