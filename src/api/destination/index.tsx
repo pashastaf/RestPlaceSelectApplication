@@ -80,6 +80,7 @@ export const useUpdateDestination = () => {
 					title: data.title,
 					countries_id: data.contryId,
 					is_deleted: 0,
+					image_path: data.imagePath,
 				})
 				.eq("id", data.id)
 				.select()

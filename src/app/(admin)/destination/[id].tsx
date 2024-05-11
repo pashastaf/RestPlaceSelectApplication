@@ -77,7 +77,7 @@ const DestinationDetailScreen = () => {
 			/>
 			<Text>{}</Text>
 			<RemoteImage
-        path='95b081b6-cdd7-4ff8-a01a-d7e448417d18.png'
+        path={destination.image_path}
         fallback={DefaultImage}
         style={styles.image}
       />

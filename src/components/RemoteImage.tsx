@@ -15,8 +15,8 @@ const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
     (async () => {
       setImage('');
       const { data, error } = await supabase.storage
-        .from('destination_images')
-        .download(`image/png/${path}`);
+        .from('images')
+        .download(path);
 
       if (error) {
         console.log(data, error);

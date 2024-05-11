@@ -1,6 +1,7 @@
 import { Link, useSegments } from "expo-router";
 import { Image, Pressable, StyleSheet, Text } from "react-native";
 import type { Destination } from "../types";
+import RemoteImage from "./RemoteImage";
 
 export const DefaultImage =
 	"https://previews.123rf.com/images/koblizeek/koblizeek2208/koblizeek220800254/190563481-no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg";
@@ -20,7 +21,11 @@ const DestinationListItem = ({
 			asChild
 		>
 			<Pressable style={styles.container}>
-				{/* <Image style={styles.image} source={{ uri: DefaultImage }} resizeMode="contain" /> */}
+			<RemoteImage
+        path={destination.image_path}
+        fallback={DefaultImage}
+        style={styles.image}
+      />
 
 				<Text style={styles.title}> {destination.title} </Text>
 				<Text style={styles.contry}>

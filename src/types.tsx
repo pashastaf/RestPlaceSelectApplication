@@ -3,6 +3,8 @@ export type Destination = {
 	title: string;
 	countries_id: number;
 	is_deleted: boolean;
+	description: string;
+	image_path: string;
 };
 
 export type Country = {

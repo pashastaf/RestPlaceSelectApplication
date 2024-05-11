@@ -9,7 +9,6 @@ import {
 } from "@/src/api/restplace";
 import Button from "@/src/components/Button";
 import { DefaultImage } from "@/src/components/DestinationListItem";
-import Colors from "@/src/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -24,6 +23,10 @@ import {
 	TouchableOpacity,
 	View
 } from "react-native";
+import * as FileSystem from "expo-file-system"
+import { randomUUID } from "expo-crypto";
+import { supabase } from "@/src/lib/supabase";
+import { decode } from "base64-arraybuffer";
 import DropDownPicker from "react-native-dropdown-picker";
 
 const CreateRestPlaceScreen = () => {
@@ -38,31 +41,31 @@ const CreateRestPlaceScreen = () => {
 	}
 
 	// Определение состояний и хуков маршрутизатора
-    const router = useRouter();
-    const { id: idString } = useLocalSearchParams();
-    const id = Number.parseFloat(
-        typeof idString === "string" ? idString : idString?.[0]
-    );
-    const isUpdating = !!idString;
+	const router = useRouter();
+	const { id: idString } = useLocalSearchParams();
+	const id = Number.parseFloat(
+		typeof idString === "string" ? idString : idString?.[0]
+	);
+	const isUpdating = !!idString;
 
-    // CRUD группа хуков
-    const { data: updatingRestPlace } = useRestPlace(id);
-    const { mutate: insertRestPlace } = useInsertRestPlace();
-    const { mutate: updateRestPlace } = useUpdateRestPlace();
-    const { mutate: deleteRestPlace } = useDeleteRestPlace();
+	// CRUD группа хуков
+	const { data: updatingRestPlace } = useRestPlace(id);
+	const { mutate: insertRestPlace } = useInsertRestPlace();
+	const { mutate: updateRestPlace } = useUpdateRestPlace();
+	const { mutate: deleteRestPlace } = useDeleteRestPlace();
 
-    // Группа хуков для работы с данными
-    const { data: destinations } = useDestinationList();
-    const { data: featuresByPlaceId } = useFeaturesByPlacesId(id);
-    const { data: features } = useFeaturesForPlaces();
+	// Группа хуков для работы с данными
+	const { data: destinations } = useDestinationList();
+	const { data: featuresByPlaceId } = useFeaturesByPlacesId(id);
+	const { data: features } = useFeaturesForPlaces();
 
-    // Определение состояний компонента
-    const [title, setTitle] = useState("");
-    const [destinationId, setDestinationId] = useState("");
-    const [errors, setErrors] = useState("");
-    const [image, setImage] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
+	// Определение состояний компонента
+	const [title, setTitle] = useState("");
+	const [destinationId, setDestinationId] = useState("");
+	const [errors, setErrors] = useState("");
+	const [image, setImage] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
 
 	// Инициализация выбранных элементов
 	const initializeSelectedFeatures = (
@@ -190,14 +193,39 @@ const CreateRestPlaceScreen = () => {
 			quality: 1,
 		});
 
-		console.log(result);
-
 		if (!result.canceled) {
 			setImage(result.assets[0].uri);
 		}
 	};
 
-	if (!destinations) {
+	const uploadImage = async () => {
+		if (!image?.startsWith('file://')) {
+			return console.log('1IF', image)
+		}
+
+		const base64 = await FileSystem.readAsStringAsync(image, {
+			encoding: 'base64',
+		});
+		const filePath = `${randomUUID()}.png`;
+		const contentType = 'image/png';
+		const { data, error } = await supabase.storage
+			.from('images')
+			.upload(filePath, decode(base64), { contentType });
+
+		if (error) {
+			console.error('Error uploading image:', error);
+			return null; // Возвращаем null в случае ошибки
+		}
+
+		if (data) {
+			console.log('2IF', image)
+			console.log('2IF', data.path)
+
+			return data.path;
+		}
+	};
+
+	if (!destinations || !features) {
 		return <ActivityIndicator />;
 	}
 
@@ -206,141 +234,163 @@ const CreateRestPlaceScreen = () => {
 		value: destination.id.toString(),
 	}));
 
-	const [openDestination, setOpenDestination] = useState(false);
+	const itemsFeatures = features.map((feature) => ({
+		label: feature.title,
+		value: feature.id,
+	}));
 
+
+	const [openDestination, setOpenDestination] = useState(false);
+	const [openFeatures, setOpenFeatures] = useState(false);
 
 	console.log(selectedFeatures)
 	console.log(featuresByPlaceId)
 	return (
-		<View style={styles.contrainer}>
+		<View style={styles.container}>
 			<Stack.Screen
 				options={{
-					title: isUpdating
-						? "Update Rest Place"
-						: "Create Rest Place",
+					title: isUpdating ? "Update Rest Place" : "Create Rest Place",
+					headerStyle: {
+						backgroundColor: Colors.primary,
+					},
+					headerTintColor: Colors.textPrimary,
+					headerTitleStyle: {
+						fontWeight: 'bold',
+					},
 				}}
 			/>
-			<View style={[styles.contrainer, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
-				<Image
-					source={{ uri: image || DefaultImage }}
-					style={styles.image}
-				/>
-				<Text style={styles.textButton} onPress={pickImage}>
-					Select Image
-				</Text>
-				<Text style={styles.title}>Title</Text>
-				<TextInput
-					placeholder="Rest place name"
-					style={styles.input}
-					value={title}
-					onChangeText={setTitle}
-				/>
-				<Text style={styles.title}>Destination</Text>
-				<DropDownPicker
-					placeholder={
-						isUpdating
-							? `${destinations.find(
-								(destination) => destination.id === destinationId,
-							)?.title || "error"
-							}`
-							: "Select new item"
-					}
-					open={openDestination}
-					value={destinationId}
-					items={itemsDestination}
-					setOpen={setOpenDestination}
-					setValue={setDestinationId}
-					setItems={() => { }}
-				/>
-				<FlatList 
-				data={features}
-				numColumns={2}
-				renderItem={({ item }) => {
-					return (
-						<View style={styles.flatView}>
-								<TouchableOpacity
-									style={[
-										styles.touchView,
-										selectedFeatures.includes(item.id) && {
-											backgroundColor: "lightgray",
-										},
-									]}
-									onPress={() => toggleFeaturesSelection(item.id)}
-								>
-									<Text>{item.title}</Text>
-								</TouchableOpacity>
-							</View>
-					)
-				}}
-				/>
-				<Button
-					text={isUpdating ? "Update" : "Create"}
-					onPress={onSubmit}
-				/>
-				{isUpdating && (
-					<Text onPress={confirmDelete} style={styles.textButton}>
-						{" "}
-						Delete{" "}
-					</Text>
-				)}
+			<View style={styles.content}>
+				<View style={{ opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }}>
+					<Image source={{ uri: image || DefaultImage }} style={styles.image} />
+					<TouchableOpacity style={styles.selectImageButton} onPress={pickImage}>
+						<Text style={styles.selectImageText}>Select Image</Text>
+					</TouchableOpacity>
+					<Text style={styles.label}>Title</Text>
+					<TextInput placeholder="Rest place name" style={styles.input} value={title} onChangeText={setTitle} />
+					<Text style={styles.label}>Destination</Text>
+					<DropDownPicker
+						style={styles.dropdown}
+						placeholder={isUpdating ? `${destinations.find(destination => destination.id === destinationId)?.title || 'error'}` : 'Select new item'}
+						open={openDestination}
+						value={destinationId}
+						items={itemsDestination}
+						setOpen={setOpenDestination}
+						setValue={setDestinationId}
+						setItems={() => { }}
+					/>
+					<DropDownPicker
+						style={styles.dropdown}
+						dropDownContainerStyle={styles.dropdown}
+						placeholder="Select features"
+						placeholderStyle={{ color: 'gray' }}
+						open={openFeatures}
+						value={selectedFeatures}
+						items={itemsFeatures}
+						setOpen={setOpenFeatures}
+						setValue={value => setSelectedFeatures(value)}
+						setItems={() => { }}
+						multiple={true}
+						mode="BADGE"
+						extendableBadgeContainer={true}
+						badgeDotColors={['#e76f51', '#00b4d8', '#e9c46a', '#e76f51', '#8ac926', '#00b4d8', '#e9c46a']}
+					/>
+					<TouchableOpacity style={styles.button} onPress={onSubmit}>
+						<Text style={styles.buttonText}>{isUpdating ? "Update" : "Create"}</Text>
+					</TouchableOpacity>
+					{isUpdating && (
+						<TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
+							<Text style={styles.deleteButtonText}>Delete</Text>
+						</TouchableOpacity>
+					)}
+				</View>
+				{isLoading && <ActivityIndicator size="large" color={Colors.primary} style={styles.activityIndicator} />}
 			</View>
-			{isLoading && (
-				<ActivityIndicator size={80} color='gray' style={styles.activityIndicatorContainer} />
-			)}
 		</View>
 	);
-};
+	};
+	
+	const Colors = {
+		primary: '#DB4437', // Красный
+		secondary: '#4285F4', // Синий
+		background: '#F5F5F5', // Светло-серый
+		textPrimary: '#333333', // Темно-серый
+		textSecondary: '#757575', // Серый
+		inputBackground: '#FFFFFF', // Белый
+		buttonBackground: '#4CAF50', // Зеленый
+		buttonTextColor: '#FFFFFF', // Белый
+		deleteButtonBackground: '#FF5733', // Оранжевый (такой же, как и основной)
+	};
+	
+	const styles = StyleSheet.create({
+		container: {
+			flex: 1,
+			backgroundColor: Colors.background,
+		},
+		content: {
+			flex: 1,
+			paddingHorizontal: 20,
+			paddingTop: 20,
+		},
+		image: {
+			width: '100%',
+			aspectRatio: 16 / 9,
+			marginBottom: 20,
+			borderRadius: 15,
+		},
+		selectImageButton: {
+			alignSelf: 'flex-start',
+			marginBottom: 10,
+		},
+		selectImageText: {
+			color: Colors.primary,
+			fontWeight: 'bold',
+		},
+		label: {
+			fontSize: 16,
+			color: Colors.textSecondary,
+			marginBottom: 5,
+		},
+		input: {
+			backgroundColor: Colors.inputBackground,
+			paddingVertical: 15,
+			paddingHorizontal: 20,
+			borderRadius: 25,
+			marginBottom: 20,
+			color: Colors.textPrimary,
+			fontSize: 16,
+		},
+		dropdown: {
+			marginTop: 5,
+			marginBottom: 20,
+		},
+		button: {
+			backgroundColor: Colors.buttonBackground,
+			paddingVertical: 15,
+			borderRadius: 25,
+			marginBottom: 10,
+		},
+		buttonText: {
+			color: Colors.buttonTextColor,
+			textAlign: 'center',
+			fontWeight: 'bold',
+		},
+		deleteButton: {
+			backgroundColor: Colors.deleteButtonBackground,
+			paddingVertical: 15,
+			borderRadius: 25,
+			marginBottom: 10,
+		},
+		deleteButtonText: {
+			color: Colors.buttonTextColor,
+			textAlign: 'center',
+			fontWeight: 'bold',
+		},
+		activityIndicator: {
+			marginTop: 20,
+		},
+	});
+	
+	
 
-const styles = StyleSheet.create({
-	contrainer: {
-		flex: 1,
-		padding: 10,
-	},
-	title: {
-		color: "gray",
-		fontSize: 16,
-	},
-	input: {
-		backgroundColor: "white",
-		padding: 10,
-		borderRadius: 5,
-		marginTop: 5,
-		marginBottom: 20,
-	},
-	image: {
-		width: "50%",
-		aspectRatio: 1,
-		alignSelf: "center",
-	},
-	textButton: {
-		alignSelf: "center",
-		fontWeight: "bold",
-		color: Colors.light.tint,
-		marginVertical: 10,
-	},
-	activityIndicatorContainer: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		bottom: 0,
-		right: 0,
-		justifyContent: 'center'
-	},
-	flatView: {
-		width: "50%",
-		height: 60,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	touchView: {
-		borderWidth: 1,
-		borderRadius: 20,
-		width: "90%",
-		height: 50,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#fff",
-	},
-});
 
 export default CreateRestPlaceScreen;

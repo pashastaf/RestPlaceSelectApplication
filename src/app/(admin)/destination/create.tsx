@@ -80,6 +80,7 @@ const CreateDestinationScreen = () => {
 	};
 
 	const onSubmit = () => {
+		setIsLoading(true);
 		if (isUpdating) {
 			onUpdate();
 		} else {
@@ -92,7 +93,6 @@ const CreateDestinationScreen = () => {
 			return;
 		}
 		const imagePath = await uploadImage();
-		setIsLoading(true);
 		insertDestination(
 			{ title, countryId, imagePath },
 			{
@@ -107,10 +107,11 @@ const CreateDestinationScreen = () => {
 	const onUpdate = async () => {
 		if (!validateInput()) {
 			return;
-		}
-		setIsLoading(true);
+		}		
+		const imagePath = await uploadImage();
+
 		updateDestination(
-			{ id, title, countryId },
+			{ id, title, countryId, imagePath },
 			{
 				onSuccess: () => {
 					resetFields();
@@ -171,7 +172,7 @@ const CreateDestinationScreen = () => {
 		const filePath = `${randomUUID()}.png`;
 		const contentType = 'image/png';
 		const { data, error } = await supabase.storage
-			.from('destination-images')
+			.from('images')
 			.upload(filePath, decode(base64), { contentType });
 
 		if (error) {
