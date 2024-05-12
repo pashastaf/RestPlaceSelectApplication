@@ -15,6 +15,11 @@ export type Country = {
 export type RestPlace = {
 	id: number;
 	title: string;
+	destination_id: number;
+	is_deleted: boolean;
+	description: string;
+	rest_type: string;
+	image_path: string;
 };
 
 export type Profile = {

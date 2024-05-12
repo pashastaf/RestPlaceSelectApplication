@@ -1,5 +1,10 @@
-import { useFeaturesByPlacesId, useFeaturesForPlaces, useRestPlace } from "@/src/api/restplace";
+import {
+	useFeaturesByPlacesId,
+	useFeaturesForPlaces,
+	useRestPlace,
+} from "@/src/api/restplace";
 import { DefaultImage } from "@/src/components/DestinationListItem";
+import RemoteImage from "@/src/components/RemoteImage";
 import Colors from "@/src/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
@@ -21,7 +26,7 @@ const RestPlaceDetailScreen = () => {
 		features: {
 			id: number;
 			title: string;
-		}
+		};
 	}
 
 	const { id: idSting } = useLocalSearchParams();
@@ -34,11 +39,22 @@ const RestPlaceDetailScreen = () => {
 		data: FeaturesByRestPlace[];
 	};
 
+	const tagColors = [
+		"#888888",
+		"#00ffff",
+		"#0000ff",
+		"#ff8800",
+		"#00ffff",
+		"#ff00ff",
+		"#ff8800",
+		"#888888",
+	];
+
 	if (!restPlace) {
 		return <Text> destination not found</Text>;
 	}
 
-	console.log(featuresByPlaceId)
+	console.log(featuresByPlaceId);
 
 	return (
 		<View style={styles.container}>
@@ -66,25 +82,21 @@ const RestPlaceDetailScreen = () => {
 			/>
 
 			<Stack.Screen options={{ title: restPlace.title }} />
-			<Image
+			<RemoteImage
+				path={restPlace.image_path}
+				fallback={DefaultImage}
 				style={styles.image}
-				source={{ uri: DefaultImage }}
-				resizeMode="contain"
 			/>
-			<Text style={styles.destinationId}>
-				{" "}
-				{restPlace.destination_catalogue_id}{" "}
-			</Text>
+			<Text style={styles.description}>{restPlace?.description}</Text>
 			<FlatList
 				data={featuresByPlaceId}
-				numColumns={2}
-				renderItem={({ item }) => {
+				horizontal
+				renderItem={({ item, index }) => {
+					const tagColor = tagColors[index % tagColors.length];
 					return (
-						<View style={styles.flatView}>
-							<TouchableOpacity
-								style={styles.touchView}
-							>
-								<Text>{item.features.title}</Text>
+						<View style={[styles.flatView, { backgroundColor: tagColor }]}>
+							<TouchableOpacity style={styles.touchView}>
+								<Text style={styles.flatText}>{item.features.title}</Text>
 							</TouchableOpacity>
 						</View>
 					);
@@ -98,30 +110,35 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: "white",
 		flex: 1,
-		padding: 10,
 	},
 	image: {
 		width: "100%",
 		aspectRatio: 1,
 	},
-	destinationId: {
-		fontSize: 18,
-		fontWeight: "bold",
+	description: {
+		fontSize: 16,
+		alignSelf: "stretch",
+		padding: 5,
 	},
 	flatView: {
-		width: "50%",
-		height: 60,
-		justifyContent: "center",
-		alignItems: "center",
+		marginHorizontal: 5,
+		marginBottom: 10,
+		width: 150,
+		height: 40,
+		borderRadius: 10,
+	},
+	flatText: {
+		alignSelf: "center",
+		color: "white",
 	},
 	touchView: {
-		borderWidth: 1,
-		borderRadius: 20,
-		width: "90%",
-		height: 50,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#fff",
+		padding: 10,
+		flex: 1,
+	},
+	text: {
+		marginHorizontal: 10,
+		fontSize: 20,
+		fontWeight: "bold",
 	},
 });
 

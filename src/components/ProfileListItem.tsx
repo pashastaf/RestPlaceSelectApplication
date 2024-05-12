@@ -1,6 +1,7 @@
 import { Link, useSegments } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
 import type { Profile } from "../types";
+import { format } from "date-fns";
 
 type ProfileListItemProps = {
 	profile: Profile;
@@ -19,9 +20,13 @@ const ProfileListItem = ({ profile }: ProfileListItemProps) => {
 					{" "}
 					{profile.second_name} {profile.first_name}{" "}
 				</Text>
-				<Text style={styles.contry}> {profile.email} </Text>
-				<Text style={styles.contry}> {profile.group} </Text>
-				<Text style={styles.contry}> {profile.created_at} </Text>
+				<Text style={styles.contry}> Email: {profile.email} </Text>
+				<Text style={styles.contry}> Group: {profile.group} </Text>
+				<Text style={styles.contry}> Created: {format(
+						new Date(profile.created_at),
+						"dd.MM.yyyy HH:mm:ss",
+					)} 
+				</Text>
 			</Pressable>
 		</Link>
 	);

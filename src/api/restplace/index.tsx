@@ -21,16 +21,18 @@ export const useRestPlaceList = () => {
 	});
 };
 
-export const useRestPlacesByDestinationId = (
+
+export const useRestPlacesByDestIdType = (
 	destinationId: number,
+	restType: string,
 ) => {
 	return useQuery({
-		queryKey: ["rest_places", { destinationId }],
+		queryKey: ["rest_places", { destinationId, restType }],
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("rest_places")
 				.select("*")
-				.eq("destinations_id", destinationId)
+				.eq("rest_type",restType).eq("destinations_id", destinationId)
 				.order("id");
 			if (error) {
 				throw new Error(error.message);
@@ -39,6 +41,7 @@ export const useRestPlacesByDestinationId = (
 		},
 	});
 };
+
 
 export const useRestPlace = (id: number) => {
 	return useQuery({
@@ -169,6 +172,24 @@ export const useFeaturesByPlacesId = (id: number) => {
 				.from("places_features")
 				.select("*, features(id, title)")
 				.eq("rest_places_id", id);
+
+			if (error) {
+				throw new Error(error.message);
+			}
+			return data;
+		},
+	});
+};
+
+export const useRestPlaceRate = (id: number) => {
+	return useQuery({
+		queryKey: ["rest_places_rate", id],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("rest_places_rate")
+				.select("*")
+				.eq("rest_places_id", id)
+				.single();
 
 			if (error) {
 				throw new Error(error.message);

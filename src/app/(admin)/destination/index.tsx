@@ -29,6 +29,7 @@ export default function DestinationScreen() {
 		}
 	}, [filterQuery])
 
+	console.log('VALUE',value)
 	useEffect(() => {
 		async function fetchData() {
 			if (value.length > 0) {
@@ -75,7 +76,7 @@ export default function DestinationScreen() {
 	}));
 
 	return (
-		<View style={{ flex: 1}}>
+		<View style={{ flex: 1, backgroundColor:'white'}}>
 			<View style={styles.seacrhButton}>
 				<TextInput
 					placeholder="Search"
@@ -135,7 +136,7 @@ export default function DestinationScreen() {
 				renderItem={({ item }) => (
 					<DestinationListItem destination={item} />
 				)}
-				contentContainerStyle={{ gap: 10, padding: 10 }}
+				contentContainerStyle={{ gap: 20, padding: 10 }}
 			/>
 		</View>
 	);
