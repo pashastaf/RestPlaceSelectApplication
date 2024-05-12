@@ -1,14 +1,11 @@
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
-import { useAuth } from "@/src/providers/AuthProvider";
 import {
 	Link,
-	Stack,
-	useLocalSearchParams,
-	useRouter,
+	Stack
 } from "expo-router";
-import React, { ChangeEvent, useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
 	Alert,
 	StyleSheet,

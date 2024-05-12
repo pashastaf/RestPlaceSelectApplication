@@ -1,15 +1,10 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Redirect, Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import type React from "react";
-import { Pressable, View } from "react-native";
 
-import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
-import { useColorScheme } from "@/src/components/useColorScheme";
-import Colors from "@/src/constants/Colors";
 import { useAuth } from "@/src/providers/AuthProvider";
 import {
-	FontAwesome6,
-	MaterialCommunityIcons,
+	FontAwesome6
 } from "@expo/vector-icons";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -23,7 +18,6 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-	const colorScheme = useColorScheme();
 	const { session, isAdmin, isConsultant, isManager } = useAuth();
 	if (!session) {
 		return <Redirect href={"/"} />;
@@ -35,10 +29,6 @@ export default function TabLayout() {
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-				// Disable the static render of the header on web
-				// to prevent a hydration error in React Navigation v6.
-				headerShown: useClientOnlyValue(false, true),
 			}}
 		>
 			<Tabs.Screen name="index" options={{ href: null }} />

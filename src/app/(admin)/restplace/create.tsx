@@ -28,6 +28,7 @@ import { randomUUID } from "expo-crypto";
 import { supabase } from "@/src/lib/supabase";
 import { decode } from "base64-arraybuffer";
 import DropDownPicker from "react-native-dropdown-picker";
+import RemoteImage from "@/src/components/RemoteImage";
 
 const CreateRestPlaceScreen = () => {
 	interface FeaturesByPlacesId {
@@ -261,7 +262,11 @@ const CreateRestPlaceScreen = () => {
 			/>
 			<View style={styles.content}>
 				<View style={{ opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }}>
-					<Image source={{ uri: image || DefaultImage }} style={styles.image} />
+					<RemoteImage
+						path={updatingRestPlace?.image_path}
+						fallback={DefaultImage}
+						style={styles.image}
+					/>
 					<TouchableOpacity style={styles.selectImageButton} onPress={pickImage}>
 						<Text style={styles.selectImageText}>Select Image</Text>
 					</TouchableOpacity>
@@ -310,13 +315,13 @@ const CreateRestPlaceScreen = () => {
 };
 
 const Colors = {
-	primary: '#DB4437', // Красный
+	primary: '#F5F5F5', // Красный
 	secondary: '#4285F4', // Синий
 	background: '#F5F5F5', // Светло-серый
 	textPrimary: '#333333', // Темно-серый
 	textSecondary: '#757575', // Серый
 	inputBackground: '#FFFFFF', // Белый
-	buttonBackground: '#4CAF50', // Зеленый
+	buttonBackground: '#4285F4', // Зеленый
 	buttonTextColor: '#FFFFFF', // Белый
 	deleteButtonBackground: '#FF5733', // Оранжевый (такой же, как и основной)
 };

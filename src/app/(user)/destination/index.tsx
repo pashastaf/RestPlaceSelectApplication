@@ -1,6 +1,5 @@
 import { useDestinationList, useFeaturesForDestinations } from "@/src/api/destination";
 import DestinationListItem from "@/src/components/DestinationListItem";
-import { Text, View } from "@/src/components/Themed";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
 import { Feather } from "@expo/vector-icons";
@@ -11,6 +10,8 @@ import {
 	Pressable,
 	StyleSheet,
 	TextInput,
+	View,
+	Text,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 

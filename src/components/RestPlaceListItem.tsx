@@ -1,8 +1,8 @@
-import { Link, useSegments } from "expo-router";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import type { RestPlace } from "../types";
-import { useRestPlaceRate } from "../api/restplace";
 import { FontAwesome } from "@expo/vector-icons";
+import { Link, useSegments } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useRestPlaceRate } from "../api/restplace";
+import type { RestPlace } from "../types";
 import RemoteImage from "./RemoteImage";
 
 export const DefaultImage =
@@ -22,17 +22,17 @@ const RestPlaceListItem = ({ restPlace }: RestPlaceListItemProps) => {
 		const halfStar = rating - fullStars >= 0.5;
 		const starsArray = [];
 		for (let i = 0; i < fullStars; i++) {
-			starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star"/>);
+				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star" key={`star-${i}`} />);
 		}
 		if (halfStar) {
-			starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-half-empty"/>);
+				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-half-empty" key={'half-star'} />);
 		}
 		const emptyStars = 5 - starsArray.length;
 		for (let i = 0; i < emptyStars; i++) {
-			starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-o"/>);
+				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-o" key={`empty-star-${i}`}/>);
 		}
 		return starsArray;
-	};
+};
 	
 
 	return (

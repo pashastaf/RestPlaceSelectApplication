@@ -1,8 +1,5 @@
-import { Link, Redirect } from "expo-router";
+import { Redirect } from "expo-router";
 import { ActivityIndicator } from "react-native";
-import Button from "../components/Button";
-import { View } from "../components/Themed";
-import { supabase } from "../lib/supabase";
 import { useAuth } from "../providers/AuthProvider";
 
 const index = () => {
@@ -26,11 +23,14 @@ const index = () => {
 
 	if (isAdmin) {
 		return <Redirect href={"/(admin)"} />;
-	} else if (isManager) {
+	} 
+	if (isManager) {
 		return <Redirect href={"/(manager)"} />;
-	} else if (isConsultant) {
+	} 
+	if (isConsultant) {
 		return <Redirect href={"/(consultant)"} />;
-	} else {
+	} 
+	if (!isAdmin && !isConsultant && !isManager) {
 		return <Redirect href={"/(user)"} />;
 	}
 };

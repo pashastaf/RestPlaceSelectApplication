@@ -1,8 +1,7 @@
 import { useOrderList } from "@/src/api/order";
 import OrderListItem from "@/src/components/OrderListItem";
 import ProfileListItem from "@/src/components/ProfileListItem";
-import { Text, View } from "@/src/components/Themed";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, Text } from "react-native";
 
 export default function OrderScreen() {
 	const { data: profile, error, isLoading } = useOrderList();

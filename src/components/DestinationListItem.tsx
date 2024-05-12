@@ -22,14 +22,14 @@ const DestinationListItem = ({ destination }: DestinationListItemProps) => {
 			const halfStar = rating - fullStars >= 0.5;
 			const starsArray = [];
 			for (let i = 0; i < fullStars; i++) {
-					starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star" />);
+					starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star" key={`star-${i}`} />);
 			}
 			if (halfStar) {
-					starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-half-empty" />);
+					starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-half-empty" key={'half-star'} />);
 			}
 			const emptyStars = 5 - starsArray.length;
 			for (let i = 0; i < emptyStars; i++) {
-					starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-o" />);
+					starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-o" key={`empty-star-${i}`}/>);
 			}
 			return starsArray;
 	};
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
 	image: {
 		width: "100%",
 		aspectRatio: 1,
-		borderRadius: 20,
+		borderRadius: 19,
 	},
 	star: {
 		margin: 5,

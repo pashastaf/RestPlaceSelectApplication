@@ -1,9 +1,7 @@
 import { useProfileList } from "@/src/api/profile";
-import DestinationListItem from "@/src/components/DestinationListItem";
 import ProfileListItem from "@/src/components/ProfileListItem";
-import { Text, View } from "@/src/components/Themed";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, TextInput } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, TextInput, Text, View } from "react-native";
 
 export default function ProfileScreen() {
 	const { data: profile, error, isLoading } = useProfileList();

@@ -1,10 +1,9 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Stack } from "expo-router";
 import { Pressable, View } from "react-native";
 
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 export default function DestinationStack() {
 	return (
@@ -17,8 +16,8 @@ export default function DestinationStack() {
 						<View style={{ flexDirection: "row" }}>
 							<Pressable>
 								{({ pressed }) => (
-									<MaterialCommunityIcons
-										name="logout"
+									<Feather
+										name="log-out"
 										size={25}
 										color={Colors.light.tint}
 										style={{
@@ -32,7 +31,7 @@ export default function DestinationStack() {
 							<Link href="/(admin)/destination/create" asChild>
 								<Pressable>
 									{({ pressed }) => (
-										<FontAwesome
+										<Feather
 											name="plus"
 											size={25}
 											color={Colors.light.tint}

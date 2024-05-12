@@ -8,20 +8,17 @@ import { DefaultImage } from "@/src/components/DestinationListItem";
 import RemoteImage from "@/src/components/RemoteImage";
 import RestPlaceListByDestination from "@/src/components/RestPlaceListByDestination";
 import Colors from "@/src/constants/Colors";
-import { supabase } from "@/src/lib/supabase";
-import { FontAwesome } from "@expo/vector-icons";
-import { roundToNearestHours } from "date-fns";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
 	FlatList,
-	Image,
 	Pressable,
 	ScrollView,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	View,
+	View
 } from "react-native";
 
 const DestinationDetailScreen = () => {
@@ -55,33 +52,17 @@ const DestinationDetailScreen = () => {
 		const halfStar = rating - fullStars >= 0.5;
 		const starsArray = [];
 		for (let i = 0; i < fullStars; i++) {
-			starsArray.push(
-				<FontAwesome size={25} style={styles.star} color="gold" name="star" />,
-			);
+				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star" key={`star-${i}`} />);
 		}
 		if (halfStar) {
-			starsArray.push(
-				<FontAwesome
-					size={25}
-					style={styles.star}
-					color="gold"
-					name="star-half-empty"
-				/>,
-			);
+				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-half-empty" key={'half-star'} />);
 		}
 		const emptyStars = 5 - starsArray.length;
 		for (let i = 0; i < emptyStars; i++) {
-			starsArray.push(
-				<FontAwesome
-					size={25}
-					style={styles.star}
-					color="gold"
-					name="star-o"
-				/>,
-			);
+				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-o" key={`empty-star-${i}`}/>);
 		}
 		return starsArray;
-	};
+};
 
 	if (!destination) {
 		return <Text> destination not found</Text>;
@@ -108,8 +89,8 @@ const DestinationDetailScreen = () => {
 						<Link href={`/(admin)/destination/create?id=${id}`} asChild>
 							<Pressable>
 								{({ pressed }) => (
-									<FontAwesome
-										name="pencil"
+									<Feather
+										name="edit"
 										size={25}
 										color={Colors.light.tint}
 										style={{

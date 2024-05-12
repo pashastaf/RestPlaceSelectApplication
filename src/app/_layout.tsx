@@ -9,7 +9,6 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
-import { useColorScheme } from "@/src/components/useColorScheme";
 import AuthProvider from "../providers/AuthProvider";
 import QueryProvider from "../providers/QueryProvider";
 
@@ -51,12 +50,8 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-	const colorScheme = useColorScheme();
 
 	return (
-		<ThemeProvider
-			value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-		>
 			<QueryProvider>
 				<AuthProvider>
 					<Stack>
@@ -87,6 +82,5 @@ function RootLayoutNav() {
 					</Stack>
 				</AuthProvider>
 			</QueryProvider>
-		</ThemeProvider>
 	);
 }

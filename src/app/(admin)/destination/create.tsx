@@ -25,6 +25,7 @@ import * as FileSystem from "expo-file-system"
 import { randomUUID } from "expo-crypto";
 import { supabase } from "@/src/lib/supabase";
 import { decode } from "base64-arraybuffer";
+import RemoteImage from "@/src/components/RemoteImage";
 
 const CreateDestinationScreen = () => {
 	const router = useRouter();
@@ -203,10 +204,11 @@ const CreateDestinationScreen = () => {
 				}}
 			/>
 			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
-				<Image
-					source={{ uri: image || DefaultImage }}
-					style={styles.image}
-				/>
+			<RemoteImage
+				path={updatingDestination.image_path}
+				fallback={DefaultImage}
+				style={styles.image}
+			/>
 				<Text style={styles.textButton} onPress={pickImage}>
 					Select Image
 				</Text>

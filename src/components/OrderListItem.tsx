@@ -1,6 +1,6 @@
 import { format } from "date-fns";
-import { Link, useSegments } from "expo-router";
-import { Image, Pressable, StyleSheet, Text } from "react-native";
+import { Link } from "expo-router";
+import { Pressable, StyleSheet, Text } from "react-native";
 import { useConsultantList } from "../api/order";
 import { useProfileList } from "../api/profile";
 import type { Order } from "../types";

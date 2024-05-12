@@ -1,6 +1,5 @@
 import { useFeaturesForPlaces, useRestPlaceList } from "@/src/api/restplace";
 import RestPlaceListItem from "@/src/components/RestPlaceListItem";
-import { View } from "@/src/components/Themed";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
 import { Feather } from "@expo/vector-icons";
@@ -11,7 +10,8 @@ import {
 	Pressable,
 	StyleSheet,
 	Text,
-	TextInput
+	TextInput,
+	View
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 

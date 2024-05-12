@@ -1,11 +1,10 @@
 import { useDestinationList, useFeaturesForDestinations } from "@/src/api/destination";
 import DestinationListItem from "@/src/components/DestinationListItem";
-import { Text, View } from "@/src/components/Themed";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
 import { Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, TextInput, StyleSheet } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, TextInput, StyleSheet, Text, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 export default function DestinationScreen() {

@@ -2,6 +2,7 @@ import {
 	useFeaturesByPlacesId,
 	useFeaturesForPlaces,
 	useRestPlace,
+	useRestPlaceRate,
 } from "@/src/api/restplace";
 import { DefaultImage } from "@/src/components/DestinationListItem";
 import RemoteImage from "@/src/components/RemoteImage";
@@ -39,6 +40,25 @@ const RestPlaceDetailScreen = () => {
 		data: FeaturesByRestPlace[];
 	};
 
+	const {data: restPlaceRate} = useRestPlaceRate(id);
+
+	const renderStars = (rating: number) => {
+		const fullStars = Math.floor(rating);
+		const halfStar = rating - fullStars >= 0.5;
+		const starsArray = [];
+		for (let i = 0; i < fullStars; i++) {
+				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star" key={`star-${i}`} />);
+		}
+		if (halfStar) {
+				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-half-empty" key={'half-star'} />);
+		}
+		const emptyStars = 5 - starsArray.length;
+		for (let i = 0; i < emptyStars; i++) {
+				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-o" key={`empty-star-${i}`}/>);
+		}
+		return starsArray;
+};
+
 	const tagColors = [
 		"#888888",
 		"#00ffff",
@@ -53,8 +73,6 @@ const RestPlaceDetailScreen = () => {
 	if (!restPlace) {
 		return <Text> destination not found</Text>;
 	}
-
-	console.log(featuresByPlaceId);
 
 	return (
 		<View style={styles.container}>
@@ -88,6 +106,10 @@ const RestPlaceDetailScreen = () => {
 				style={styles.image}
 			/>
 			<Text style={styles.description}>{restPlace?.description}</Text>
+			<View style={styles.starsView}>
+				{renderStars(restPlaceRate?.rate ?? 0)}
+				<Text style={styles.rateText}> {restPlaceRate?.rate} </Text>
+			</View>
 			<FlatList
 				data={featuresByPlaceId}
 				horizontal
@@ -139,6 +161,19 @@ const styles = StyleSheet.create({
 		marginHorizontal: 10,
 		fontSize: 20,
 		fontWeight: "bold",
+	},
+	star: {
+		margin: 5,
+	},
+	starsView: {
+		flexDirection: "row",
+		alignSelf: "stretch",
+		marginVertical: 10,
+		marginHorizontal: 10,
+	},
+	rateText: {
+		fontSize: 25,
+		color: "gray",
 	},
 });
 

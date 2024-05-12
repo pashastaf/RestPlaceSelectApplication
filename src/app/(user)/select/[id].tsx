@@ -1,5 +1,5 @@
 import { useDestination } from "@/src/api/destination";
-import { useRestPlacesByDestinationId } from "@/src/api/restplace";
+import { useRestPlacesByDestIdType } from "@/src/api/restplace";
 import { DefaultImage } from "@/src/components/DestinationListItem";
 import RestPlaceListItem from "@/src/components/RestPlaceListItem";
 import Colors from "@/src/constants/Colors";
@@ -26,7 +26,7 @@ const DestinationDetailScreen = () => {
 	);
 
 	const { data: destination } = useDestination(id);
-	const { data: restPlaces } = useRestPlacesByDestinationId(id);
+	const { data: restPlaces } = useRestPlacesByDestIdType(id,'rest');
 
 	if (!destination) {
 		return <Text> destination not found</Text>;

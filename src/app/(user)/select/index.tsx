@@ -1,8 +1,6 @@
 import { useDestinationList } from "@/src/api/destination";
 import DestinationListItem from "@/src/components/DestinationListItem";
-import EditScreenInfo from "@/src/components/EditScreenInfo";
-import { Text, View } from "@/src/components/Themed";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, Text } from "react-native";
 
 export default function DestinationScreen() {
 	const {

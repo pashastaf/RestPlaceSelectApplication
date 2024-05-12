@@ -1,15 +1,13 @@
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
 import React from "react";
 
-import { useColorScheme } from "@/src/components/useColorScheme";
 import Colors from "@/src/constants/Colors";
 import { useAuth } from "@/src/providers/AuthProvider";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 
 export default function TabLayout() {
-	const colorScheme = useColorScheme();
 	const { isAdmin } = useAuth();
 	if (!isAdmin) {
 		return <Redirect href={"/"} />;
@@ -34,8 +32,8 @@ export default function TabLayout() {
 					title: "Destination",
 					headerShown: false,
 					tabBarIcon: ({ color }) => (
-						<FontAwesome6
-							name="mountain-sun"
+						<Feather
+							name="home"
 							color={color}
 							size={24}
 							style={{ marginBottom: -3 }}
@@ -49,8 +47,8 @@ export default function TabLayout() {
 					title: "Rest Place",
 					headerShown: false,
 					tabBarIcon: ({ color }) => (
-						<FontAwesome6
-							name="umbrella-beach"
+						<Feather
+							name="umbrella"
 							color={color}
 							size={24}
 							style={{ marginBottom: -3 }}
@@ -65,10 +63,10 @@ export default function TabLayout() {
 					title: "Profile",
 					headerShown: false,
 					tabBarIcon: ({ color }) => (
-						<MaterialIcons
-							name="supervisor-account"
+						<Feather
+							name="users"
 							color={color}
-							size={30}
+							size={24}
 							style={{ marginBottom: -3 }}
 						/>
 					),
@@ -81,7 +79,7 @@ export default function TabLayout() {
 					title: "Order",
 					headerShown: false,
 					tabBarIcon: ({ color }) => (
-						<MaterialIcons
+						<Feather
 							name="list"
 							color={color}
 							size={30}

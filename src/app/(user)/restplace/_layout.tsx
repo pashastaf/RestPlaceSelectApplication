@@ -5,7 +5,6 @@ import { Pressable, View } from "react-native";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { ScreenStackHeaderSearchBarView } from "react-native-screens";
 
 export default function RestPlaceStack() {
 	return (
