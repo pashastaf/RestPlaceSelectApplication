@@ -16,10 +16,10 @@ export default function TabLayout() {
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: "gray",
-				tabBarInactiveTintColor: "lightgray",
+				tabBarActiveTintColor: "#2f95dc",
+				tabBarInactiveTintColor: "lightblue",
+				tabBarLabelStyle: { fontSize: 13 },
 				tabBarStyle: {
-					backgroundColor: Colors.dark.tint,
 					height: 60,
 				},
 			}}
@@ -35,7 +35,7 @@ export default function TabLayout() {
 						<Feather
 							name="home"
 							color={color}
-							size={24}
+							size={28}
 							style={{ marginBottom: -3 }}
 						/>
 					),
@@ -50,7 +50,7 @@ export default function TabLayout() {
 						<Feather
 							name="umbrella"
 							color={color}
-							size={24}
+							size={28}
 							style={{ marginBottom: -3 }}
 						/>
 					),
@@ -66,7 +66,7 @@ export default function TabLayout() {
 						<Feather
 							name="users"
 							color={color}
-							size={24}
+							size={28}
 							style={{ marginBottom: -3 }}
 						/>
 					),
@@ -82,7 +82,7 @@ export default function TabLayout() {
 						<Feather
 							name="list"
 							color={color}
-							size={30}
+							size={28}
 							style={{ marginBottom: -3 }}
 						/>
 					),

@@ -18,7 +18,7 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	View
+	View,
 } from "react-native";
 
 const DestinationDetailScreen = () => {
@@ -39,7 +39,10 @@ const DestinationDetailScreen = () => {
 
 	const { data: destination } = useDestination(id);
 	const { data: restPlacesRest } = useRestPlacesByDestIdType(id, "rest");
-	const { data: restPlacesRestaurant } = useRestPlacesByDestIdType(id,"restaurant");
+	const { data: restPlacesRestaurant } = useRestPlacesByDestIdType(
+		id,
+		"restaurant",
+	);
 	const { data: restPlacesHotel } = useRestPlacesByDestIdType(id, "hotel");
 	const { data: featuresByDestinationId } = useFeaturesByDestinationId(id) as {
 		data: FeaturesByDestination[];
@@ -52,17 +55,38 @@ const DestinationDetailScreen = () => {
 		const halfStar = rating - fullStars >= 0.5;
 		const starsArray = [];
 		for (let i = 0; i < fullStars; i++) {
-				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star" key={`star-${i}`} />);
+			starsArray.push(
+				<FontAwesome
+					size={25}
+					color="gold"
+					name="star"
+					key={`star-${i}`}
+				/>,
+			);
 		}
 		if (halfStar) {
-				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-half-empty" key={'half-star'} />);
+			starsArray.push(
+				<FontAwesome
+					size={25}
+					color="gold"
+					name="star-half-empty"
+					key={"half-star"}
+				/>,
+			);
 		}
 		const emptyStars = 5 - starsArray.length;
 		for (let i = 0; i < emptyStars; i++) {
-				starsArray.push(<FontAwesome size={25} style={styles.star} color='gold' name="star-o" key={`empty-star-${i}`}/>);
+			starsArray.push(
+				<FontAwesome
+					size={25}
+					color="gold"
+					name="star-o"
+					key={`empty-star-${i}`}
+				/>,
+			);
 		}
 		return starsArray;
-};
+	};
 
 	if (!destination) {
 		return <Text> destination not found</Text>;
@@ -79,12 +103,12 @@ const DestinationDetailScreen = () => {
 		"#888888",
 	]; // Заранее приготовленный массив цветов
 
-
 	return (
 		<ScrollView style={styles.container}>
 			<Stack.Screen
 				options={{
 					title: destination.title,
+					headerTitleAlign: "center",
 					headerRight: () => (
 						<Link href={`/(admin)/destination/create?id=${id}`} asChild>
 							<Pressable>
@@ -108,16 +132,18 @@ const DestinationDetailScreen = () => {
 				fallback={DefaultImage}
 				style={styles.image}
 			/>
-			<Text style={styles.description}>{destination?.description}</Text>
-			<View style={styles.starsView}>
-				{renderStars(destinationRate?.rate ?? 0)}
-				<Text style={styles.rateText}> {destinationRate?.rate} </Text>
-			</View>
+			<View style={styles.textView}>
+				<Text style={styles.title}>{destination.title} </Text>
+				<Text style={styles.description}>{destination?.description}</Text>
+				<View style={styles.starsView}>
+					{renderStars(destinationRate?.rate ?? 0)}
+					<Text style={styles.rateText}> {destinationRate?.rate} </Text>
+				</View>
 
 			<FlatList
 				data={featuresByDestinationId}
-				numColumns={1}
 				horizontal
+				contentContainerStyle={{ gap: 10 }}
 				renderItem={({ item, index }) => {
 					const tagColor = tagColors[index % tagColors.length];
 					return (
@@ -129,42 +155,42 @@ const DestinationDetailScreen = () => {
 					);
 				}}
 			/>
-
+			</View>
 			{restPlacesRest && restPlacesRest.length > 0 && (
-				<Text style={styles.text}> Entertainment </Text>
+				<Text style={styles.textBeforeFlat}>Entertainment</Text>
 			)}
 			<FlatList
 				data={restPlacesRest}
-				numColumns={1}
 				horizontal
+				showsHorizontalScrollIndicator={false}
 				renderItem={({ item }) => (
 					<RestPlaceListByDestination restPlace={item} />
 				)}
-				contentContainerStyle={{ gap: 10, padding: 10 }}
+				contentContainerStyle={styles.flatContent}
 			/>
 			{restPlacesRestaurant && restPlacesRestaurant.length > 0 && (
-				<Text style={styles.text}> Restaurant </Text>
+				<Text style={styles.textBeforeFlat}>Restaurant</Text>
 			)}
 			<FlatList
 				data={restPlacesRestaurant}
-				numColumns={1}
 				horizontal
+				showsHorizontalScrollIndicator={false}
 				renderItem={({ item }) => (
 					<RestPlaceListByDestination restPlace={item} />
 				)}
-				contentContainerStyle={{ gap: 10, padding: 10 }}
+				contentContainerStyle={styles.flatContent}
 			/>
 			{restPlacesHotel && restPlacesHotel.length > 0 && (
-				<Text style={styles.text}> Hotel </Text>
+				<Text style={styles.textBeforeFlat}>Hotel</Text>
 			)}
 			<FlatList
 				data={restPlacesHotel}
-				numColumns={1}
+				showsHorizontalScrollIndicator={false}
 				horizontal
 				renderItem={({ item }) => (
 					<RestPlaceListByDestination restPlace={item} />
 				)}
-				contentContainerStyle={{ gap: 10, padding: 10 }}
+				contentContainerStyle={styles.flatContent}
 			/>
 		</ScrollView>
 	);
@@ -179,14 +205,27 @@ const styles = StyleSheet.create({
 		width: "100%",
 		aspectRatio: 1,
 	},
+	textView: {
+		margin: 30,
+		gap: 10
+	},
+	title: {
+		fontSize: 30,
+		fontWeight: "bold",
+	},
 	description: {
 		fontSize: 16,
+	},
+	starsView: {
+		flexDirection: "row",
 		alignSelf: "stretch",
-		padding: 5,
+		gap: 10
+	},
+	rateText: {
+		fontSize: 25,
+		color: "gray",
 	},
 	flatView: {
-		marginHorizontal: 5,
-		marginBottom: 10,
 		width: 150,
 		borderRadius: 10,
 	},
@@ -198,23 +237,18 @@ const styles = StyleSheet.create({
 		padding: 10,
 		flex: 1,
 	},
-	text: {
-		marginHorizontal: 10,
-		fontSize: 20,
+	textBeforeFlat: {
+		fontSize: 22,
 		fontWeight: "bold",
+		marginLeft: 30,
+		marginTop: 30,
+
 	},
-	star: {
-		margin: 5,
-	},
-	starsView: {
-		flexDirection: "row",
-		alignSelf: "stretch",
-		marginVertical: 10,
-		marginHorizontal: 10,
-	},
-	rateText: {
-		fontSize: 25,
-		color: "gray",
+	flatContent: {
+		gap: 50, 
+		marginHorizontal: 30, 
+		marginTop: 20,
+		marginBottom: 40,
 	},
 });
 

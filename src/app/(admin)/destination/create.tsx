@@ -205,7 +205,7 @@ const CreateDestinationScreen = () => {
 			/>
 			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
 			<RemoteImage
-				path={updatingDestination.image_path}
+				path={updatingDestination?.image_path}
 				fallback={DefaultImage}
 				style={styles.image}
 			/>

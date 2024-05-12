@@ -36,7 +36,6 @@ export default function DestinationStack() {
 											size={25}
 											color={Colors.light.tint}
 											style={{
-												marginRight: 15,
 												opacity: pressed ? 0.5 : 1,
 											}}
 										/>

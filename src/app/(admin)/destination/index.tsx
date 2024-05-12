@@ -28,7 +28,6 @@ export default function DestinationScreen() {
 		}
 	}, [filterQuery])
 
-	console.log('VALUE',value)
 	useEffect(() => {
 		async function fetchData() {
 			if (value.length > 0) {
