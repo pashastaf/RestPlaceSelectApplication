@@ -29,7 +29,7 @@ const AuthContext = createContext<AuthData>({
 interface UserProfile {
 	id: number;
 	email: string;
-	group?: string;
+	group_id?: number;
 	auth_id: string;
 }
 
@@ -82,9 +82,9 @@ export default function AuthProvider({
 				session,
 				profile,
 				loading,
-				isAdmin: profile?.group === "admin",
-				isConsultant: profile?.group === "consultant",
-				isManager: profile?.group === "manager",
+				isAdmin: profile?.group_id === 4,
+				isConsultant: profile?.group_id === 2,
+				isManager: profile?.group_id === 3,
 			}}
 		>
 			{children}
