@@ -50,8 +50,9 @@ export const useUpdateProfile = () => {
 					first_name: data.firstName,
 					second_name: data.secondName,
 					email: data.email,
-					password: data.password,
-					group: data.group,
+					phone: data.phone,
+					group_id: data.groupId,
+					avatar_url: data.avatarImage
 				})
 				.eq("id", data.id)
 				.select()
@@ -74,14 +75,14 @@ export const useUpdateProfile = () => {
 	});
 };
 
-export const useProfileByGroup = (group: string) => {
+export const useProfileByGroup = (groupId: number) => {
 	return useQuery({
-		queryKey: ["profiles", { group }],
+		queryKey: ["profiles", { groupId }],
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("profiles")
 				.select("*")
-				.eq("group", group);
+				.eq("group_id", groupId);
 			if (error) {
 				throw new Error(error.message);
 			}
