@@ -124,21 +124,6 @@ export const useDeleteOrder = () => {
 	});
 };
 
-export const useConsultantList = () => {
-	return useQuery({
-		queryKey: ["consultants"],
-		queryFn: async () => {
-			const { data, error } = await supabase
-				.from("consultants")
-				.select("*");
-			if (error) {
-				throw new Error(error.message);
-			}
-			return data;
-		},
-	});
-};
-
 export const useServiceList = () => {
 	return useQuery({
 		queryKey: ["services"],

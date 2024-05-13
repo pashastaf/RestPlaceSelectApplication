@@ -150,7 +150,7 @@ export const useFeaturesForDestinations = () => {
 			const { data, error } = await supabase
 				.from("features")
 				.select("*")
-				.eq('features_type_id', 1);
+				.eq('features_type_id', 2);
 			if (error) {
 				throw new Error(error.message);
 			}

@@ -38,12 +38,9 @@ const DestinationDetailScreen = () => {
 	);
 
 	const { data: destination } = useDestination(id);
-	const { data: restPlacesRest } = useRestPlacesByDestIdType(id, "rest");
-	const { data: restPlacesRestaurant } = useRestPlacesByDestIdType(
-		id,
-		"restaurant",
-	);
-	const { data: restPlacesHotel } = useRestPlacesByDestIdType(id, "hotel");
+	const { data: restPlacesRest } = useRestPlacesByDestIdType(id, 1);
+	const { data: restPlacesRestaurant } = useRestPlacesByDestIdType(id,2,);
+	const { data: restPlacesHotel } = useRestPlacesByDestIdType(id, 3);
 	const { data: featuresByDestinationId } = useFeaturesByDestinationId(id) as {
 		data: FeaturesByDestination[];
 	};

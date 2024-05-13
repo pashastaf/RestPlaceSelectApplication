@@ -24,15 +24,15 @@ export const useRestPlaceList = () => {
 
 export const useRestPlacesByDestIdType = (
 	destinationId: number,
-	restType: string,
+	restTypesId: number,
 ) => {
 	return useQuery({
-		queryKey: ["rest_places", { destinationId, restType }],
+		queryKey: ["rest_places", { destinationId, restTypesId }],
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("rest_places")
 				.select("*")
-				.eq("rest_type",restType).eq("destinations_id", destinationId)
+				.eq("rest_types_id",restTypesId).eq("destinations_id", destinationId)
 				.order("id");
 			if (error) {
 				throw new Error(error.message);

@@ -1,5 +1,4 @@
 import {
-	useConsultantList,
 	useDeleteOrder,
 	useDeleteServiceByOrder,
 	useInsertOrder,
@@ -9,7 +8,7 @@ import {
 	useServicesByOrder,
 	useUpdateOrder,
 } from "@/src/api/order";
-import { useProfileByGroup } from "@/src/api/profile";
+import { useProfileByGroup, useConsultantList } from "@/src/api/profile";
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -42,7 +41,7 @@ const CreateOrderScreen = () => {
 	const [totalCost, setTotalCost] = useState(0);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const { data: profiles } = useProfileByGroup("user");
+	const { data: profiles } = useProfileByGroup(1);
 	const { data: consultants } = useConsultantList();
 	const { data: services } = useServiceList();
 

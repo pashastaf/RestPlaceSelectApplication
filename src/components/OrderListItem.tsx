@@ -1,8 +1,7 @@
 import { format } from "date-fns";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
-import { useConsultantList } from "../api/order";
-import { useProfileList } from "../api/profile";
+import { useProfileList, useConsultantList } from "../api/profile";
 import type { Order } from "../types";
 
 type orderListItemProps = {

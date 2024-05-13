@@ -41,12 +41,15 @@ export default function AuthProvider({
 	const [loading, setLoading] = useState(true);
 
 	const fetchProfile = async (userId: string) => {
-		const { data } = await supabase
+		const { data, error } = await supabase
 			.from("profiles")
 			.select("*")
 			.eq("auth_id", userId)
 			.single();
 		setProfile(data || null);
+		if (error) {
+			console.log(error)
+		}
 	};
 
 	useEffect(() => {

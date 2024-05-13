@@ -90,3 +90,18 @@ export const useProfileByGroup = (groupId: number) => {
 		},
 	});
 };
+
+export const useConsultantList = () => {
+	return useQuery({
+		queryKey: ["consultants"],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("consultants")
+				.select("*, profiles(first_name,second_name)");
+			if (error) {
+				throw new Error(error.message);
+			}
+			return data;
+		},
+	});
+};

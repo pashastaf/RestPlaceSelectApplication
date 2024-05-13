@@ -3,7 +3,6 @@ import { Link, Stack } from "expo-router";
 import { Pressable } from "react-native";
 
 import Colors from "@/src/constants/Colors";
-import { ScreenStackHeaderSearchBarView } from "react-native-screens";
 
 export default function ProfileStack() {
 	return (

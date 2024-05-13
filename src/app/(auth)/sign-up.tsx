@@ -13,6 +13,7 @@ import {
 
 const SignUpScreen = () => {
 	const [email, setEmail] = useState("");
+	const [phone, setPhone] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [secondName, setSecondName] = useState("");
 	const [password, setPassword] = useState("");
@@ -28,7 +29,7 @@ const SignUpScreen = () => {
 			options: {
 				data: {
 					email,
-					password,
+					phone,
 					firstName,
 					secondName,
 					fullName,
@@ -64,6 +65,14 @@ const SignUpScreen = () => {
 			<TextInput
 				value={email}
 				onChangeText={setEmail}
+				placeholder="pashastaf@gmail.com"
+				style={styles.input}
+			/>
+
+			<Text style={styles.label}>Phone</Text>
+			<TextInput
+				value={phone}
+				onChangeText={setPhone}
 				placeholder="pashastaf@gmail.com"
 				style={styles.input}
 			/>

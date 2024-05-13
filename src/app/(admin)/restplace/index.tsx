@@ -64,6 +64,7 @@ export default function RestPlaceScreen() {
 		return <ActivityIndicator />;
 	}
 	if (error) {
+		console.log(error)
 		return <Text>Failed to fetch</Text>;
 	}
 	if (!features) {
