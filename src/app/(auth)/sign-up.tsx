@@ -17,6 +17,7 @@ import {
 	View
 } from "react-native";
 import { DefaultAvatar } from "../(admin)";
+import { Stack } from "expo-router";
 
 const SignUpScreen = () => {
 	const [email, setEmail] = useState("");
@@ -87,6 +88,7 @@ const SignUpScreen = () => {
 	};
 	return (
 		<View style={styles.container}>
+			<Stack.Screen options={{ title: "Sign up" }} />
 			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
 				<View>
 				<Image

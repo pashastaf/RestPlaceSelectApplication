@@ -1,5 +1,4 @@
 import { useRestPlace } from "@/src/api/restplace";
-import { DefaultImage } from "@/src/components/DestinationListItem";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
 import {
@@ -15,6 +14,7 @@ import {
 	Text,
 	View,
 } from "react-native";
+import { DefaultImage } from "../../(admin)";
 const RestPlaceDetailScreen = () => {
 	const { id: idSting } = useLocalSearchParams();
 	const id = Number.parseFloat(

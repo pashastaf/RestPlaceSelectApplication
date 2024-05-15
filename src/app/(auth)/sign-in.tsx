@@ -36,8 +36,10 @@ const SignInScreen = () => {
 		<View style={styles.container}>
 			<Stack.Screen options={{ title: "Sign in" }} />
 			<Image
-				source={require('../../assets/Designer.jpeg')}
-				style={{ width: '100%', height: 40 }}
+				source={{
+          uri: 'https://raw.githubusercontent.com/pashastaf/RestPlaceSelectApplication/main/assets/images/Designer.jpeg',
+        }}
+				style={styles.image}
 			/>
 			<Text style={styles.label}>Login</Text>
 			<TextInput
@@ -58,6 +60,7 @@ const SignInScreen = () => {
 			<Button
 				onPress={signInWithEmail}
 				disabled={loading}
+				color={Colors.light.tint}
 				text={loading ? "Signing in..." : "Sign in"}
 			/>
 			<Link href="/sign-up" style={styles.textButton}>
@@ -72,6 +75,7 @@ const styles = StyleSheet.create({
 		padding: 20,
 		justifyContent: "center",
 		flex: 1,
+		backgroundColor: 'white'
 	},
 	label: {
 		color: "gray",
@@ -92,10 +96,10 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 	},
 	image: {
-		width: '25%',
+		width: '100%',
 		aspectRatio: 1,
 		alignSelf: "center",
-		borderRadius: 100,
+		borderRadius: 200,
 	},
 });
 

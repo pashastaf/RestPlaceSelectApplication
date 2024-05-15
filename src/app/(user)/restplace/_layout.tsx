@@ -4,7 +4,7 @@ import { Pressable, View } from "react-native";
 
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function RestPlaceStack() {
 	return (
@@ -12,13 +12,13 @@ export default function RestPlaceStack() {
 			<Stack.Screen
 				name="index"
 				options={{
-					title: "Rest Places",
+					title: "Destinations",
 					headerRight: () => (
 						<View style={{ flexDirection: "row" }}>
 							<Pressable>
 								{({ pressed }) => (
-									<MaterialCommunityIcons
-										name="logout"
+									<Feather
+										name="log-out"
 										size={25}
 										color={Colors.light.tint}
 										style={{
@@ -29,15 +29,14 @@ export default function RestPlaceStack() {
 									/>
 								)}
 							</Pressable>
-							<Link href="/sign-up" asChild>
+							<Link href="/(user)/settings" asChild>
 								<Pressable>
 									{({ pressed }) => (
-										<FontAwesome
-											name="cog"
+										<Feather
+											name="settings"
 											size={25}
 											color={Colors.light.tint}
 											style={{
-												marginRight: 15,
 												opacity: pressed ? 0.5 : 1,
 											}}
 										/>

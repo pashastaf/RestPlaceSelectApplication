@@ -4,6 +4,7 @@ import type React from "react";
 
 import { useAuth } from "@/src/providers/AuthProvider";
 import {
+	Feather,
 	FontAwesome6
 } from "@expo/vector-icons";
 
@@ -29,19 +30,26 @@ export default function TabLayout() {
 	return (
 		<Tabs
 			screenOptions={{
+				tabBarActiveTintColor: "#2f95dc",
+				tabBarInactiveTintColor: "lightblue",
+				tabBarLabelStyle: { fontSize: 13 },
+				tabBarStyle: {
+					height: 60,
+				},
 			}}
 		>
 			<Tabs.Screen name="index" options={{ href: null }} />
+			<Tabs.Screen name="settings" options={{ href: null }} />
 			<Tabs.Screen
 				name="destination"
 				options={{
 					title: "Destination",
 					headerShown: false,
 					tabBarIcon: ({ color }) => (
-						<FontAwesome6
-							name="mountain-sun"
+						<Feather
+							name="home"
 							color={color}
-							size={24}
+							size={28}
 							style={{ marginBottom: -3 }}
 						/>
 					),
@@ -53,25 +61,26 @@ export default function TabLayout() {
 					title: "Rest Place",
 					headerShown: false,
 					tabBarIcon: ({ color }) => (
-						<FontAwesome6
-							name="umbrella-beach"
+						<Feather
+							name="umbrella"
 							color={color}
-							size={24}
+							size={28}
 							style={{ marginBottom: -3 }}
 						/>
 					),
 				}}
 			/>
+
 			<Tabs.Screen
-				name="select"
+				name="order"
 				options={{
-					title: "Select",
+					title: "Order",
 					headerShown: false,
 					tabBarIcon: ({ color }) => (
-						<FontAwesome6
-							name="location-arrow"
+						<Feather
+							name="list"
 							color={color}
-							size={24}
+							size={28}
 							style={{ marginBottom: -3 }}
 						/>
 					),

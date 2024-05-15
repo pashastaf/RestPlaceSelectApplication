@@ -1,4 +1,5 @@
-import { useDestinationList, useFeaturesForDestinations } from "@/src/api/destination";
+import { useDestinationList } from "@/src/api/destination";
+import { useFeaturesForDestinations } from "@/src/api/features";
 import DestinationListItem from "@/src/components/DestinationListItem";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";

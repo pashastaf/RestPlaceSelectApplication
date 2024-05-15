@@ -1,4 +1,5 @@
-import { useFeaturesForPlaces, useRestPlaceList } from "@/src/api/restplace";
+import { useFeaturesForPlaces } from "@/src/api/features";
+import { useRestPlaceList } from "@/src/api/restplace";
 import RestPlaceListItem from "@/src/components/RestPlaceListItem";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";

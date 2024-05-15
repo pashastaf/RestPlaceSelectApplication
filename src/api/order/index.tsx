@@ -20,6 +20,22 @@ export const useOrderList = () => {
 	});
 };
 
+export const useOrderListById = (id: number) => {
+	return useQuery({
+		queryKey: ["orders"],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("orders")
+				.select("*,orders_status(title)")
+				.eq('profiles_id', id);
+			if (error) {
+				throw new Error(error.message);
+			}
+			return data;
+		},
+	});
+};
+
 
 export const useOrder = (id: number) => {
 	return useQuery({

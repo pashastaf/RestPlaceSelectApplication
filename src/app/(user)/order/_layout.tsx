@@ -3,22 +3,22 @@ import { Link, Stack } from "expo-router";
 import { Pressable, View } from "react-native";
 
 import Colors from "@/src/constants/Colors";
+import { Feather } from "@expo/vector-icons";
 import { supabase } from "@/src/lib/supabase";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function DestinationStack() {
+export default function ProfileStack() {
 	return (
 		<Stack>
 			<Stack.Screen
 				name="index"
 				options={{
-					title: "Destinations",
+					title: "Orders",
 					headerRight: () => (
 						<View style={{ flexDirection: "row" }}>
 							<Pressable>
 								{({ pressed }) => (
-									<MaterialCommunityIcons
-										name="logout"
+									<Feather
+										name="log-out"
 										size={25}
 										color={Colors.light.tint}
 										style={{
@@ -29,15 +29,14 @@ export default function DestinationStack() {
 									/>
 								)}
 							</Pressable>
-							<Link href="/sign-in" asChild>
+							<Link href="/(user)/settings" asChild>
 								<Pressable>
 									{({ pressed }) => (
-										<FontAwesome
-											name="cog"
+										<Feather
+											name="settings"
 											size={25}
 											color={Colors.light.tint}
 											style={{
-												marginRight: 15,
 												opacity: pressed ? 0.5 : 1,
 											}}
 										/>
