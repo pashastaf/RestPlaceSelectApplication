@@ -57,23 +57,23 @@ function RootLayoutNav() {
 					<Stack>
 						<Stack.Screen
 							name="(admin)"
-							options={{ headerShown: true }}
+							options={{ headerShown: false }}
 						/>
 						<Stack.Screen
 							name="(auth)"
-							options={{ headerShown: true }}
+							options={{ headerShown: false }}
 						/>
 						<Stack.Screen
 							name="(user)"
-							options={{ headerShown: true }}
+							options={{ headerShown: false }}
 						/>
 						<Stack.Screen
 							name="(consultant)"
-							options={{ headerShown: true }}
+							options={{ headerShown: false }}
 						/>
 						<Stack.Screen
 							name="(manager)"
-							options={{ headerShown: true }}
+							options={{ headerShown: false }}
 						/>
 						<Stack.Screen
 							name="modal"

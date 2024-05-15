@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
 	},
 	rateText: {
 		fontSize: 25,
+		padding: 2,
 		color: 'gray',
 	},
 });

@@ -20,20 +20,6 @@ export const useOrderList = () => {
 	});
 };
 
-export const useOrderStatusList = () => {
-	return useQuery({
-		queryKey: ["orders_status"],
-		queryFn: async () => {
-			const { data, error } = await supabase
-				.from("orders_status")
-				.select("*");
-			if (error) {
-				throw new Error(error.message);
-			}
-			return data;
-		},
-	});
-};
 
 export const useOrder = (id: number) => {
 	return useQuery({

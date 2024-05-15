@@ -1,9 +1,8 @@
 import { format } from "date-fns";
 import { Link } from "expo-router";
-import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
 import { useProfileList, useConsultantList } from "../api/profile";
 import type { Order } from "../types";
-import { useOrderStatusList } from "../api/order";
 
 type orderListItemProps = {
 	order: Order;
@@ -12,13 +11,12 @@ type orderListItemProps = {
 const orderListItem = ({ order }: orderListItemProps) => {
 	const { data: profiles } = useProfileList();
 	const { data: consultants } = useConsultantList();
-	const { data: ordersStatus } = useOrderStatusList();
 
 	return (
 		<Link href={`/(admin)/order/create?id=${order.id}` as `${string}:${string}`} asChild>
 			<Pressable style={styles.container}>
-				<Text style={styles.contry}>
-					Consultant:{" "}
+				<Text style={styles.text}>
+					<Text style={{ fontWeight: 'bold' }}>Consultant:</Text>{" "}
 					{
 						consultants?.find(
 							(consultant) => consultant.id === order.consultants_id,
@@ -30,8 +28,8 @@ const orderListItem = ({ order }: orderListItemProps) => {
 						).profiles.second_name
 					}
 				</Text>
-				<Text style={styles.contry}>
-					Client:{" "}
+				<Text style={styles.text}>
+					<Text style={{ fontWeight: 'bold' }}>Client:</Text>{" "}
 					{
 						profiles?.find(
 							(profile) => profile.id === order.profiles_id,
@@ -43,34 +41,19 @@ const orderListItem = ({ order }: orderListItemProps) => {
 						).second_name
 					}
 				</Text>
-				<Text style={styles.contry}>
-					Sale date:{" "}
+				<Text style={styles.text}>
+					<Text style={{ fontWeight: 'bold' }}>Sale date:</Text>{" "}
 					{format(
 						new Date(order.sale_date),
 						"dd.MM.yyyy HH:mm:ss",
-					)}{" "}
+					)}
 				</Text>
-				<Text style={styles.contry}>
-					Order cost: {order.total_cost}{" "}
+				<Text style={styles.text}>
+					<Text style={{ fontWeight: 'bold' }}>Total const:</Text> {order.total_cost}
 				</Text>
-				<Text style={styles.contry}>
-					Status: {order.orders_status?.title}{" "}
+				<Text style={styles.text}>
+					<Text style={{ fontWeight: 'bold' }}>Status:</Text> {order.orders_status?.title}
 				</Text>
-
-				<FlatList
-					data={ordersStatus}
-					horizontal
-					style={{ marginBottom: 30 }}
-					showsHorizontalScrollIndicator={false}
-					contentContainerStyle={{ gap: 10, padding: 5 }}
-					renderItem={({ item }) => {
-						return (
-							<TouchableOpacity style={styles.touchView}>
-								<Text style={styles.flatText}>{item.title}</Text>
-							</TouchableOpacity>
-						)
-					}}
-				/>
 			</Pressable>
 		</Link>
 	);
@@ -84,24 +67,17 @@ const styles = StyleSheet.create({
 		padding: 10,
 		borderRadius: 20,
 		flex: 1,
+		borderWidth: 1,
 	},
 	title: {
 		fontSize: 20,
 		fontWeight: "bold",
 	},
-	contry: {
-		fontSize: 14,
-		fontWeight: "normal",
-		color: "blue",
+	text: {
+		fontSize: 16,
 	},
-	flatText: {
-		alignSelf: "center",
-		color: "black",
-		fontSize: 10
-	},
-	touchView: {
-		padding: 10,height: 40,
-		borderRadius: 10,
-		width: 70,
+	image: {
+		width: "100%",
+		aspectRatio: 1,
 	},
 });

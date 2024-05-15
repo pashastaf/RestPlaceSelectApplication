@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
 		gap: 10
 	},
 	rateText: {
-		fontSize: 25,
+		fontSize: 20,
 		color: "gray",
 	},
 	flatView: {

@@ -12,7 +12,9 @@ import {
 	Text,
 	TextInput,
 	View,
+	Image,
 } from "react-native";
+
 
 const SignInScreen = () => {
 	const [email, setEmail] = useState("");
@@ -33,7 +35,10 @@ const SignInScreen = () => {
 	return (
 		<View style={styles.container}>
 			<Stack.Screen options={{ title: "Sign in" }} />
-
+			<Image
+				source={require('../../assets/Designer.jpeg')}
+				style={{ width: '100%', height: 40 }}
+			/>
 			<Text style={styles.label}>Login</Text>
 			<TextInput
 				value={email}
@@ -85,6 +90,12 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		color: Colors.light.tint,
 		marginVertical: 10,
+	},
+	image: {
+		width: '25%',
+		aspectRatio: 1,
+		alignSelf: "center",
+		borderRadius: 100,
 	},
 });
 

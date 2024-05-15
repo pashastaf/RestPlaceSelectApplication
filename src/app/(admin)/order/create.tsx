@@ -256,11 +256,11 @@ const CreateOrderScreen = () => {
 					placeholder={
 						isUpdating
 							? `${consultants.find(
-								(consultant) => consultant.profiles.id === consultantId,
-							)?.first_name || "error"
+								(consultant) => consultant.id === consultantId,
+							)?.profiles.first_name || "error"
 							} ${consultants.find(
-								(consultant) => consultant.profiles.id === consultantId,
-							)?.second_name || "fetch"
+								(consultant) => consultant.id === consultantId,
+							)?.profiles.second_name || "fetch"
 							}`
 							: "Select new item"
 					}
@@ -304,7 +304,7 @@ const CreateOrderScreen = () => {
 									style={[
 										styles.touchView,
 										selectedServices.includes(item.id) && {
-											backgroundColor: "lightgray",
+											backgroundColor: "lightblue",
 										},
 									]}
 									onPress={() => toggleServiceSelection(item.id)}
