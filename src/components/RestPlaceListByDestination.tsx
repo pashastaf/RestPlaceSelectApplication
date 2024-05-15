@@ -2,9 +2,9 @@ import { Link, useSegments } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import type { RestPlace } from "../types";
 import RemoteImage from "./RemoteImage";
-import { DefaultImage } from "./DestinationListItem";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRestPlaceRate } from "../api/restplace";
+import { DefaultImage } from "../app/(admin)";
 
 type RestPlaceListItemProps = {
 	restPlace: RestPlace;
@@ -49,7 +49,7 @@ const RestPlaceListItem = ({ restPlace }: RestPlaceListItemProps) => {
 	};
 
 	return (
-		<Link href={`/${segments[0]}/restplace/${restPlace.id}`} asChild>
+		<Link href={`/${segments[0]}/restplace/${restPlace.id}` as `${string}:${string}`} asChild>
 			<Pressable style={styles.container}>
 				<View style={styles.textView}>
 				<RemoteImage

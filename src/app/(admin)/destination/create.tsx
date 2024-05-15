@@ -6,15 +6,15 @@ import {
 	useUpdateDestination,
 } from "@/src/api/destination";
 import Button from "@/src/components/Button";
-import { DefaultImage } from "@/src/components/DestinationListItem";
 import Colors from "@/src/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Alert,
 	Image,
+	Pressable,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -26,6 +26,9 @@ import { randomUUID } from "expo-crypto";
 import { supabase } from "@/src/lib/supabase";
 import { decode } from "base64-arraybuffer";
 import RemoteImage from "@/src/components/RemoteImage";
+import { Feather } from "@expo/vector-icons";
+import { FeaturesByDestination, useFeaturesByDestinationId, useFeaturesForDestinations } from '@/src/api/features'
+import { DefaultImage } from "..";
 
 const CreateDestinationScreen = () => {
 	const router = useRouter();
@@ -35,30 +38,43 @@ const CreateDestinationScreen = () => {
 	);
 
 	const { data: countries } = useCountryList();
+	const { data: updatingDestination } = useDestination(id);
+	const { data: featuresByDestinationId } = useFeaturesByDestinationId(id);
+	const { data: features } = useFeaturesForDestinations();
+
 	const { mutate: insertDestination } = useInsertDestination();
 	const { mutate: updateDestination } = useUpdateDestination();
-	const { data: updatingDestination } = useDestination(id);
 	const { mutate: deleteDestination } = useDeleteDestination();
 
 	const [title, setTitle] = useState("");
 	const [countryId, setCountryId] = useState("");
 	const [errors, setErrors] = useState("");
 	const [image, setImage] = useState<string | null>(null);
-	const [openCountry, setOpenCountry] = useState(false);
+	const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 
+	const initializeSelectedFeatures = (
+		featuresByDestinationId: FeaturesByDestination[],
+	) => {
+		const initialSelectedServices: number[] = [];
+
+		if (featuresByDestinationId) {
+			featuresByDestinationId.forEach((features) => {
+				initialSelectedServices.push(features.features_id);
+			});
+		}
+		setSelectedFeatures(initialSelectedServices);
+	};
 
 	useEffect(() => {
-		if (updatingDestination) {
+		if (updatingDestination && featuresByDestinationId) {
 			setTitle(updatingDestination.title);
 			setCountryId(updatingDestination.countries_id);
 			setImage(updatingDestination.image_path);
+			initializeSelectedFeatures(featuresByDestinationId);
 		}
-	}, [updatingDestination]);
+	}, [updatingDestination, featuresByDestinationId]);
 
-	if (!countries) {
-		return <ActivityIndicator />;
-	}
 
 	const isUpdating = !!idString;
 
@@ -108,7 +124,7 @@ const CreateDestinationScreen = () => {
 	const onUpdate = async () => {
 		if (!validateInput()) {
 			return;
-		}		
+		}
 		const imagePath = await uploadImage();
 
 		updateDestination(
@@ -189,68 +205,124 @@ const CreateDestinationScreen = () => {
 		}
 	};
 
+	const [openCountry, setOpenCountry] = useState(false);
+	const [openFeatures, setOpenFeatures] = useState(false);
+
+	const onCountryOpen = useCallback(() => {
+		setOpenFeatures(false);
+	}, []);
+
+	const onFeaturesOpen = useCallback(() => {
+		setOpenCountry(false);
+	}, []);
+
+	if (!countries || !features) {
+		return <ActivityIndicator />;
+	}
+
 	const itemsCountry = countries.map((country) => ({
 		label: country.title,
 		value: country.id.toString(),
 	}));
 
+	const itemsFeatures = features.map((feature) => ({
+		label: feature.title,
+		value: feature.id,
+	}));
+
+
 	return (
 		<View style={styles.container}>
 			<Stack.Screen
 				options={{
-					title: isUpdating
-						? "Update Destination"
-						: "Create Destination",
+					title: isUpdating ? "Update Rest Place" : "Create Rest Place",
+					headerTitleStyle: {
+						fontWeight: 'bold',
+					},
+					headerRight: () => (
+						isUpdating &&
+						<Pressable>
+							{({ pressed }) => (
+								<Feather
+									onPress={confirmDelete}
+									name="trash-2"
+									color='red'
+									size={25}
+									style={{
+										opacity: pressed ? 0.5 : 1,
+									}}
+								/>
+							)}
+						</Pressable>
+					)
 				}}
 			/>
 			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
-			<RemoteImage
-				path={updatingDestination?.image_path}
-				fallback={DefaultImage}
-				style={styles.image}
-			/>
-				<Text style={styles.textButton} onPress={pickImage}>
-					Select Image
-				</Text>
-				<Text style={styles.title}>Title</Text>
-				<TextInput
-					placeholder="Destination name"
-					style={styles.input}
-					value={title}
-					onChangeText={setTitle}
-				/>
-				<Text style={styles.title}>Country</Text>
+				<View style={{ flexDirection: 'row', gap: 20 }}>
+					<View style={styles.viewBlock}>
+						{isUpdating ? <RemoteImage
+							path={updatingDestination.image_path}
+							fallback={DefaultImage}
+							style={styles.image}
+						/> : <Image
+							source={{ uri: image || DefaultImage }}
+							style={styles.image}
+						/>}
+						<Text style={styles.textButton} onPress={pickImage}>
+							Select Image
+						</Text>
+					</View>
+					<View style={styles.viewBlock}>
+						<Text style={styles.title}>Title</Text>
+						<TextInput
+							placeholder="Destination name"
+							style={styles.input}
+							value={title}
+							onChangeText={setTitle}
+						/>
+						<Text style={styles.title}>Destination</Text>
+						<DropDownPicker
+							style={{ zIndex: openFeatures ? 1 : 0 }}
+							placeholder={isUpdating ? `${countries.find(country => country.id === countryId)?.title || 'error'}` : 'Select new item'}
+							open={openCountry}
+							onOpen={onCountryOpen}
+							value={countryId}
+							items={itemsCountry}
+							setOpen={setOpenCountry}
+							setValue={setCountryId}
+							setItems={() => { }}
+						/>
+					</View>
+				</View>
 				<DropDownPicker
-					placeholder={
-						isUpdating
-							? `${countries.find((country) => country.id === countryId)
-								?.title || "error"
-							}`
-							: "Select new item"
-					}
-					open={openCountry}
-					value={countryId}
-					items={itemsCountry}
-					setOpen={setOpenCountry}
-					setValue={setCountryId}
-					setItems={() => { }}
-					listMode="MODAL"
-					searchable={true}
-					searchPlaceholder="Search..."
+					style={{ zIndex: openCountry ? 1 : 0, }}
+					placeholder="Select features"
+					placeholderStyle={{ color: 'gray' }}
+					open={openFeatures}
+					onOpen={onFeaturesOpen}
+					value={selectedFeatures}
+					items={itemsFeatures}
+					setOpen={setOpenFeatures}
+					setValue={value => setSelectedFeatures(value)}
+					setItems={() => {}}
+					dropDownDirection="TOP"
+					multiple={true}
+					mode="BADGE"
+					selectedItemLabelStyle={{
+						fontWeight: 'bold',
+						opacity: 0.2
+					}}
+					badgeTextStyle={{
+						fontSize: 12
+					}}
+					extendableBadgeContainer={true}
+					badgeDotColors={['#e76f51', '#00b4d8', '#e9c46a', '#8ac926', '#7209b7', '#f4a261', '#9a6324']}
 				/>
-				<Button
-					text={isUpdating ? "Update" : "Create"}
-					onPress={onSubmit}
-				/>
-				{isUpdating && (
-					<Text onPress={confirmDelete} style={styles.textButton}>
-						{" "}
-						Delete{" "}
-					</Text>
-				)}
+				<View style={{ paddingHorizontal: 15 }}>
+					<Button color={Colors.light.tint} onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
+				</View>
 			</View>
-			{isLoading && (
-				<ActivityIndicator size={80} color='gray' style={styles.activityIndicatorContainer} />)}
+			{isLoading && <ActivityIndicator size="large" style={styles.activityIndicatorContainer} />}
 		</View>
 	);
 };
@@ -259,27 +331,30 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 10,
+		backgroundColor: 'white',
+		justifyContent: 'space-between',
 	},
 	title: {
 		color: "gray",
 		fontSize: 16,
+		marginBottom: 5,
 	},
 	input: {
 		backgroundColor: "white",
 		padding: 10,
-		borderRadius: 5,
-		marginTop: 5,
+		borderRadius: 10,
+		borderWidth: 1,
 		marginBottom: 20,
 	},
 	image: {
-		width: "50%",
+		width: '100%',
 		aspectRatio: 1,
 		alignSelf: "center",
 	},
 	textButton: {
 		alignSelf: "center",
 		fontWeight: "bold",
-		color: Colors.light.tint,
+		color: 'lightblue',
 		marginVertical: 10,
 	},
 	activityIndicatorContainer: {
@@ -289,6 +364,9 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 0,
 		justifyContent: 'center',
+	},
+	viewBlock: {
+		flex: 1,
 	},
 });
 

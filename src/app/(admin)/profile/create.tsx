@@ -1,8 +1,13 @@
 import { useProfile, useUpdateProfile } from "@/src/api/profile";
 import Button from "@/src/components/Button";
+import RemoteImage from "@/src/components/RemoteImage";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
+import { decode } from "base64-arraybuffer";
+import { randomUUID } from "expo-crypto";
+import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -10,19 +15,29 @@ import {
 	Alert,
 	StyleSheet,
 	Text,
+	Image,
 	TextInput,
-	View
+	View,
+	Pressable,
+	TouchableOpacity,
+	FlatList,
+	ScrollView
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import { DefaultAvatar } from "..";
+import { Feather } from "@expo/vector-icons";
+
 
 const CreateProfileScreen = () => {
 	const [email, setEmail] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [secondName, setSecondName] = useState("");
 	const [password, setPassword] = useState("");
-	const [group, setGroup] = useState("user");
+	const [phone, setPhone] = useState("");
+	const [groupId, setGroupId] = useState<number>(1);
 	const [errors, setErrors] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+	const [image, setImage] = useState<string | null>(null);
 
 	const queryClient = useQueryClient();
 
@@ -40,8 +55,9 @@ const CreateProfileScreen = () => {
 			setFirstName(updatingProfile.first_name);
 			setSecondName(updatingProfile.second_name);
 			setEmail(updatingProfile.email);
+			setPhone(updatingProfile.phone);
 			setPassword(updatingProfile.password);
-			setGroup(updatingProfile.group);
+			setGroupId(updatingProfile.group_id);
 		}
 	}, [updatingProfile]);
 
@@ -52,7 +68,10 @@ const CreateProfileScreen = () => {
 		setSecondName("");
 		setEmail("");
 		setPassword("");
+		setPhone("");
 	};
+
+
 
 	const validateInput = () => {
 		setErrors("");
@@ -86,20 +105,26 @@ const CreateProfileScreen = () => {
 			return;
 		}
 		const fullName = `${secondName} ${firstName}`;
+		const avatarPath = await uploadImage();
 		const { error } = await supabase.auth.admin.createUser({
 			email,
 			password,
 			email_confirm: true,
 			user_metadata: {
 				email,
-				password,
+				phone,
 				firstName,
 				secondName,
 				fullName,
-				group,
+				groupId,
+				avatarPath
 			},
 		});
-		if (error) Alert.alert(error.message);
+		console.log(email, password, firstName, secondName, phone, groupId, avatarPath)
+		if (error) {
+			console.log(error)
+			Alert.alert(error.message);
+		}
 		else {
 			queryClient.invalidateQueries({ queryKey: ["profiles"] });
 			resetFields();
@@ -114,7 +139,7 @@ const CreateProfileScreen = () => {
 			return;
 		}
 		updateProfile(
-			{ id, firstName, secondName, email, group, password },
+			{ id, firstName, secondName, email, groupId, password },
 			{
 				onSuccess: () => {
 					resetFields();
@@ -123,6 +148,7 @@ const CreateProfileScreen = () => {
 			},
 		);
 		const fullName = `${secondName} ${firstName}`;
+		const avatarPath = await uploadImage();
 		const { error } = await supabase.auth.admin.updateUserById(
 			updatingProfile.auth_id,
 			{
@@ -134,11 +160,14 @@ const CreateProfileScreen = () => {
 					firstName,
 					secondName,
 					fullName,
-					group,
+					groupId,
+					avatarPath,
 				},
 			},
 		);
-		if (error) Alert.alert(error.message);
+		if (error) {
+			Alert.alert(error.message);
+		}
 		else {
 			queryClient.invalidateQueries({ queryKey: ["profiles"] });
 			resetFields();
@@ -175,112 +204,201 @@ const CreateProfileScreen = () => {
 		);
 	};
 
-	const [openGroup, setOpenGroup] = useState(false);
+	const pickImage = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+		}
+	};
+
+	const uploadImage = async () => {
+		if (!image?.startsWith('file://')) {
+			return console.log('1IF', image)
+		}
+
+		const base64 = await FileSystem.readAsStringAsync(image, {
+			encoding: 'base64',
+		});
+		const filePath = `${randomUUID()}.png`;
+		const contentType = 'image/png';
+		const { data, error } = await supabase.storage
+			.from('images')
+			.upload(filePath, decode(base64), { contentType });
+
+		if (error) {
+			console.error('Error uploading image:', error);
+			return null;
+		}
+
+		if (data) {
+			return data.path;
+		}
+	};
+
+	const [openGroupId, setOpenGroupId] = useState(false);
 	const [items, setItems] = useState([
-		{ label: "user", value: "user" },
-		{ label: "consultant", value: "consultant" },
-		{ label: "manager", value: "manager" },
-		{ label: "admin", value: "admin" },
+		{ label: "user", value: 1, color: '#8ac926' },
+		{ label: "consult", value: 2, color: '#e76f51' },
+		{ label: "manager", value: 3, color: '#e9c46a' },
+		{ label: "admin", value: 4, color: '#00b4d8' },
 	]);
 
 	return (
-		<View style={styles.container}>
+		<ScrollView style={styles.container}>
 			<Stack.Screen
 				options={{
 					title: isUpdating ? "Update Profile" : "Create Profile",
+					headerRight: () => (
+						isUpdating &&
+						<Pressable>
+							{({ pressed }) => (
+								<Feather
+									onPress={confirmDelete}
+									name="trash-2"
+									color='red'
+									size={25}
+									style={{
+										opacity: pressed ? 0.5 : 1,
+									}}
+								/>
+							)}
+						</Pressable>
+					)
 				}}
 			/>
 			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
-				<Text style={styles.label}>Name</Text>
-				<TextInput
-					value={firstName}
-					onChangeText={setFirstName}
-					placeholder="Jhon"
-					style={styles.input}
+				{isUpdating ? <RemoteImage
+					path={updatingProfile?.avatar_url}
+					fallback={DefaultAvatar}
+					style={styles.image}
+				/> : <Image
+					source={{ uri: image || DefaultAvatar }}
+					style={styles.image}
+				/>}
+				<TouchableOpacity onPress={pickImage}>
+					<Text style={styles.textButton}>Select Image</Text>
+				</TouchableOpacity>
+				<View style={{ flexDirection: 'row', gap: 20 }}>
+					<View style={{ flex: 1 }}>
+						<Text style={styles.label}>Name</Text>
+						<TextInput
+							value={firstName}
+							onChangeText={setFirstName}
+							placeholder="Jhon"
+							style={styles.input}
+						/>
+						<Text style={styles.label}>Second Name</Text>
+						<TextInput
+							value={secondName}
+							onChangeText={setSecondName}
+							placeholder="Dou"
+							style={styles.input}
+						/>
+						<Text style={styles.label}>Phone</Text>
+						<TextInput
+							value={phone}
+							onChangeText={setPhone}
+							placeholder="+79771267179"
+							style={styles.input}
+						/>
+					</View>
+					<View style={{ flex: 1 }}>
+						<Text style={styles.label}>Email</Text>
+						<TextInput
+							value={email}
+							onChangeText={setEmail}
+							placeholder="pashastaf@gmail.com"
+							style={styles.input}
+						/>
+						<Text style={styles.label}>Password</Text>
+						<TextInput
+							value={password}
+							onChangeText={setPassword}
+							placeholder=""
+							style={styles.input}
+							secureTextEntry
+						/>
+						{/* <DropDownPicker
+							style={[styles.input , { zIndex: openGroupId ? 1 : 0 }]}
+							placeholder={
+								isUpdating
+									? `${items.find((item) => item.value === groupId)?.label || "error"
+									}`
+									: "Select groupId"
+							}
+							dropDownContainerStyle={{ marginBottom: 20}}
+							open={openGroupId}
+							value={groupId}
+							items={items}
+							setOpen={setOpenGroupId}
+							setValue={(setGroupId)}
+							setItems={setItems}
+						/> */}
+					</View>
+				</View>
+				<Text style={styles.label}>GroupId</Text>
+				<FlatList
+					data={items}
+					horizontal
+					style={{ marginBottom: 30 }}
+					showsHorizontalScrollIndicator={false}
+					contentContainerStyle={{ gap: 10, padding: 5 }}
+					renderItem={({ item }) => {
+						return (
+							<TouchableOpacity style={[styles.touchView, {backgroundColor: item.color}]}>
+								<Text style={styles.flatText}>{item.label}</Text>
+							</TouchableOpacity>
+						)
+					}}
 				/>
-
-				<Text style={styles.label}>Second Name</Text>
-				<TextInput
-					value={secondName}
-					onChangeText={setSecondName}
-					placeholder="Dou"
-					style={styles.input}
-				/>
-
-				<Text style={styles.label}>Email</Text>
-				<TextInput
-					value={email}
-					onChangeText={setEmail}
-					placeholder="pashastaf@gmail.com"
-					style={styles.input}
-				/>
-
-				<Text style={styles.label}>Password</Text>
-				<TextInput
-					value={password}
-					onChangeText={setPassword}
-					placeholder=""
-					style={styles.input}
-					secureTextEntry
-				/>
-				<Text style={styles.label}>Group</Text>
-				<DropDownPicker
-					style={{ zIndex: openGroup ? 1 : 0 }}
-					placeholder={
-						isUpdating
-							? `${items.find((item) => item.value === group)?.label ||
-							"error"
-							}`
-							: "Select group"
-					}
-					open={openGroup}
-					value={group}
-					items={items}
-					setOpen={setOpenGroup}
-					setValue={setGroup}
-					setItems={setItems}
-				/>
-
 				<Button
 					text={isUpdating ? "Update" : "Create"}
 					onPress={onSubmit}
+					color={Colors.light.tint}
 				/>
-				{isUpdating && (
-					<Text onPress={confirmDelete} style={styles.textButton}>
-						{" "}
-						Delete{" "}
-					</Text>
-				)}
 			</View>
 			{isLoading && (
 				<ActivityIndicator size={80} color='gray' style={styles.activityIndicatorContainer} />
 			)}
-		</View>
+		</ScrollView>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 20,
+		padding: 10,
 		flex: 1,
+		backgroundColor: 'white',
 	},
 	label: {
-		color: "gray",
+		fontWeight: 'bold',
+		fontSize: 18
 	},
 	input: {
 		borderWidth: 1,
-		borderColor: "gray",
 		padding: 10,
 		marginTop: 5,
-		marginBottom: 20,
+		marginBottom: 10,
 		backgroundColor: "white",
-		borderRadius: 5,
+		borderRadius: 8,
+	},
+	image: {
+		width: '25%',
+		aspectRatio: 1,
+		alignSelf: "center",
+		borderRadius: 100,
 	},
 	textButton: {
 		alignSelf: "center",
 		fontWeight: "bold",
 		color: Colors.light.tint,
-		marginVertical: 10,
+		marginVertical: 5,
 	},
 	activityIndicatorContainer: {
 		position: 'absolute',
@@ -290,15 +408,14 @@ const styles = StyleSheet.create({
 		right: 0,
 		justifyContent: 'center'
 	},
-	flatView: {
-		height: 60,
+	flatText: {
+		alignSelf: "center",
+		color: "black",
 	},
 	touchView: {
-		borderWidth: 1,
-		borderRadius: 20,
-		width: "90%",
-		height: 50,
-		backgroundColor: "#fff",
+		padding: 10,height: 40,
+		borderRadius: 10,
+		width: 70,
 	},
 });
 

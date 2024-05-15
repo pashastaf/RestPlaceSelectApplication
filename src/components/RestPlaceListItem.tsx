@@ -4,9 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useRestPlaceRate } from "../api/restplace";
 import type { RestPlace } from "../types";
 import RemoteImage from "./RemoteImage";
-
-export const DefaultImage =
-	"https://previews.123rf.com/images/koblizeek/koblizeek2208/koblizeek220800254/190563481-no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg";
+import { DefaultImage } from "../app/(admin)";
 
 type RestPlaceListItemProps = {
 	restPlace: RestPlace;
@@ -37,7 +35,7 @@ const RestPlaceListItem = ({ restPlace }: RestPlaceListItemProps) => {
 
 	return (
 		<Link
-			href={`/${segments[0]}/restplace/${restPlace.id}`}
+			href={`/${segments[0]}/restplace/${restPlace.id}` as `${string}:${string}`}
 			asChild
 		>
 			<Pressable style={styles.container}>

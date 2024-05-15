@@ -11,6 +11,7 @@ import {
 import { useProfileByGroup, useConsultantList } from "@/src/api/profile";
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
+import { Feather } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, {
 	useCallback,
@@ -21,6 +22,7 @@ import {
 	ActivityIndicator,
 	Alert,
 	FlatList,
+	Pressable,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
@@ -214,7 +216,7 @@ const CreateOrderScreen = () => {
 	}
 
 	const itemsConsultant = consultants.map((consultant) => ({
-		label: `${consultant.first_name} ${consultant.second_name}`,
+		label: `${consultant.profiles.first_name} ${consultant.profiles.second_name}`,
 		value: consultant.id.toString(),
 	}));
 
@@ -229,6 +231,22 @@ const CreateOrderScreen = () => {
 			<Stack.Screen
 				options={{
 					title: isUpdating ? `Update Order #${id}` : "Create Order",
+					headerRight: () => (
+						isUpdating &&
+						<Pressable>
+							{({ pressed }) => (
+								<Feather
+									onPress={confirmDelete}
+									name="trash-2"
+									color='red'
+									size={25}
+									style={{
+										opacity: pressed ? 0.5 : 1,
+									}}
+								/>
+							)}
+						</Pressable>
+					)
 				}}
 			/>
 			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
@@ -238,10 +256,10 @@ const CreateOrderScreen = () => {
 					placeholder={
 						isUpdating
 							? `${consultants.find(
-								(consultant) => consultant.id === consultantId,
+								(consultant) => consultant.profiles.id === consultantId,
 							)?.first_name || "error"
 							} ${consultants.find(
-								(consultant) => consultant.id === consultantId,
+								(consultant) => consultant.profiles.id === consultantId,
 							)?.second_name || "fetch"
 							}`
 							: "Select new item"
@@ -299,15 +317,10 @@ const CreateOrderScreen = () => {
 				/>
 				<Text style={styles.title}>Total Cost is: {totalCost} </Text>
 				<Button
+				color={Colors.light.tint}
 					text={isUpdating ? "Update" : "Create"}
 					onPress={onSubmit}
 				/>
-				{isUpdating && (
-					<Text onPress={confirmDelete} style={styles.textButton}>
-						Delete
-					</Text>
-
-				)}
 			</View>
 			{isLoading && (
 				<ActivityIndicator size={80} color='gray' style={styles.activityIndicatorContainer} />)}
@@ -335,12 +348,6 @@ const styles = StyleSheet.create({
 		width: "50%",
 		aspectRatio: 1,
 		alignSelf: "center",
-	},
-	textButton: {
-		alignSelf: "center",
-		fontWeight: "bold",
-		color: Colors.light.tint,
-		marginVertical: 10,
 	},
 	flatView: {
 		width: "50%",

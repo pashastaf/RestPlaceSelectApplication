@@ -27,10 +27,14 @@ export type Profile = {
 	first_name: string;
 	second_name: string;
 	email: string;
-	group: string;
+	phone: string;
+	group_id: number;
 	avatar_url: string;
 	created_at: string;
 	serial_num: number;
+	profiles_group: {
+		title: string;
+	}
 };
 
 export type Order = {
@@ -39,7 +43,10 @@ export type Order = {
 	consultants_id: number;
 	sale_date: string;
 	total_cost: number;
-	status: string;
+	status_id: number;
+	orders_status: {
+		title: string;
+	}
 };
 
 export type Service = {

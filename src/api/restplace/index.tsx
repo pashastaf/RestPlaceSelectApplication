@@ -148,39 +148,6 @@ export const useDeleteRestPlace = () => {
 	});
 };
 
-export const useFeaturesForPlaces = () => {
-	return useQuery({
-		queryKey: ["features"],
-		queryFn: async () => {
-			const { data, error } = await supabase
-				.from("features")
-				.select("*")
-				.eq('features_type_id', 2);
-			if (error) {
-				throw new Error(error.message);
-			}
-			return data;
-		},
-	});
-};
-
-export const useFeaturesByPlacesId = (id: number) => {
-	return useQuery({
-		queryKey: ["places_features", id],
-		queryFn: async () => {
-			const { data, error } = await supabase
-				.from("places_features")
-				.select("*, features(id, title)")
-				.eq("rest_places_id", id);
-
-			if (error) {
-				throw new Error(error.message);
-			}
-			return data;
-		},
-	});
-};
-
 export const useRestPlaceRate = (id: number) => {
 	return useQuery({
 		queryKey: ["rest_places_rate", id],

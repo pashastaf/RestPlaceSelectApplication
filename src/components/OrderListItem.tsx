@@ -1,8 +1,9 @@
 import { format } from "date-fns";
 import { Link } from "expo-router";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useProfileList, useConsultantList } from "../api/profile";
 import type { Order } from "../types";
+import { useOrderStatusList } from "../api/order";
 
 type orderListItemProps = {
 	order: Order;
@@ -11,21 +12,22 @@ type orderListItemProps = {
 const orderListItem = ({ order }: orderListItemProps) => {
 	const { data: profiles } = useProfileList();
 	const { data: consultants } = useConsultantList();
+	const { data: ordersStatus } = useOrderStatusList();
 
 	return (
-		<Link href={`/(admin)/order/create?id=${order.id}`} asChild>
+		<Link href={`/(admin)/order/create?id=${order.id}` as `${string}:${string}`} asChild>
 			<Pressable style={styles.container}>
 				<Text style={styles.contry}>
 					Consultant:{" "}
 					{
 						consultants?.find(
 							(consultant) => consultant.id === order.consultants_id,
-						).first_name
+						).profiles.first_name
 					}{" "}
 					{
 						consultants?.find(
 							(consultant) => consultant.id === order.consultants_id,
-						).second_name
+						).profiles.second_name
 					}
 				</Text>
 				<Text style={styles.contry}>
@@ -52,8 +54,23 @@ const orderListItem = ({ order }: orderListItemProps) => {
 					Order cost: {order.total_cost}{" "}
 				</Text>
 				<Text style={styles.contry}>
-					Status: {order.status}{" "}
+					Status: {order.orders_status?.title}{" "}
 				</Text>
+
+				<FlatList
+					data={ordersStatus}
+					horizontal
+					style={{ marginBottom: 30 }}
+					showsHorizontalScrollIndicator={false}
+					contentContainerStyle={{ gap: 10, padding: 5 }}
+					renderItem={({ item }) => {
+						return (
+							<TouchableOpacity style={styles.touchView}>
+								<Text style={styles.flatText}>{item.title}</Text>
+							</TouchableOpacity>
+						)
+					}}
+				/>
 			</Pressable>
 		</Link>
 	);
@@ -77,8 +94,14 @@ const styles = StyleSheet.create({
 		fontWeight: "normal",
 		color: "blue",
 	},
-	image: {
-		width: "100%",
-		aspectRatio: 1,
+	flatText: {
+		alignSelf: "center",
+		color: "black",
+		fontSize: 10
+	},
+	touchView: {
+		padding: 10,height: 40,
+		borderRadius: 10,
+		width: 70,
 	},
 });

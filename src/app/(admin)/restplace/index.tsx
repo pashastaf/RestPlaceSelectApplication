@@ -1,4 +1,5 @@
-import { useFeaturesForPlaces, useRestPlaceList } from "@/src/api/restplace";
+import { useFeaturesForPlaces } from "@/src/api/features";
+import {  useRestPlaceList } from "@/src/api/restplace";
 import RestPlaceListItem from "@/src/components/RestPlaceListItem";
 import Colors from "@/src/constants/Colors";
 import { supabase } from "@/src/lib/supabase";
@@ -77,7 +78,7 @@ export default function RestPlaceScreen() {
 	}));
 
 	return (
-		<View style={{ flex: 1 }}>
+		<View style={{ flex: 1, backgroundColor: 'white'}}>
 			<View style={styles.seacrhButton}>
 				<TextInput
 					placeholder="Search"
@@ -137,7 +138,7 @@ export default function RestPlaceScreen() {
 				renderItem={({ item }) => (
 					<RestPlaceListItem restPlace={item} />
 				)}
-				contentContainerStyle={{ gap: 10, padding: 10 }}
+				contentContainerStyle={{ gap: 20, padding: 10 }}
 			/>
 		</View>
 	);

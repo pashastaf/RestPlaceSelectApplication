@@ -1,45 +1,37 @@
 import { useDestinationList } from "@/src/api/destination";
 import {
 	useDeleteRestPlace,
-	useFeaturesByPlacesId,
-	useFeaturesForPlaces,
 	useInsertRestPlace,
 	useRestPlace,
 	useUpdateRestPlace,
 } from "@/src/api/restplace";
 import Button from "@/src/components/Button";
-import { DefaultImage } from "@/src/components/DestinationListItem";
+import RemoteImage from "@/src/components/RemoteImage";
+import Colors from "@/src/constants/Colors";
+import { supabase } from "@/src/lib/supabase";
+import { Feather } from "@expo/vector-icons";
+import { decode } from "base64-arraybuffer";
+import { randomUUID } from "expo-crypto";
+import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Alert,
-	FlatList,
 	Image,
+	Pressable,
 	StyleSheet,
 	Text,
 	TextInput,
-	TouchableOpacity,
 	View
 } from "react-native";
-import * as FileSystem from "expo-file-system"
-import { randomUUID } from "expo-crypto";
-import { supabase } from "@/src/lib/supabase";
-import { decode } from "base64-arraybuffer";
 import DropDownPicker from "react-native-dropdown-picker";
-import RemoteImage from "@/src/components/RemoteImage";
+import { DefaultImage } from "..";
+import { FeaturesByPlacesId, useFeaturesByPlacesId, useFeaturesForPlaces } from "@/src/api/features";
 
 const CreateRestPlaceScreen = () => {
-	interface FeaturesByPlacesId {
-		id: number;
-		features_id: number;
-		rest_places_id: number;
-		features: {
-			id: number;
-			title: number;
-		}
-	}
+	
 
 	// Определение состояний и хуков маршрутизатора
 	const router = useRouter();
@@ -90,18 +82,6 @@ const CreateRestPlaceScreen = () => {
 		}
 	}, [updatingRestPlace, featuresByPlaceId]);
 
-	const toggleFeaturesSelection = (featuresId: number) => {
-		if (featuresByPlaceId) {
-			if (selectedFeatures.includes(featuresId)) {
-				setSelectedFeatures(
-					selectedFeatures.filter((id) => id !== featuresId),
-				);
-			} else {
-				setSelectedFeatures([...selectedFeatures, featuresId]);
-			}
-		}
-	};
-
 	const resetFields = () => {
 		setTitle("");
 		setDestinationId("");
@@ -110,7 +90,7 @@ const CreateRestPlaceScreen = () => {
 	const validateInput = () => {
 		setErrors("");
 		if (!title) {
-			setErrors("Name is required");
+			setErrors("Title is required");
 			return false;
 		}
 		if (!destinationId) {
@@ -230,10 +210,10 @@ const CreateRestPlaceScreen = () => {
 		return <ActivityIndicator />;
 	}
 
-	const itemsDestination = destinations.map((destination) => ({
+	const [itemsDestination, setItemDestinations] = useState(destinations.map((destination) => ({
 		label: destination.title,
 		value: destination.id.toString(),
-	}));
+	})));
 
 	const itemsFeatures = features.map((feature) => ({
 		label: feature.title,
@@ -244,6 +224,14 @@ const CreateRestPlaceScreen = () => {
 	const [openDestination, setOpenDestination] = useState(false);
 	const [openFeatures, setOpenFeatures] = useState(false);
 
+	const onDestinationOpen = useCallback(() => {
+		setOpenFeatures(false);
+	}, []);
+
+	const onFeaturesOpen = useCallback(() => {
+		setOpenDestination(false);
+	}, []);
+
 	console.log(selectedFeatures)
 	console.log(featuresByPlaceId)
 	return (
@@ -251,152 +239,134 @@ const CreateRestPlaceScreen = () => {
 			<Stack.Screen
 				options={{
 					title: isUpdating ? "Update Rest Place" : "Create Rest Place",
-					headerStyle: {
-						backgroundColor: Colors.primary,
-					},
-					headerTintColor: Colors.textPrimary,
 					headerTitleStyle: {
 						fontWeight: 'bold',
 					},
+					headerRight: () => (
+						isUpdating &&
+						<Pressable>
+							{({ pressed }) => (
+								<Feather
+									onPress={confirmDelete}
+									name="trash-2"
+									color='red'
+									size={25}
+									style={{
+										opacity: pressed ? 0.5 : 1,
+									}}
+								/>
+							)}
+						</Pressable>
+					)
 				}}
 			/>
-			<View style={styles.content}>
-				<View style={{ opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }}>
-					<RemoteImage
-						path={updatingRestPlace?.image_path}
-						fallback={DefaultImage}
-						style={styles.image}
-					/>
-					<TouchableOpacity style={styles.selectImageButton} onPress={pickImage}>
-						<Text style={styles.selectImageText}>Select Image</Text>
-					</TouchableOpacity>
-					<Text style={styles.label}>Title</Text>
-					<TextInput placeholder="Rest place name" style={styles.input} value={title} onChangeText={setTitle} />
-					<Text style={styles.label}>Destination</Text>
-					<DropDownPicker
-						style={styles.dropdown}
-						placeholder={isUpdating ? `${destinations.find(destination => destination.id === destinationId)?.title || 'error'}` : 'Select new item'}
-						open={openDestination}
-						value={destinationId}
-						items={itemsDestination}
-						setOpen={setOpenDestination}
-						setValue={setDestinationId}
-						setItems={() => { }}
-					/>
-					<DropDownPicker
-						style={styles.dropdown}
-						dropDownContainerStyle={styles.dropdown}
-						placeholder="Select features"
-						placeholderStyle={{ color: 'gray' }}
-						open={openFeatures}
-						value={selectedFeatures}
-						items={itemsFeatures}
-						setOpen={setOpenFeatures}
-						setValue={value => setSelectedFeatures(value)}
-						setItems={() => { }}
-						multiple={true}
-						mode="BADGE"
-						extendableBadgeContainer={true}
-						badgeDotColors={['#e76f51', '#00b4d8', '#e9c46a', '#e76f51', '#8ac926', '#00b4d8', '#e9c46a']}
-					/>
-					<TouchableOpacity style={styles.button} onPress={onSubmit}>
-						<Text style={styles.buttonText}>{isUpdating ? "Update" : "Create"}</Text>
-					</TouchableOpacity>
-					{isUpdating && (
-						<TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
-							<Text style={styles.deleteButtonText}>Delete</Text>
-						</TouchableOpacity>
-					)}
+			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
+				<View style={{ flexDirection: 'row', gap: 20 }}>
+					<View style={{ flex: 1 }}>
+					{isUpdating ? <RemoteImage
+							path={updatingRestPlace.image_path}
+							fallback={DefaultImage}
+							style={styles.image}
+						/> : <Image
+							source={{ uri: image || DefaultImage }}
+							style={styles.image}
+						/>}
+						<Text style={styles.textButton} onPress={pickImage}>
+							Select Image
+						</Text>
+					</View>
+					<View style={{ flex: 1 }}>
+						<Text style={styles.title}>Title</Text>
+						<TextInput
+							placeholder="Destination name"
+							style={styles.input}
+							value={title}
+							onChangeText={setTitle}
+						/>
+						<Text style={styles.title}>Destination</Text>
+						<DropDownPicker
+							style={{ zIndex: openFeatures ? 1 : 0 }}
+							placeholder={isUpdating ? `${destinations.find(destination => destination.id === destinationId)?.title || 'error'}` : 'Select new item'}
+							open={openDestination}
+							onOpen={onDestinationOpen}
+							value={destinationId}
+							items={itemsDestination}
+							setOpen={setOpenDestination}
+							setValue={setDestinationId}
+							setItems={() => { }}
+						/>
+					</View>
 				</View>
-				{isLoading && <ActivityIndicator size="large" color={Colors.primary} style={styles.activityIndicator} />}
+				<DropDownPicker
+					style={{ zIndex: openDestination ? 1 : 0, }}
+					placeholder="Select features"
+					placeholderStyle={{ color: 'gray' }}
+					open={openFeatures}
+					onOpen={onFeaturesOpen}
+					value={selectedFeatures}
+					items={itemsFeatures}
+					setOpen={setOpenFeatures}
+					setValue={value => setSelectedFeatures(value)}
+					setItems={setItemDestinations}
+					multiple={true}
+					mode="BADGE"
+					extendableBadgeContainer={true}
+					dropDownDirection="TOP"
+					selectedItemLabelStyle={{
+						fontWeight: 'bold',
+						opacity: 0.2
+					}}
+					badgeTextStyle={{
+						fontSize: 12
+					}}
+					badgeDotColors={['#e76f51', '#00b4d8', '#e9c46a', '#8ac926', '#7209b7', '#f4a261', '#9a6324']}
+				/>
+				<View style={{ paddingHorizontal: 15 }}>
+					<Button color={Colors.light.tint} onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
+				</View>
 			</View>
+			{isLoading && <ActivityIndicator size="large" style={styles.activityIndicatorContainer} />}
 		</View>
 	);
-};
-
-const Colors = {
-	primary: '#F5F5F5', // Красный
-	secondary: '#4285F4', // Синий
-	background: '#F5F5F5', // Светло-серый
-	textPrimary: '#333333', // Темно-серый
-	textSecondary: '#757575', // Серый
-	inputBackground: '#FFFFFF', // Белый
-	buttonBackground: '#4285F4', // Зеленый
-	buttonTextColor: '#FFFFFF', // Белый
-	deleteButtonBackground: '#FF5733', // Оранжевый (такой же, как и основной)
 };
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: Colors.background,
+		padding: 10,
+		backgroundColor: 'white',
+		justifyContent: 'space-between',
 	},
-	content: {
-		flex: 1,
-		paddingHorizontal: 20,
-		paddingTop: 20,
-	},
-	image: {
-		width: '100%',
-		aspectRatio: 16 / 9,
-		marginBottom: 20,
-		borderRadius: 15,
-	},
-	selectImageButton: {
-		alignSelf: 'flex-start',
-		marginBottom: 10,
-	},
-	selectImageText: {
-		color: Colors.primary,
-		fontWeight: 'bold',
-	},
-	label: {
+	title: {
+		color: "gray",
 		fontSize: 16,
-		color: Colors.textSecondary,
 		marginBottom: 5,
 	},
 	input: {
-		backgroundColor: Colors.inputBackground,
-		paddingVertical: 15,
-		paddingHorizontal: 20,
-		borderRadius: 25,
-		marginBottom: 20,
-		color: Colors.textPrimary,
-		fontSize: 16,
-	},
-	dropdown: {
-		marginTop: 5,
+		backgroundColor: "white",
+		padding: 10,
+		borderRadius: 10,
+		borderWidth: 1,
 		marginBottom: 20,
 	},
-	button: {
-		backgroundColor: Colors.buttonBackground,
-		paddingVertical: 15,
-		borderRadius: 25,
-		marginBottom: 10,
+	image: {
+		width: '100%',
+		aspectRatio: 1,
+		alignSelf: "center",
 	},
-	buttonText: {
-		color: Colors.buttonTextColor,
-		textAlign: 'center',
-		fontWeight: 'bold',
+	textButton: {
+		alignSelf: "center",
+		fontWeight: "bold",
+		color: 'lightblue',
+		marginVertical: 10,
 	},
-	deleteButton: {
-		backgroundColor: Colors.deleteButtonBackground,
-		paddingVertical: 15,
-		borderRadius: 25,
-		marginBottom: 10,
-	},
-	deleteButtonText: {
-		color: Colors.buttonTextColor,
-		textAlign: 'center',
-		fontWeight: 'bold',
-	},
-	activityIndicator: {
+	activityIndicatorContainer: {
 		position: 'absolute',
 		top: 0,
-		left: 0,
 		bottom: 0,
+		left: 0,
 		right: 0,
-		justifyContent: 'center'
+		justifyContent: 'center',
 	},
 });
 

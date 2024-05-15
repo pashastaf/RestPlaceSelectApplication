@@ -11,6 +11,21 @@ export const useOrderList = () => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("orders")
+				.select("*,orders_status(title)");
+			if (error) {
+				throw new Error(error.message);
+			}
+			return data;
+		},
+	});
+};
+
+export const useOrderStatusList = () => {
+	return useQuery({
+		queryKey: ["orders_status"],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("orders_status")
 				.select("*");
 			if (error) {
 				throw new Error(error.message);
@@ -26,7 +41,7 @@ export const useOrder = (id: number) => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("orders")
-				.select("*")
+				.select("*,orders_status(title)")
 				.eq("id", id)
 				.single();
 
@@ -50,7 +65,7 @@ export const useInsertOrder = () => {
 					consultants_id: data.consultantId,
 					sale_date: data.currentDate,
 					total_cost: data.totalCost,
-					status: 'In process',
+					status_id: 1,
 				})
 				.select()
 				.single();
@@ -81,7 +96,7 @@ export const useUpdateOrder = () => {
 					profiles_id: data.profileId,
 					consultants_id: data.consultantId,
 					total_cost: data.totalCost,
-					status: 'On progress'
+					status: 1
 				})
 				.eq("id", data.id)
 				.select()

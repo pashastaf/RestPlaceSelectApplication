@@ -143,39 +143,6 @@ export const useCountryList = () => {
 	});
 };
 
-export const useFeaturesForDestinations = () => {
-	return useQuery({
-		queryKey: ["features"],
-		queryFn: async () => {
-			const { data, error } = await supabase
-				.from("features")
-				.select("*")
-				.eq('features_type_id', 2);
-			if (error) {
-				throw new Error(error.message);
-			}
-			return data;
-		},
-	});
-};
-
-export const useFeaturesByDestinationId = (id: number) => {
-	return useQuery({
-		queryKey: ["destinations_features", id],
-		queryFn: async () => {
-			const { data, error } = await supabase
-				.from("destinations_features")
-				.select("*, features(id, title)")
-				.eq("destinations_id", id);
-
-			if (error) {
-				throw new Error(error.message);
-			}
-			return data;
-		},
-	});
-};
-
 export const useDestinationsRate = (id: number) => {
 	return useQuery({
 		queryKey: ["destinations_rate", id],

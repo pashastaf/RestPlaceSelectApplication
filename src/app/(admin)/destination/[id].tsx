@@ -1,10 +1,9 @@
 import {
 	useDestination,
 	useDestinationsRate,
-	useFeaturesByDestinationId,
 } from "@/src/api/destination";
+;
 import { useRestPlacesByDestIdType } from "@/src/api/restplace";
-import { DefaultImage } from "@/src/components/DestinationListItem";
 import RemoteImage from "@/src/components/RemoteImage";
 import RestPlaceListByDestination from "@/src/components/RestPlaceListByDestination";
 import Colors from "@/src/constants/Colors";
@@ -20,18 +19,10 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { DefaultImage } from "..";
+import { FeaturesByDestination, useFeaturesByDestinationId } from "@/src/api/features";
 
 const DestinationDetailScreen = () => {
-	interface FeaturesByDestination {
-		id: number;
-		features_id: number;
-		destinations_id: number;
-		features: {
-			id: number;
-			title: string;
-		};
-	}
-
 	const { id: idSting } = useLocalSearchParams();
 	const id = Number.parseFloat(
 		typeof idSting === "string" ? idSting : idSting[0],
@@ -89,17 +80,6 @@ const DestinationDetailScreen = () => {
 		return <Text> destination not found</Text>;
 	}
 
-	const tagColors = [
-		"#888888",
-		"#00ffff",
-		"#0000ff",
-		"#ffff00",
-		"#00ffff",
-		"#ff00ff",
-		"#ff8800",
-		"#888888",
-	]; // Заранее приготовленный массив цветов
-
 	return (
 		<ScrollView style={styles.container}>
 			<Stack.Screen
@@ -142,9 +122,8 @@ const DestinationDetailScreen = () => {
 				horizontal
 				contentContainerStyle={{ gap: 10 }}
 				renderItem={({ item, index }) => {
-					const tagColor = tagColors[index % tagColors.length];
 					return (
-						<View style={[styles.flatView, { backgroundColor: tagColor }]}>
+						<View style={[styles.flatView, { backgroundColor: item.features.color }]}>
 							<TouchableOpacity style={styles.touchView}>
 								<Text style={styles.flatText}>{item.features.title}</Text>
 							</TouchableOpacity>
@@ -160,10 +139,10 @@ const DestinationDetailScreen = () => {
 				data={restPlacesRest}
 				horizontal
 				showsHorizontalScrollIndicator={false}
+				contentContainerStyle={styles.flatContent}
 				renderItem={({ item }) => (
 					<RestPlaceListByDestination restPlace={item} />
 				)}
-				contentContainerStyle={styles.flatContent}
 			/>
 			{restPlacesRestaurant && restPlacesRestaurant.length > 0 && (
 				<Text style={styles.textBeforeFlat}>Restaurant</Text>
@@ -172,22 +151,22 @@ const DestinationDetailScreen = () => {
 				data={restPlacesRestaurant}
 				horizontal
 				showsHorizontalScrollIndicator={false}
+				contentContainerStyle={styles.flatContent}
 				renderItem={({ item }) => (
 					<RestPlaceListByDestination restPlace={item} />
 				)}
-				contentContainerStyle={styles.flatContent}
 			/>
 			{restPlacesHotel && restPlacesHotel.length > 0 && (
 				<Text style={styles.textBeforeFlat}>Hotel</Text>
 			)}
 			<FlatList
 				data={restPlacesHotel}
-				showsHorizontalScrollIndicator={false}
 				horizontal
+				showsHorizontalScrollIndicator={false}
+				contentContainerStyle={styles.flatContent}
 				renderItem={({ item }) => (
 					<RestPlaceListByDestination restPlace={item} />
 				)}
-				contentContainerStyle={styles.flatContent}
 			/>
 		</ScrollView>
 	);
@@ -228,7 +207,7 @@ const styles = StyleSheet.create({
 	},
 	flatText: {
 		alignSelf: "center",
-		color: "white",
+		color: "black",
 	},
 	touchView: {
 		padding: 10,

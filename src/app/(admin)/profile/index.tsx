@@ -16,11 +16,11 @@ export default function ProfileScreen() {
 	}, [profile])
 
 	if (isLoading) {
-		return <ActivityIndicator />;
+		return <ActivityIndicator style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'center'}} />;
 	}
 
 	if (error) {
-		return <Text> Failed to fetch product </Text>;
+		return <Text style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'center'}}> Failed to fetch profiles </Text>;
 	}
 
 	async function handleFilter(search: string) {
@@ -36,7 +36,7 @@ export default function ProfileScreen() {
 	}
 
 	return (
-		<View style={{ flex: 1, marginTop: 10 }}>
+		<View style={{ flex: 1, backgroundColor:'white' }}>
 			<TextInput
 				placeholder="Search"
 				clearButtonMode="always"
@@ -50,14 +50,14 @@ export default function ProfileScreen() {
 				data={searchQuery}
 				renderItem={({ item }) => <ProfileListItem profile={item} />}
 				numColumns={1}
-				contentContainerStyle={{ gap: 10, padding: 10 }}
-			//columnWrapperStyle= {{ gap: 10}}
+				contentContainerStyle={{ gap: 20, padding: 15 }}
 			/>
 		</View>
 	);
 }
 const styles = StyleSheet.create({
 	searchBox: {
+		marginVertical: 15,
 		paddingHorizontal: 20,
 		paddingVertical: 10,
 		borderColor: "#ccc",

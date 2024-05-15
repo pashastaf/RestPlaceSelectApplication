@@ -12,7 +12,7 @@ export const useProfileList = () => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("profiles")
-				.select("*");
+				.select("*, profiles_group(title)");
 			if (error) {
 				throw new Error(error.message);
 			}
@@ -27,7 +27,7 @@ export const useProfile = (id: number) => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("profiles")
-				.select("*")
+				.select("*, profiles_group(title)")
 				.eq("id", id)
 				.single();
 
@@ -52,7 +52,7 @@ export const useUpdateProfile = () => {
 					email: data.email,
 					phone: data.phone,
 					group_id: data.groupId,
-					avatar_url: data.avatarImage
+					avatar_url: data.avatarPath
 				})
 				.eq("id", data.id)
 				.select()

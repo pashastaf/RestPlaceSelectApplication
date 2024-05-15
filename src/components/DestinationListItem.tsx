@@ -4,9 +4,8 @@ import type { Destination } from "../types";
 import RemoteImage from "./RemoteImage";
 import { useDestinationsRate } from "../api/destination";
 import { FontAwesome } from "@expo/vector-icons";
+import { DefaultImage } from "../app/(admin)";
 
-export const DefaultImage =
-	"https://previews.123rf.com/images/koblizeek/koblizeek2208/koblizeek220800254/190563481-no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.jpg";
 
 type DestinationListItemProps = {
 	destination: Destination;
@@ -33,11 +32,12 @@ const DestinationListItem = ({ destination }: DestinationListItemProps) => {
 			}
 			return starsArray;
 	};
+	
 
 
 	return (
 			<Link
-					href={`/${segments[0]}/destination/${destination.id}`}
+					href={`/${segments[0]}/destination/${destination.id}` as `${string}:${string}`}
 					asChild
 			>
 					<Pressable style={styles.container}>
