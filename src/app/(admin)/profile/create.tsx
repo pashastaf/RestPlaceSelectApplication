@@ -342,7 +342,7 @@ const CreateProfileScreen = () => {
 						/> */}
 					</View>
 				</View>
-				<Text style={styles.label}>GroupId</Text>
+				<Text style={styles.label}>Groups: </Text>
 				<FlatList
 					data={items}
 					horizontal
