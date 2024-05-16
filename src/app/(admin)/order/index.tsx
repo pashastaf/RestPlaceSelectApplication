@@ -1,11 +1,16 @@
 import { useOrderList } from "@/src/api/order";
 import OrderListItem from "@/src/components/OrderListItem";
 import Colors from "@/src/constants/Colors";
+import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View, StyleSheet, TextInput, Pressable } from "react-native";
+import { BackgroundImage } from "react-native-elements/dist/config";
 
 export default function OrderScreen() {
 	const { data: order, error, isLoading } = useOrderList();
+
+	const [inputValue, setInputValue] = useState('');
+
 
 	if (isLoading) {
 		return <ActivityIndicator />;
@@ -16,14 +21,42 @@ export default function OrderScreen() {
 	}
 
 	const items = [
-		{ label: "In process", value: 1, color: '#8ac926' },
-		{ label: "Under review", value: 2, color: '#e76f51' },
-		{ label: "In the work", value: 3, color: '#e9c46a' },
-		{ label: "Completed", value: 4, color: '#00b4d8' },
+		{ label: "In process", value: 1, color: Colors.light.tint },
+		{ label: "Under review", value: 2, color: 'white' },
+		{ label: "In the work", value: 3, color: 'white' },
+		{ label: "Completed", value: 4, color: 'white' },
 	];
 
 	return (
 		<View style={{ backgroundColor: 'white', flex: 1}}>
+			<View style={styles.seacrhButton}>
+				<TextInput
+					placeholder="Search"
+					clearButtonMode="always"
+					style={styles.searchBox}
+					autoCapitalize="none"
+					value={inputValue}
+					autoCorrect={false}
+					onChangeText={() => {}}
+				/>
+				<View>
+					<Pressable
+						onPress={() => {
+						}}
+					>
+						{({ pressed }) => (
+							<Feather
+								name="sliders"
+								size={25}
+								color={Colors.light.tint}
+								style={{
+									opacity: pressed ? 0.5 : 1,
+								}}
+							/>
+						)}
+					</Pressable>
+				</View>
+		</View>
 		<FlatList
 			data={order}
 			numColumns={1}
@@ -37,7 +70,7 @@ export default function OrderScreen() {
 			contentContainerStyle={{ gap: 10, padding: 10 }}
 			renderItem={({ item }) => {
 							return (
-								<TouchableOpacity style={[styles.touchView, { backgroundColor: item.color }]}>
+								<TouchableOpacity style={[styles.touchView, {backgroundColor: item.color}]}>
 									<Text style={styles.flatText}>{item.label}</Text>
 								</TouchableOpacity>
 							)
@@ -60,6 +93,22 @@ const styles = StyleSheet.create({
 		padding: 10, 
 		height: 40,
 		borderRadius: 10,
-		width: 90,
+		width: 100,
+		borderWidth: 1,
+	},
+	searchBox: {
+		paddingHorizontal: 20,
+		paddingVertical: 10,
+		borderColor: "#ccc",
+		borderWidth: 1,
+		borderRadius: 8,
+		width: "90%",
+	},
+	seacrhButton: {
+		marginHorizontal: 15,
+		marginVertical: 15,
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: 'center'
 	},
 });
