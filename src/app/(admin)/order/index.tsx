@@ -4,7 +4,6 @@ import Colors from "@/src/constants/Colors";
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View, StyleSheet, TextInput, Pressable } from "react-native";
-import { BackgroundImage } from "react-native-elements/dist/config";
 
 export default function OrderScreen() {
 	const { data: order, error, isLoading } = useOrderList();
@@ -28,7 +27,7 @@ export default function OrderScreen() {
 	];
 
 	return (
-		<View style={{ backgroundColor: 'white', flex: 1}}>
+		<View style={{ backgroundColor: 'white', flex: 1 }}>
 			<View style={styles.seacrhButton}>
 				<TextInput
 					placeholder="Search"
@@ -37,7 +36,7 @@ export default function OrderScreen() {
 					autoCapitalize="none"
 					value={inputValue}
 					autoCorrect={false}
-					onChangeText={() => {}}
+					onChangeText={() => { }}
 				/>
 				<View>
 					<Pressable
@@ -56,30 +55,31 @@ export default function OrderScreen() {
 						)}
 					</Pressable>
 				</View>
-		</View>
-		<FlatList
-			data={order}
-			numColumns={1}
-			contentContainerStyle={{ gap: 10, padding: 10 }}
-			renderItem={({ item }) =>
-				<View>
-					<OrderListItem order={item} />
-					<FlatList
-						data={items}
-						horizontal
-			contentContainerStyle={{ gap: 10, padding: 10 }}
-			renderItem={({ item }) => {
-							return (
-								<TouchableOpacity style={[styles.touchView, {backgroundColor: item.color}]}>
-									<Text style={styles.flatText}>{item.label}</Text>
-								</TouchableOpacity>
-							)
-						}}
-					/>
-				</View>
+			</View>
+			<FlatList
+				data={order}
+				numColumns={1}
+				contentContainerStyle={{ gap: 10, padding: 10 }}
+				renderItem={({ item }) =>
+					<View>
+						<OrderListItem order={item} />
+						<FlatList
+							data={items}
+							horizontal
+							showsHorizontalScrollIndicator={false}
+							contentContainerStyle={{ gap: 10, padding: 10 }}
+							renderItem={({ item }) => {
+								return (
+									<TouchableOpacity style={[styles.touchView, { backgroundColor: item.color }]}>
+										<Text style={styles.flatText}>{item.label}</Text>
+									</TouchableOpacity>
+								)
+							}}
+						/>
+					</View>
 
-			}
-		/>
+				}
+			/>
 		</View>
 	);
 }
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
 		color: "black",
 	},
 	touchView: {
-		padding: 10, 
+		padding: 10,
 		height: 40,
 		borderRadius: 10,
 		width: 100,
