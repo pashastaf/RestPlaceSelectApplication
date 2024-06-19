@@ -12,7 +12,7 @@ import { useProfileByGroup, useConsultantList } from "@/src/api/profile";
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
 import { Feather } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, {
 	useCallback,
 	useEffect,
@@ -231,6 +231,23 @@ const CreateOrderScreen = () => {
 			<Stack.Screen
 				options={{
 					title: isUpdating ? `Update Order #${id}` : "Create Order",
+					headerLeft: () => (
+						<Link href= "/(admin)/order" asChild>
+							<Pressable>
+								{({ pressed }) => (
+									<Feather
+										name="chevron-left"
+										size={25}
+										color={Colors.light.tint}
+										style={{
+											opacity: pressed ? 0.5 : 1,
+											marginRight: 15,
+										}}
+									/>
+								)}
+							</Pressable>
+						</Link>
+					),
 					headerRight: () => (
 						isUpdating &&
 						<Pressable>

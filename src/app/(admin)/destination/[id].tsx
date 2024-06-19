@@ -86,6 +86,23 @@ const DestinationDetailScreen = () => {
 				options={{
 					title: destination.title,
 					headerTitleAlign: "center",
+					headerLeft: () => (
+						<Link href="/(admin)/destination/" asChild>
+								<Pressable>
+									{({ pressed }) => (
+										<Feather
+											name="chevron-left"
+											size={25}
+											color={Colors.light.tint}
+											style={{
+												opacity: pressed ? 0.5 : 1,
+												marginRight: 15,
+											}}
+										/>
+									)}
+								</Pressable>
+							</Link>
+					),
 					headerRight: () => (
 						<Link href={`/(admin)/destination/create?id=${id}`} asChild>
 							<Pressable>

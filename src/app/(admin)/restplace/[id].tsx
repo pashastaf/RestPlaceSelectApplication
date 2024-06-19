@@ -59,6 +59,23 @@ const RestPlaceDetailScreen = () => {
 			<Stack.Screen
 				options={{
 					title: "Rest Place",
+					headerLeft: () => (
+						<Link href="/(admin)/restplace/" asChild>
+								<Pressable>
+									{({ pressed }) => (
+										<Feather
+											name="chevron-left"
+											size={25}
+											color={Colors.light.tint}
+											style={{
+												opacity: pressed ? 0.5 : 1,
+												marginRight: 15,
+											}}
+										/>
+									)}
+								</Pressable>
+							</Link>
+					),
 					headerRight: () => (
 						<Link href={`/(admin)/restplace/create?id=${id}`} asChild>
 							<Pressable>

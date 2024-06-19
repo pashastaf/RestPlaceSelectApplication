@@ -8,7 +8,7 @@ import { decode } from "base64-arraybuffer";
 import { randomUUID } from "expo-crypto";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
@@ -38,6 +38,7 @@ const CreateProfileScreen = () => {
 	const [errors, setErrors] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [image, setImage] = useState<string | null>(null);
+
 
 	const queryClient = useQueryClient();
 
@@ -241,7 +242,6 @@ const CreateProfileScreen = () => {
 		}
 	};
 
-	const [openGroupId, setOpenGroupId] = useState(false);
 	const [items, setItems] = useState([
 		{ label: "user", value: 1, color: '#8ac926' },
 		{ label: "consult", value: 2, color: '#e76f51' },
@@ -254,6 +254,23 @@ const CreateProfileScreen = () => {
 			<Stack.Screen
 				options={{
 					title: isUpdating ? "Update Profile" : "Create Profile",
+					headerLeft: () => (
+						<Link href= "/(admin)/profile" asChild>
+							<Pressable>
+								{({ pressed }) => (
+									<Feather
+										name="chevron-left"
+										size={25}
+										color={Colors.light.tint}
+										style={{
+											opacity: pressed ? 0.5 : 1,
+											marginRight: 15,
+										}}
+									/>
+								)}
+							</Pressable>
+						</Link>
+					),
 					headerRight: () => (
 						isUpdating &&
 						<Pressable>
@@ -324,22 +341,6 @@ const CreateProfileScreen = () => {
 							style={styles.input}
 							secureTextEntry
 						/>
-						{/* <DropDownPicker
-							style={[styles.input , { zIndex: openGroupId ? 1 : 0 }]}
-							placeholder={
-								isUpdating
-									? `${items.find((item) => item.value === groupId)?.label || "error"
-									}`
-									: "Select groupId"
-							}
-							dropDownContainerStyle={{ marginBottom: 20}}
-							open={openGroupId}
-							value={groupId}
-							items={items}
-							setOpen={setOpenGroupId}
-							setValue={(setGroupId)}
-							setItems={setItems}
-						/> */}
 					</View>
 				</View>
 				<Text style={styles.label}>Groups: </Text>
@@ -350,10 +351,16 @@ const CreateProfileScreen = () => {
 					showsHorizontalScrollIndicator={false}
 					contentContainerStyle={{ gap: 10, padding: 5 }}
 					renderItem={({ item }) => {
+						const isSelected = groupId === item.value; 
 						return (
-							<TouchableOpacity style={[styles.touchView, {backgroundColor: item.color}]}>
-								<Text style={styles.flatText}>{item.label}</Text>
-							</TouchableOpacity>
+							<TouchableOpacity
+							style={[
+								styles.touchView,
+								{ borderColor: isSelected ? 'black' : item.color, backgroundColor: item.color },
+							]}
+							onPress={() => { setGroupId(item.value); 	}}>
+							<Text style={styles.flatText}>{item.label}</Text>
+						</TouchableOpacity>
 						)
 					}}
 				/>
@@ -416,6 +423,7 @@ const styles = StyleSheet.create({
 		padding: 10,height: 40,
 		borderRadius: 10,
 		width: 70,
+		borderWidth: 1.3,
 	},
 });
 

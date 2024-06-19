@@ -8,7 +8,7 @@ import {
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
@@ -239,6 +239,40 @@ const CreateDestinationScreen = () => {
 					headerTitleStyle: {
 						fontWeight: 'bold',
 					},
+					headerLeft: () => (
+						isUpdating ?
+						<Link href= {`/(admin)/destination/${updatingDestination.id}`} asChild>
+							<Pressable>
+								{({ pressed }) => (
+									<Feather
+										name="chevron-left"
+										size={25}
+										color={Colors.light.tint}
+										style={{
+											opacity: pressed ? 0.5 : 1,
+											marginRight: 15,
+										}}
+									/>
+								)}
+							</Pressable>
+						</Link>
+						:
+						<Link href= "/(admin)/destination/" asChild>
+							<Pressable>
+								{({ pressed }) => (
+									<Feather
+										name="chevron-left"
+										size={25}
+										color={Colors.light.tint}
+										style={{
+											opacity: pressed ? 0.5 : 1,
+											marginRight: 15,
+										}}
+									/>
+								)}
+							</Pressable>
+						</Link>
+					),
 					headerRight: () => (
 						isUpdating &&
 						<Pressable>
