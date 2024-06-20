@@ -230,12 +230,13 @@ const CreateDestinationScreen = () => {
 		value: feature.id,
 	}));
 
+	console.log(selectedFeatures)
 
 	return (
 		<View style={styles.container}>
 			<Stack.Screen
 				options={{
-					title: isUpdating ? "Update Rest Place" : "Create Rest Place",
+					title: isUpdating ? "Update Destination" : "Create Destination",
 					headerTitleStyle: {
 						fontWeight: 'bold',
 					},

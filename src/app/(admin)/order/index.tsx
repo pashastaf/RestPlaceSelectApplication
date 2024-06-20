@@ -7,7 +7,6 @@ import { ActivityIndicator, FlatList, Text, TouchableOpacity, View, StyleSheet, 
 
 export default function OrderScreen() {
 	const { data: order, error, isLoading } = useOrderList();
-	const [selectedStatus, setSelectedStatus] = useState<number | null>(null);
 	const [inputValue, setInputValue] = useState('');
 
 
@@ -19,12 +18,7 @@ export default function OrderScreen() {
 		return <Text> Failed to fetch product </Text>;
 	}
 
-	const items = [
-		{ label: "In process", value: 1, color: 'white' },
-		{ label: "Under review", value: 2, color: 'white' },
-		{ label: "In the work", value: 3, color: 'white' },
-		{ label: "Completed", value: 4, color: 'white' },
-	];
+
 
 	return (
 		<View style={{ backgroundColor: 'white', flex: 1 }}>
@@ -60,40 +54,13 @@ export default function OrderScreen() {
 				data={order}
 				numColumns={1}
 				contentContainerStyle={{ gap: 10, padding: 10 }}
-				renderItem={({ item }) =>
-					<View>
-						<OrderListItem order={item} />
-						<FlatList
-							data={items}
-							horizontal
-							showsHorizontalScrollIndicator={false}
-							contentContainerStyle={{ gap: 10, padding: 10 }}
-							renderItem={({ item }) => {
-								const isSelected = selectedStatus === item.value; // Проверяем, выбран ли данный статус
-								return (
-									<TouchableOpacity
-										style={[
-											styles.touchView,
-											{ backgroundColor: isSelected ? 'lightblue' : item.color },]}
-										onPress={() => { setSelectedStatus(item.value); }}>
-										<Text style={styles.flatText}>{item.label}</Text>
-									</TouchableOpacity>
-								);
-							}}
-						/>
-					</View>
-
-				}
+				renderItem={({ item }) => <OrderListItem order={item} /> }
 			/>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	flatText: {
-		alignSelf: "center",
-		color: "black",
-	},
 	touchView: {
 		padding: 10,
 		height: 40,

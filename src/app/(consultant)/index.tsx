@@ -1,14 +1,26 @@
-import { StyleSheet, View, Text } from "react-native";
+import Colors from "@/src/constants/Colors";
+import { supabase } from "@/src/lib/supabase";
+import { Feather } from "@expo/vector-icons";
+import { Link, Stack } from "expo-router";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 
 
 export default function TabOneScreen() {
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>Tab One</Text>
-			<View
-				style={styles.separator}
-			/>
-		</View>
+		<Pressable>
+								{({ pressed }) => (
+									<Feather
+										name="log-out"
+										size={25}
+										color={Colors.light.tint}
+										style={{
+											marginRight: 15,
+											opacity: pressed ? 0.5 : 1,
+										}}
+										onPress={() => supabase.auth.signOut()}
+									/>
+								)}
+							</Pressable>
 	);
 }
 

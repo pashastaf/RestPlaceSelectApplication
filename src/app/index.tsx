@@ -15,8 +15,8 @@ const index = () => {
 	if (loading) {
 		return <ActivityIndicator />;
 	}
-	console.log("INDEX", session);
-	console.log("INDEX", profile);
+	console.log("INDEX S", session);
+	console.log("INDEX P", profile);
 	if (!session) {
 		return <Redirect href={"/sign-in"} />;
 	}

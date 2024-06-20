@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
-import { useProfileList, useConsultantList } from "../api/profile";
+import { useProfileList, useProfileByGroup } from "../api/profile";
 import type { Order } from "../types";
 
 type orderListItemProps = {
@@ -10,11 +10,17 @@ type orderListItemProps = {
 
 const orderListItem = ({ order }: orderListItemProps) => {
 	const { data: profiles } = useProfileList();
-	const { data: consultants } = useConsultantList();
+	const { data: consultants } = useProfileByGroup(2);
 
 	return (
 		<Link href={`/(admin)/order/create?id=${order.id}` as `${string}:${string}`} asChild>
 			<Pressable style={styles.container}>
+			<Text style={styles.text}>
+					<Text style={{ fontWeight: 'bold' }}>Order #</Text>{" "}
+					{
+						order?.id
+					}
+				</Text>
 				<Text style={styles.text}>
 					<Text style={{ fontWeight: 'bold' }}>Consultant:</Text>{" "}
 					{

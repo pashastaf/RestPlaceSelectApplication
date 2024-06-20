@@ -39,42 +39,6 @@ export const useProfile = (id: number) => {
 	});
 };
 
-export const useUpdateProfile = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		async mutationFn(data: any) {
-			const { error, data: updatedProfile } = await supabase
-				.from("profiles")
-				.update({
-					first_name: data.firstName,
-					second_name: data.secondName,
-					email: data.email,
-					phone: data.phone,
-					group_id: data.groupId,
-					avatar_url: data.avatarPath
-				})
-				.eq("id", data.id)
-				.select()
-				.single();
-
-			if (error) {
-				throw new Error(error.message);
-			}
-			return updatedProfile;
-		},
-		async onSuccess(_, { id }) {
-			await queryClient.invalidateQueries({ queryKey: ["profiles"] });
-			await queryClient.invalidateQueries({
-				queryKey: ["profiles", id],
-			});
-		},
-		onError(error) {
-			console.log("Mutation error:", error);
-		},
-	});
-};
-
 export const useProfileByGroup = (groupId: number) => {
 	return useQuery({
 		queryKey: ["profiles", { groupId }],
@@ -83,21 +47,6 @@ export const useProfileByGroup = (groupId: number) => {
 				.from("profiles")
 				.select("*")
 				.eq("group_id", groupId);
-			if (error) {
-				throw new Error(error.message);
-			}
-			return data;
-		},
-	});
-};
-
-export const useConsultantList = () => {
-	return useQuery({
-		queryKey: ["consultants"],
-		queryFn: async () => {
-			const { data, error } = await supabase
-				.from("consultants")
-				.select("*, profiles(first_name,second_name)");
 			if (error) {
 				throw new Error(error.message);
 			}

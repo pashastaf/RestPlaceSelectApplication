@@ -8,7 +8,7 @@ import {
 	useServicesByOrder,
 	useUpdateOrder,
 } from "@/src/api/order";
-import { useProfileByGroup, useConsultantList } from "@/src/api/profile";
+import { useProfileByGroup } from "@/src/api/profile";
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
 import { Feather } from "@expo/vector-icons";
@@ -41,10 +41,11 @@ const CreateOrderScreen = () => {
 	const [consultantId, setConsultantId] = useState();
 	const [selectedServices, setSelectedServices] = useState<number[]>([],);
 	const [totalCost, setTotalCost] = useState(0);
+	const [selectedStatus, setSelectedStatus] = useState<number | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { data: profiles } = useProfileByGroup(1);
-	const { data: consultants } = useConsultantList();
+	const { data: consultants } = useProfileByGroup(2);
 	const { data: services } = useServiceList();
 
 	const currentDate = new Date(Date.now());
@@ -92,6 +93,7 @@ const CreateOrderScreen = () => {
 			setProfileId(updatingOrder.profiles_id);
 			setConsultantId(updatingOrder.consultants_id);
 			initializeSelectedServices(serviceByOrder);
+			setSelectedStatus(updatingOrder.status_id)
 		}
 	}, [updatingOrder, serviceByOrder]);
 
@@ -133,28 +135,44 @@ const CreateOrderScreen = () => {
 	console.log("Заказ", id)
 
 	const onUpdate = async () => {
-		deleteServiceByOrder(id);
-		updateOrder(
-			{ id, profileId, consultantId, totalCost },
+		deleteServiceByOrder(
+			id, 
 			{
-				onSuccess: async () => {
-					const orderId = id;
-					selectedServices.forEach((serviceId) => {
-						insertServiceByOrder({ orderId, serviceId });
-						console.log('Временный', selectedServices);
-            console.log("Добавлено ", orderId, serviceId);
-					});
-					router.back();
-				},
+			onSuccess: async () => {
+				updateOrder(
+					{ id, profileId, consultantId, totalCost, status_id: selectedStatus },
+					{
+						onSuccess: async () => {
+							const orderId = id;
+							selectedServices.forEach((serviceId) => {
+								insertServiceByOrder({ orderId, serviceId });
+								console.log('Временный', selectedServices);
+								console.log("Добавлено ", orderId, serviceId);
+							});
+							router.back();
+						},
+					},
+				);
 			},
-		);
+			onError: (error) => {
+				setIsLoading(false);
+				console.error("Failed to delete order:", error);
+			},
+			}
+		)
+		
 	};
 
-	const onDelete = async () => {
+	const onDelete = () => {
 		setIsLoading(true);
-		await deleteOrder(id, {
+		deleteOrder(id, {
 			onSuccess: () => {
+				setIsLoading(false); // Сбрасываем состояние загрузки
 				router.replace("/(admin)/order");
+			},
+			onError: (error) => {
+				setIsLoading(false); // Сбрасываем состояние загрузки
+				console.error("Failed to delete order:", error);
 			},
 		});
 	};
@@ -216,7 +234,7 @@ const CreateOrderScreen = () => {
 	}
 
 	const itemsConsultant = consultants.map((consultant) => ({
-		label: `${consultant.profiles.first_name} ${consultant.profiles.second_name}`,
+		label: `${consultant.first_name} ${consultant.second_name}`,
 		value: consultant.id.toString(),
 	}));
 
@@ -224,6 +242,13 @@ const CreateOrderScreen = () => {
 		label: `${profile.first_name} ${profile.second_name}`,
 		value: profile.id.toString(),
 	}));
+
+	const items = [
+		{ label: "In process", value: 1, color: 'white' },
+		{ label: "Under review", value: 2, color: 'white' },
+		{ label: "In the work", value: 3, color: 'white' },
+		{ label: "Completed", value: 4, color: 'white' },
+	];
 
 
 	return (
@@ -274,10 +299,10 @@ const CreateOrderScreen = () => {
 						isUpdating
 							? `${consultants.find(
 								(consultant) => consultant.id === consultantId,
-							)?.profiles.first_name || "error"
+							)?.first_name || "error"
 							} ${consultants.find(
 								(consultant) => consultant.id === consultantId,
-							)?.profiles.second_name || "fetch"
+							)?.second_name || "fetch"
 							}`
 							: "Select new item"
 					}
@@ -332,6 +357,24 @@ const CreateOrderScreen = () => {
 						);
 					}}
 				/>
+				<FlatList
+							data={items}
+							horizontal
+							showsHorizontalScrollIndicator={false}
+							contentContainerStyle={{ gap: 10, padding: 10 }}
+							renderItem={({ item }) => {
+								const isSelected = selectedStatus === item.value; // Проверяем, выбран ли данный статус
+								return (
+									<TouchableOpacity
+										style={[
+											styles.statusView,
+											{ backgroundColor: isSelected ? 'lightblue' : item.color },]}
+										onPress={() => { setSelectedStatus(item.value); }}>
+										<Text style={styles.flatText}>{item.label}</Text>
+									</TouchableOpacity>
+								);
+							}}
+						/>
 				<Text style={styles.title}>Total Cost is: {totalCost} </Text>
 				<Button
 				color={Colors.light.tint}
@@ -389,6 +432,17 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 0,
 		justifyContent: 'center',
+	},
+	flatText: {
+		alignSelf: "center",
+		color: "black",
+	},
+	statusView: {
+		padding: 10,
+		height: 40,
+		borderRadius: 10,
+		width: 100,
+		borderWidth: 1,
 	},
 });
 

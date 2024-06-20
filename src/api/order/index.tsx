@@ -98,7 +98,7 @@ export const useUpdateOrder = () => {
 					profiles_id: data.profileId,
 					consultants_id: data.consultantId,
 					total_cost: data.totalCost,
-					status: 1
+					status_id: data.status_id
 				})
 				.eq("id", data.id)
 				.select()
@@ -135,8 +135,11 @@ export const useDeleteOrder = () => {
 				throw new Error(error.message);
 			}
 		},
-		async onSuccess() {
+		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ["orders"] });
+		},
+		onError: (error) => {
+			console.error("Error deleting order:", error);
 		},
 	});
 };
@@ -201,6 +204,9 @@ export const useDeleteServiceByOrder = () => {
 		},
 		async onSuccess() {
 			await queryClient.invalidateQueries({ queryKey: ["services_by_order"] });
+		},
+		onError: (error) => {
+			console.error("Error deleting order:", error);
 		},
 	});
 };

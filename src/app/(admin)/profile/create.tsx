@@ -1,4 +1,4 @@
-import { useProfile, useUpdateProfile } from "@/src/api/profile";
+import { useProfile } from "@/src/api/profile";
 import Button from "@/src/components/Button";
 import RemoteImage from "@/src/components/RemoteImage";
 import Colors from "@/src/constants/Colors";
@@ -48,19 +48,30 @@ const CreateProfileScreen = () => {
 	);
 	const isUpdating = !!idString;
 
-	const { mutate: updateProfile } = useUpdateProfile();
 	const { data: updatingProfile } = useProfile(id);
 
-	useEffect(() => {
-		if (updatingProfile) {
-			setFirstName(updatingProfile.first_name);
-			setSecondName(updatingProfile.second_name);
-			setEmail(updatingProfile.email);
-			setPhone(updatingProfile.phone);
-			setPassword(updatingProfile.password);
-			setGroupId(updatingProfile.group_id);
+	async function getUserData(authId: string) {
+		const { data, error } = await supabase.auth.admin.getUserById(authId);
+		if (error) {
+			return null;
 		}
-	}, [updatingProfile]);
+		return data.user.user_metadata.password;
+	}
+	
+	useEffect(() => {
+		const fetchData = async () => {
+      if (updatingProfile) {
+        setFirstName(updatingProfile.first_name);
+        setSecondName(updatingProfile.second_name);
+        setEmail(updatingProfile.email);
+        setPhone(updatingProfile.phone);
+        setGroupId(updatingProfile.group_id);
+        const password = await getUserData(updatingProfile.auth_id);
+        setPassword(password);
+      }
+    };
+    fetchData();
+  }, [updatingProfile]);
 
 	const router = useRouter();
 
@@ -88,6 +99,10 @@ const CreateProfileScreen = () => {
 			setErrors("Email is required");
 			return false;
 		}
+		if (!password) {
+			setErrors("Password is required");
+			return false;
+		}
 		return true;
 	};
 
@@ -103,6 +118,10 @@ const CreateProfileScreen = () => {
 	const onCreate = async () => {
 		if (!validateInput()) {
 			console.log(errors);
+			setIsLoading(false)
+			Alert.alert('Validate error', errors, [
+				{text: 'OK'},
+			]);
 			return;
 		}
 		const fullName = `${secondName} ${firstName}`;
@@ -112,6 +131,7 @@ const CreateProfileScreen = () => {
 			password,
 			email_confirm: true,
 			user_metadata: {
+				password,
 				email,
 				phone,
 				firstName,
@@ -136,28 +156,24 @@ const CreateProfileScreen = () => {
 	const onUpdate = async () => {
 		if (!validateInput()) {
 			console.log(errors);
-			console.log(firstName, secondName);
+			setIsLoading(false)
+			Alert.alert('Validate error', errors, [
+				{text: 'OK'},
+			]);
 			return;
 		}
-		updateProfile(
-			{ id, firstName, secondName, email, groupId, password },
-			{
-				onSuccess: () => {
-					resetFields();
-					router.back();
-				},
-			},
-		);
 		const fullName = `${secondName} ${firstName}`;
 		const avatarPath = await uploadImage();
+		console.log(id, email, password, firstName, secondName, phone, groupId, avatarPath)
 		const { error } = await supabase.auth.admin.updateUserById(
 			updatingProfile.auth_id,
 			{
 				email: email,
 				password: password,
 				user_metadata: {
-					email,
 					password,
+					email,
+					phone,
 					firstName,
 					secondName,
 					fullName,

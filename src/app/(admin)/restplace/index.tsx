@@ -110,7 +110,7 @@ export default function RestPlaceScreen() {
 			</View>
 			{hideView && (
 				<DropDownPicker
-					style={[styles.filterBox, {paddingHorizontal: 20 }]}
+					style={[styles.filterBox, {paddingHorizontal: 20, marginBottom: 10 }]}
 					dropDownContainerStyle={styles.filterBox}
 					placeholder="Select filter"
 					placeholderStyle={{ color: 'gray'}}
