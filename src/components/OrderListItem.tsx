@@ -26,12 +26,12 @@ const orderListItem = ({ order }: orderListItemProps) => {
 					{
 						consultants?.find(
 							(consultant) => consultant.id === order.consultants_id,
-						).profiles.first_name
+						).first_name
 					}{" "}
 					{
 						consultants?.find(
 							(consultant) => consultant.id === order.consultants_id,
-						).profiles.second_name
+						).second_name
 					}
 				</Text>
 				<Text style={styles.text}>

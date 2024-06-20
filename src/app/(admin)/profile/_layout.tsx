@@ -3,7 +3,6 @@ import { Link, Stack } from "expo-router";
 import { Pressable, View } from "react-native";
 
 import Colors from "@/src/constants/Colors";
-import { ScreenStackHeaderSearchBarView } from "react-native-screens";
 import { Feather } from "@expo/vector-icons";
 import { supabase } from "@/src/lib/supabase";
 

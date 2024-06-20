@@ -41,7 +41,7 @@ const CreateOrderScreen = () => {
 	const [consultantId, setConsultantId] = useState();
 	const [selectedServices, setSelectedServices] = useState<number[]>([],);
 	const [totalCost, setTotalCost] = useState(0);
-	const [selectedStatus, setSelectedStatus] = useState<number | null>(null);
+	const [selectedStatus, setSelectedStatus] = useState<number>(1);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { data: profiles } = useProfileByGroup(1);

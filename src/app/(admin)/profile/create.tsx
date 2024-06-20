@@ -23,7 +23,6 @@ import {
 	FlatList,
 	ScrollView
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
 import { DefaultAvatar } from "..";
 import { Feather } from "@expo/vector-icons";
 
@@ -57,7 +56,7 @@ const CreateProfileScreen = () => {
 		}
 		return data.user.user_metadata.password;
 	}
-	
+
 	useEffect(() => {
 		const fetchData = async () => {
       if (updatingProfile) {
@@ -367,7 +366,7 @@ const CreateProfileScreen = () => {
 					showsHorizontalScrollIndicator={false}
 					contentContainerStyle={{ gap: 10, padding: 5 }}
 					renderItem={({ item }) => {
-						const isSelected = groupId === item.value; 
+						const isSelected = groupId === item.value;
 						return (
 							<TouchableOpacity
 							style={[
