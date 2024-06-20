@@ -11,7 +11,8 @@ export const useRestPlaceList = () => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("rest_places")
-				.select("*")
+				.select("*, rest_types(id, title)")
+				.eq("is_deleted", 0)
 				.order("id");
 				if (error) {
 				throw new Error(error.message);
@@ -49,7 +50,7 @@ export const useRestPlace = (id: number) => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("rest_places")
-				.select("*")
+				.select("*, rest_types(id, title)")
 				.eq("id", id)
 				.single();
 
@@ -72,7 +73,11 @@ export const useInsertRestPlace = () => {
 					title: data.title,
 					destinations_id: data.destinationId,
 					is_deleted: 0,
+					description: data.desc,
+					rest_type_id: data.typeId,
+					image_path: data.imagePath
 				})
+				.select()
 				.single();
 
 			if (error) {
@@ -102,6 +107,9 @@ export const useUpdateRestPlace = () => {
 					title: data.title,
 					destinations_id: data.destinationId,
 					is_deleted: 0,
+					description: data.desc,
+					rest_type_id: data.typeId,
+					image_path: data.imagePath
 				})
 				.eq("id", data.id)
 				.select()

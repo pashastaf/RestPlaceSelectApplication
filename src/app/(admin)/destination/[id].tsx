@@ -8,6 +8,7 @@ import RemoteImage from "@/src/components/RemoteImage";
 import RestPlaceListByDestination from "@/src/components/RestPlaceListByDestination";
 import Colors from "@/src/constants/Colors";
 import { Feather, FontAwesome } from "@expo/vector-icons";
+import { FeaturesByDestination, useFeaturesByDestinationId } from "@/src/api/features";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
@@ -20,7 +21,6 @@ import {
 	View,
 } from "react-native";
 import { DefaultImage } from "..";
-import { FeaturesByDestination, useFeaturesByDestinationId } from "@/src/api/features";
 
 const DestinationDetailScreen = () => {
 	const { id: idSting } = useLocalSearchParams();

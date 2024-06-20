@@ -3,6 +3,7 @@ import {
 	useDeleteRestPlace,
 	useInsertRestPlace,
 	useRestPlace,
+	useRestPlaceList,
 	useUpdateRestPlace,
 } from "@/src/api/restplace";
 import Button from "@/src/components/Button";
@@ -55,6 +56,8 @@ const CreateRestPlaceScreen = () => {
 	// Определение состояний компонента
 	const [title, setTitle] = useState("");
 	const [destinationId, setDestinationId] = useState("");
+	const [desc, setDesc] = useState("");
+	const [typeId, setTypeId] = useState<number | null>(null)
 	const [errors, setErrors] = useState("");
 	const [image, setImage] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -79,6 +82,8 @@ const CreateRestPlaceScreen = () => {
 			setTitle(updatingRestPlace.title);
 			setDestinationId(updatingRestPlace.destinations_id);
 			initializeSelectedFeatures(featuresByPlaceId);
+			setTypeId(updatingRestPlace.rest_types_id);
+			setDesc(updatingRestPlace.description);
 		}
 	}, [updatingRestPlace, featuresByPlaceId]);
 
@@ -113,8 +118,9 @@ const CreateRestPlaceScreen = () => {
 		if (!validateInput()) {
 			return;
 		}
+		const imagePath = uploadImage();
 		insertRestPlace(
-			{ title, destinationId },
+			{ title, destinationId, desc, typeId, imagePath },
 			{
 				onSuccess: () => {
 					resetFields();
@@ -128,8 +134,9 @@ const CreateRestPlaceScreen = () => {
 		if (!validateInput()) {
 			return;
 		}
+		const imagePath = uploadImage();
 		updateRestPlace(
-			{ id, title, destinationId },
+			{ id, title, destinationId, desc, typeId, imagePath },
 			{
 				onSuccess: () => {
 					resetFields();
@@ -215,6 +222,12 @@ const CreateRestPlaceScreen = () => {
 		value: destination.id.toString(),
 	})));
 
+	const itemsTypes = [
+		{ label: "entertainment", value: 1},
+		{ label: "food", value: 2},
+		{ label: "hotel", value: 3},
+	];
+
 	const itemsFeatures = features.map((feature) => ({
 		label: feature.title,
 		value: feature.id,
@@ -222,18 +235,20 @@ const CreateRestPlaceScreen = () => {
 
 
 	const [openDestination, setOpenDestination] = useState(false);
+	const [openTypes, setOpenTypes] = useState(false);
 	const [openFeatures, setOpenFeatures] = useState(false);
 
 	const onDestinationOpen = useCallback(() => {
 		setOpenFeatures(false);
+		setOpenTypes(false);
 	}, []);
 
 	const onFeaturesOpen = useCallback(() => {
 		setOpenDestination(false);
+		setOpenTypes(false);
 	}, []);
 
 	console.log(selectedFeatures)
-	console.log(featuresByPlaceId)
 	return (
 		<View style={styles.container}>
 			<Stack.Screen
@@ -295,7 +310,7 @@ const CreateRestPlaceScreen = () => {
 				}}
 			/>
 			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
-				<View style={{ flexDirection: 'row', gap: 20 }}>
+				<View style={{ flexDirection: 'row', gap: 10 }}>
 					<View style={{ flex: 1 }}>
 					{isUpdating ? <RemoteImage
 							path={updatingRestPlace.image_path}
@@ -319,7 +334,7 @@ const CreateRestPlaceScreen = () => {
 						/>
 						<Text style={styles.title}>Destination</Text>
 						<DropDownPicker
-							style={{ zIndex: openFeatures ? 1 : 0 }}
+							style={[{ zIndex: openFeatures ? 1 : 0, marginBottom: 10 }]}
 							placeholder={isUpdating ? `${destinations.find(destination => destination.id === destinationId)?.title || 'error'}` : 'Select new item'}
 							open={openDestination}
 							onOpen={onDestinationOpen}
@@ -329,8 +344,29 @@ const CreateRestPlaceScreen = () => {
 							setValue={setDestinationId}
 							setItems={() => { }}
 						/>
+						<Text style={styles.title}>Rest Type</Text>
+						<DropDownPicker
+							style={{ zIndex: openFeatures ? 1 : 0 }}
+							placeholder={'Select new item'}
+							open={openTypes}
+							value={typeId}
+							items={itemsTypes}
+							setOpen={setOpenTypes}
+							setValue={setTypeId}
+							setItems={() => { }}
+						/>
 					</View>
 				</View>
+				<View>
+				<Text style={styles.title}>Description</Text>
+				<TextInput
+					placeholder="Description"
+					multiline
+					style={{ borderWidth: 1, borderRadius: 10, height: 70, fontSize: 12, paddingHorizontal: 10}}
+					value={desc}
+					onChangeText={setDesc}
+				/>
+				<Text style={styles.title}>Features</Text>
 				<DropDownPicker
 					style={{ zIndex: openDestination ? 1 : 0, }}
 					placeholder="Select features"
@@ -355,6 +391,7 @@ const CreateRestPlaceScreen = () => {
 					}}
 					badgeDotColors={['#e76f51', '#00b4d8', '#e9c46a', '#8ac926', '#7209b7', '#f4a261', '#9a6324']}
 				/>
+				</View>
 				<View style={{ paddingHorizontal: 15 }}>
 					<Button color={Colors.light.tint} onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
 				</View>
@@ -374,14 +411,14 @@ const styles = StyleSheet.create({
 	title: {
 		color: "gray",
 		fontSize: 16,
-		marginBottom: 5,
+		marginVertical: 5,
 	},
 	input: {
 		backgroundColor: "white",
 		padding: 10,
 		borderRadius: 10,
 		borderWidth: 1,
-		marginBottom: 20,
+		marginBottom: 10,
 	},
 	image: {
 		width: '100%',

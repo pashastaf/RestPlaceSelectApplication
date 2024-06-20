@@ -22,19 +22,6 @@ const orderListItem = ({ order }: orderListItemProps) => {
 					}
 				</Text>
 				<Text style={styles.text}>
-					<Text style={{ fontWeight: 'bold' }}>Consultant:</Text>{" "}
-					{
-						consultants?.find(
-							(consultant) => consultant.id === order.consultants_id,
-						).first_name
-					}{" "}
-					{
-						consultants?.find(
-							(consultant) => consultant.id === order.consultants_id,
-						).second_name
-					}
-				</Text>
-				<Text style={styles.text}>
 					<Text style={{ fontWeight: 'bold' }}>Client:</Text>{" "}
 					{
 						profiles?.find(
@@ -44,6 +31,19 @@ const orderListItem = ({ order }: orderListItemProps) => {
 					{
 						profiles?.find(
 							(profile) => profile.id === order.profiles_id,
+						).second_name
+					}
+				</Text>
+				<Text style={styles.text}>
+					<Text style={{ fontWeight: 'bold' }}>Consultant:</Text>{" "}
+					{
+						consultants?.find(
+							(consultant) => consultant.id === order.consultants_id,
+						).first_name
+					}{" "}
+					{
+						consultants?.find(
+							(consultant) => consultant.id === order.consultants_id,
 						).second_name
 					}
 				</Text>
