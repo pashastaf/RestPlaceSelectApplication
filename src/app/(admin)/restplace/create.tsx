@@ -29,7 +29,7 @@ import {
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { DefaultImage } from "..";
-import { FeaturesByPlacesId, useFeaturesByPlacesId, useFeaturesForPlaces } from "@/src/api/features";
+import { FeaturesByPlacesId, useDeleteFeaturesByRestPlace, useFeaturesByPlacesId, useFeaturesForPlaces, useInsertFeaturesByRestPlace } from "@/src/api/features";
 
 const CreateRestPlaceScreen = () => {
 	
@@ -47,6 +47,9 @@ const CreateRestPlaceScreen = () => {
 	const { mutate: insertRestPlace } = useInsertRestPlace();
 	const { mutate: updateRestPlace } = useUpdateRestPlace();
 	const { mutate: deleteRestPlace } = useDeleteRestPlace();
+	const { mutate: insertFeaturesByRestPlaces } = useInsertFeaturesByRestPlace();
+	const { mutate: deleteFeaturesByRestPlaces } = useDeleteFeaturesByRestPlace();
+	
 
 	// Группа хуков для работы с данными
 	const { data: destinations } = useDestinationList();
@@ -87,11 +90,6 @@ const CreateRestPlaceScreen = () => {
 		}
 	}, [updatingRestPlace, featuresByPlaceId]);
 
-	const resetFields = () => {
-		setTitle("");
-		setDestinationId("");
-	};
-
 	const validateInput = () => {
 		setErrors("");
 		if (!title) {
@@ -118,12 +116,15 @@ const CreateRestPlaceScreen = () => {
 		if (!validateInput()) {
 			return;
 		}
-		const imagePath = uploadImage();
+		const imagePath = await uploadImage();
 		insertRestPlace(
 			{ title, destinationId, desc, typeId, imagePath },
 			{
-				onSuccess: () => {
-					resetFields();
+				onSuccess: (newRestPlace) => {
+					const restPlaceId = newRestPlace.id;
+					selectedFeatures.forEach((featuresId) => {
+						insertFeaturesByRestPlaces({ restPlaceId, featuresId })
+					})
 					router.back();
 				},
 			},
@@ -134,24 +135,38 @@ const CreateRestPlaceScreen = () => {
 		if (!validateInput()) {
 			return;
 		}
-		const imagePath = uploadImage();
-		updateRestPlace(
-			{ id, title, destinationId, desc, typeId, imagePath },
+		deleteFeaturesByRestPlaces(
+			id,
 			{
-				onSuccess: () => {
-					resetFields();
-					router.back();
-				},
-			},
-		);
+				onSuccess: async () => {
+					const imagePath = await uploadImage();
+					updateRestPlace(
+						{ id, title, destinationId, desc, typeId, imagePath },
+						{
+							onSuccess: () => {
+								const restPlaceId = id
+								selectedFeatures.forEach((featuresId) => {
+									insertFeaturesByRestPlaces({ restPlaceId, featuresId })
+								})
+								router.back();
+							}
+						},
+					);
+				}
+			}
+		)
+		
 	};
 
 	const onDelete = () => {
 		setIsLoading(true)
 		deleteRestPlace(id, {
 			onSuccess: () => {
-				resetFields();
 				router.replace("/(admin)/restplace/");
+			},
+			onError: (error) => {
+				setIsLoading(false); // Сбрасываем состояние загрузки
+				console.error("Failed to delete order:", error);
 			},
 		});
 	};
@@ -360,9 +375,9 @@ const CreateRestPlaceScreen = () => {
 				<View>
 				<Text style={styles.title}>Description</Text>
 				<TextInput
-					placeholder="Description"
+					placeholder="Enter the text"
 					multiline
-					style={{ borderWidth: 1, borderRadius: 10, height: 70, fontSize: 12, paddingHorizontal: 10}}
+					style={{ borderWidth: 1, borderRadius: 10, height: 70, fontSize: 14, paddingHorizontal: 10}}
 					value={desc}
 					onChangeText={setDesc}
 				/>

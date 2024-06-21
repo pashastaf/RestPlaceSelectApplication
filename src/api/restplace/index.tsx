@@ -74,7 +74,7 @@ export const useInsertRestPlace = () => {
 					destinations_id: data.destinationId,
 					is_deleted: 0,
 					description: data.desc,
-					rest_type_id: data.typeId,
+					rest_types_id: data.typeId,
 					image_path: data.imagePath
 				})
 				.select()
@@ -108,7 +108,7 @@ export const useUpdateRestPlace = () => {
 					destinations_id: data.destinationId,
 					is_deleted: 0,
 					description: data.desc,
-					rest_type_id: data.typeId,
+					rest_types_id: data.typeId,
 					image_path: data.imagePath
 				})
 				.eq("id", data.id)
@@ -152,6 +152,9 @@ export const useDeleteRestPlace = () => {
 			await queryClient.invalidateQueries({
 				queryKey: ["rest_places"],
 			});
+		},
+		onError: (error) => {
+			console.error("Error deleting order:", error);
 		},
 	});
 };

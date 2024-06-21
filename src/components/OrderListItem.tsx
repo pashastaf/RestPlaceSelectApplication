@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Link } from "expo-router";
+import { Link, useSegments } from "expo-router";
 import { Pressable, StyleSheet, Text } from "react-native";
 import { useProfileList, useProfileByGroup } from "../api/profile";
 import type { Order } from "../types";
@@ -12,8 +12,18 @@ const orderListItem = ({ order }: orderListItemProps) => {
 	const { data: profiles } = useProfileList();
 	const { data: consultants } = useProfileByGroup(2);
 
+	const consultant = consultants?.find(
+    (consultant) => consultant.id === order.consultants_id
+	);
+	const profile = profiles?.find(
+		(profile) => profile.id === order.profiles_id
+	);
+	const segments = useSegments();
+
+	
+
 	return (
-		<Link href={`/(admin)/order/create?id=${order.id}` as `${string}:${string}`} asChild>
+		<Link href={`/${segments[0]}/order/create?id=${order.id}` as `${string}:${string}`} asChild>
 			<Pressable style={styles.container}>
 			<Text style={styles.text}>
 					<Text style={{ fontWeight: 'bold' }}>Order #</Text>{" "}
@@ -22,30 +32,14 @@ const orderListItem = ({ order }: orderListItemProps) => {
 					}
 				</Text>
 				<Text style={styles.text}>
-					<Text style={{ fontWeight: 'bold' }}>Client:</Text>{" "}
-					{
-						profiles?.find(
-							(profile) => profile.id === order.profiles_id,
-						).first_name
-					}{" "}
-					{
-						profiles?.find(
-							(profile) => profile.id === order.profiles_id,
-						).second_name
-					}
+    			<Text style={{ fontWeight: 'bold' }}>Consultant:</Text>{" "}
+    				{profile ? profile.first_name : '~'}{" "}
+    				{profile ? profile.second_name : ''}
 				</Text>
 				<Text style={styles.text}>
-					<Text style={{ fontWeight: 'bold' }}>Consultant:</Text>{" "}
-					{
-						consultants?.find(
-							(consultant) => consultant.id === order.consultants_id,
-						).first_name
-					}{" "}
-					{
-						consultants?.find(
-							(consultant) => consultant.id === order.consultants_id,
-						).second_name
-					}
+    			<Text style={{ fontWeight: 'bold' }}>Consultant:</Text>{" "}
+    				{consultant ? consultant.first_name : '~'}{" "}
+    				{consultant ? consultant.second_name : ''}
 				</Text>
 				<Text style={styles.text}>
 					<Text style={{ fontWeight: 'bold' }}>Sale date:</Text>{" "}

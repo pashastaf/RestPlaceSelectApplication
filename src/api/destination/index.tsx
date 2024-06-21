@@ -11,7 +11,7 @@ export const useDestinationList = () => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("destinations")
-				.select("*")
+				.select("*, countries(id, title)")
 				.order("id");
 			if (error) {
 				throw new Error(error.message);
@@ -27,7 +27,7 @@ export const useDestination = (id: number) => {
 		queryFn: async () => {
 			const { data, error } = await supabase
 				.from("destinations")
-				.select("*")
+				.select("*, countries(id, title)")
 				.eq("id", id)
 				.single();
 
@@ -50,8 +50,10 @@ export const useInsertDestination = () => {
 					title: data.title,
 					countries_id: data.countryId,
 					is_deleted: 0,
+					description: data.desc,
 					image_path: data.imagePath,
 				})
+				.select()
 				.single();
 
 			if (error) {
@@ -81,6 +83,7 @@ export const useUpdateDestination = () => {
 					title: data.title,
 					countries_id: data.contryId,
 					is_deleted: 0,
+					description: data.desc,
 					image_path: data.imagePath,
 				})
 				.eq("id", data.id)

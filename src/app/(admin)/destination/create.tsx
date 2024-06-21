@@ -27,7 +27,7 @@ import { supabase } from "@/src/lib/supabase";
 import { decode } from "base64-arraybuffer";
 import RemoteImage from "@/src/components/RemoteImage";
 import { Feather } from "@expo/vector-icons";
-import { FeaturesByDestination, useFeaturesByDestinationId, useFeaturesForDestinations } from '@/src/api/features'
+import { FeaturesByDestination, useDeleteFeaturesByDestination, useFeaturesByDestinationId, useFeaturesForDestinations, useInsertFeaturesByDestination } from '@/src/api/features'
 import { DefaultImage } from "..";
 
 const CreateDestinationScreen = () => {
@@ -45,9 +45,13 @@ const CreateDestinationScreen = () => {
 	const { mutate: insertDestination } = useInsertDestination();
 	const { mutate: updateDestination } = useUpdateDestination();
 	const { mutate: deleteDestination } = useDeleteDestination();
+	const { mutate: insertFeaturesByDestinations } = useInsertFeaturesByDestination();
+	const { mutate: deleteFeaturesByDestinations } = useDeleteFeaturesByDestination();
+
 
 	const [title, setTitle] = useState("");
 	const [countryId, setCountryId] = useState("");
+	const [desc, setDesc] = useState("");
 	const [errors, setErrors] = useState("");
 	const [image, setImage] = useState<string | null>(null);
 	const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
@@ -72,16 +76,12 @@ const CreateDestinationScreen = () => {
 			setCountryId(updatingDestination.countries_id);
 			setImage(updatingDestination.image_path);
 			initializeSelectedFeatures(featuresByDestinationId);
-		}
+			setDesc(updatingDestination.description);
+			}
 	}, [updatingDestination, featuresByDestinationId]);
 
 
 	const isUpdating = !!idString;
-
-	const resetFields = () => {
-		setTitle("");
-		setCountryId("");
-	};
 
 	const validateInput = () => {
 		setErrors("");
@@ -111,10 +111,14 @@ const CreateDestinationScreen = () => {
 		}
 		const imagePath = await uploadImage();
 		insertDestination(
-			{ title, countryId, imagePath },
+			{ title, countryId, imagePath, desc },
 			{
-				onSuccess: () => {
-					resetFields();
+				onSuccess: (newDestination) => {
+					const destinationsId = newDestination.id;
+					console.log(destinationsId)
+					selectedFeatures.forEach((featuresId) => {
+						insertFeaturesByDestinations({ destinationsId, featuresId })
+					})
 					router.back();
 				},
 			},
@@ -125,24 +129,32 @@ const CreateDestinationScreen = () => {
 		if (!validateInput()) {
 			return;
 		}
-		const imagePath = await uploadImage();
-
-		updateDestination(
-			{ id, title, countryId, imagePath },
+		deleteFeaturesByDestinations(
+			id,
 			{
-				onSuccess: () => {
-					resetFields();
-					router.back();
-				},
-			},
-		);
+				onSuccess: async () => {
+					const imagePath = await uploadImage();
+					updateDestination(
+						{ id, title, countryId, imagePath, desc },
+						{
+							onSuccess: () => {
+								const destinationsId = id
+								selectedFeatures.forEach((featuresId) => {
+									insertFeaturesByDestinations({ destinationsId, featuresId })
+								})
+								router.back();
+							},
+						},
+					);
+				}
+			}
+		)
 	};
 
 	const onDelete = () => {
 		setIsLoading(true);
 		deleteDestination(id, {
 			onSuccess: () => {
-				resetFields();
 				router.replace("/(admin)/destination");
 			},
 		});
@@ -293,7 +305,7 @@ const CreateDestinationScreen = () => {
 				}}
 			/>
 			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
-				<View style={{ flexDirection: 'row', gap: 20 }}>
+				<View style={{ flexDirection: 'row', gap: 10 }}>
 					<View style={styles.viewBlock}>
 						{isUpdating ? <RemoteImage
 							path={updatingDestination.image_path}
@@ -315,7 +327,7 @@ const CreateDestinationScreen = () => {
 							value={title}
 							onChangeText={setTitle}
 						/>
-						<Text style={styles.title}>Destination</Text>
+						<Text style={styles.title}>Country</Text>
 						<DropDownPicker
 							style={{ zIndex: openFeatures ? 1 : 0 }}
 							placeholder={isUpdating ? `${countries.find(country => country.id === countryId)?.title || 'error'}` : 'Select new item'}
@@ -329,6 +341,16 @@ const CreateDestinationScreen = () => {
 						/>
 					</View>
 				</View>
+				<View>
+				<Text style={styles.title}>Description</Text>
+				<TextInput
+					placeholder="Enter the text"
+					multiline
+					style={{ borderWidth: 1, borderRadius: 10, height: 70, fontSize: 14, paddingHorizontal: 10}}
+					value={desc}
+					onChangeText={setDesc}
+				/>
+				<Text style={styles.title}>Features</Text>
 				<DropDownPicker
 					style={{ zIndex: openCountry ? 1 : 0, }}
 					placeholder="Select features"
@@ -353,6 +375,7 @@ const CreateDestinationScreen = () => {
 					extendableBadgeContainer={true}
 					badgeDotColors={['#e76f51', '#00b4d8', '#e9c46a', '#8ac926', '#7209b7', '#f4a261', '#9a6324']}
 				/>
+				</View>
 				<View style={{ paddingHorizontal: 15 }}>
 					<Button color={Colors.light.tint} onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
 				</View>
@@ -372,7 +395,7 @@ const styles = StyleSheet.create({
 	title: {
 		color: "gray",
 		fontSize: 16,
-		marginBottom: 5,
+		marginVertical: 5,
 	},
 	input: {
 		backgroundColor: "white",

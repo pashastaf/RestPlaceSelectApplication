@@ -86,6 +86,23 @@ const DestinationDetailScreen = () => {
 				options={{
 					title: destination.title,
 					headerTitleAlign: "center",
+					headerLeft: () => (
+						<Link href="/(user)/destination/" asChild>
+								<Pressable>
+									{({ pressed }) => (
+										<Feather
+											name="chevron-left"
+											size={25}
+											color={Colors.light.tint}
+											style={{
+												opacity: pressed ? 0.5 : 1,
+												marginRight: 15,
+											}}
+										/>
+									)}
+								</Pressable>
+							</Link>
+					),
 				}}
 			/>
 			<RemoteImage
@@ -94,7 +111,10 @@ const DestinationDetailScreen = () => {
 				style={styles.image}
 			/>
 			<View style={styles.textView}>
-				<Text style={styles.title}>{destination.title} </Text>
+			<View style={{ flexDirection: 'row' }}>
+					<Text style={styles.title}>{destination.title} </Text>
+					<Text style={styles.country}>{destination.countries.title} </Text>
+				</View>
 				<Text style={styles.description}>{destination?.description}</Text>
 				<View style={styles.starsView}>
 					{renderStars(destinationRate?.rate ?? 0)}
@@ -172,6 +192,13 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 30,
 		fontWeight: "bold",
+	},
+	country: {
+		fontSize: 14,
+		fontWeight: "bold",
+		color: Colors.light.tint,
+		textAlignVertical: 'center',
+		marginLeft: 15,
 	},
 	description: {
 		fontSize: 16,

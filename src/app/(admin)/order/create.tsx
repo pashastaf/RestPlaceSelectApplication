@@ -131,9 +131,6 @@ const CreateOrderScreen = () => {
 		);
 	};
 
-	console.log('Изначально', selectedServices)
-	console.log("Заказ", id)
-
 	const onUpdate = async () => {
 		deleteServiceByOrder(
 			id, 
@@ -150,7 +147,7 @@ const CreateOrderScreen = () => {
 								console.log("Добавлено ", orderId, serviceId);
 							});
 							router.back();
-						},
+						}
 					},
 				);
 			},

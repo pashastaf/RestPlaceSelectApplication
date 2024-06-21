@@ -58,7 +58,6 @@ const RestPlaceDetailScreen = () => {
 		<ScrollView style={styles.container}>
 			<Stack.Screen
 				options={{
-					title: "Rest Place",
 					headerLeft: () => (
 						<Link href="/(admin)/restplace/" asChild>
 								<Pressable>

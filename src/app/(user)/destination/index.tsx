@@ -98,6 +98,7 @@ export default function DestinationScreen() {
 					<Pressable
 						onPress={() => {
 							setHideView(!hideView);
+							setValue([])
 						}}
 					>
 						{({ pressed }) => (
@@ -115,7 +116,7 @@ export default function DestinationScreen() {
 			</View>
 			{hideView && (
 				<DropDownPicker
-					style={[styles.filterBox, { paddingHorizontal: 20 }]}
+					style={[styles.filterBox, { paddingHorizontal: 20, marginBottom: 10 }]}
 					dropDownContainerStyle={styles.filterBox}
 					placeholder="Select filter"
 					placeholderStyle={{ color: 'gray' }}
@@ -127,6 +128,11 @@ export default function DestinationScreen() {
 					setItems={() => { }}
 					multiple={true}
 					mode="BADGE"
+					extendableBadgeContainer={true}
+					selectedItemLabelStyle={{
+						fontWeight: 'bold',
+						opacity: 0.2
+					}}
 					badgeDotColors={[
 						"#e76f51",
 						"#00b4d8",

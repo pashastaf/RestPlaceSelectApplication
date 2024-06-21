@@ -93,6 +93,7 @@ export default function RestPlaceScreen() {
 					<Pressable
 						onPress={() => {
 							setHideView(!hideView);
+							setValue([]);
 						}}
 					>
 						{({ pressed }) => (
@@ -122,6 +123,11 @@ export default function RestPlaceScreen() {
 					setItems={() => { }}
 					multiple={true}
 					mode="BADGE"
+					extendableBadgeContainer={true}
+					selectedItemLabelStyle={{
+						fontWeight: 'bold',
+						opacity: 0.2
+					}}
 					badgeDotColors={[
 						"#e76f51",
 						"#00b4d8",

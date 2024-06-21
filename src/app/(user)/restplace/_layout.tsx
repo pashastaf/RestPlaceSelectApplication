@@ -12,7 +12,7 @@ export default function RestPlaceStack() {
 			<Stack.Screen
 				name="index"
 				options={{
-					title: "Destinations",
+					title: "Rest Place",
 					headerRight: () => (
 						<View style={{ flexDirection: "row" }}>
 							<Pressable>

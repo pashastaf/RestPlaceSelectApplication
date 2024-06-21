@@ -43,6 +43,7 @@ const SignUpScreen = () => {
 					secondName,
 					fullName,
 					groupId: 1,
+					avatarPath,
 				},
 			},
 		});

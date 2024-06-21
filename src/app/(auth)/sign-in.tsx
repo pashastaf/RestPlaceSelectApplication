@@ -53,7 +53,7 @@ const SignInScreen = () => {
 			<TextInput
 				value={password}
 				onChangeText={setPassword}
-				placeholder="less 6 symb"
+				placeholder="Enter..."
 				style={styles.input}
 				secureTextEntry
 			/>

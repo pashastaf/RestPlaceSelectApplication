@@ -1,26 +1,24 @@
 import {
-	useDeleteOrder,
 	useDeleteServiceByOrder,
 	useInsertOrder,
 	useInsertServiceByOrder,
 	useOrder,
 	useServiceList,
 	useServicesByOrder,
-	useUpdateOrder,
+	useUpdateOrder
 } from "@/src/api/order";
-import { useProfileByGroup, useConsultantList } from "@/src/api/profile";
+import { useProfileByGroup } from "@/src/api/profile";
 import Button from "@/src/components/Button";
 import Colors from "@/src/constants/Colors";
+import { useAuth } from "@/src/providers/AuthProvider";
 import { Feather } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, {
-	useCallback,
 	useEffect,
 	useState
 } from "react";
 import {
 	ActivityIndicator,
-	Alert,
 	FlatList,
 	Pressable,
 	StyleSheet,
@@ -28,7 +26,6 @@ import {
 	TouchableOpacity,
 	View
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
 
 const CreateOrderScreen = () => {
 	interface ServiceByOrderItem {
@@ -36,29 +33,32 @@ const CreateOrderScreen = () => {
 		services_id: number;
 		order_id: number;
 	}
-
-	const [profileId, setProfileId] = useState();
-	const [consultantId, setConsultantId] = useState();
+	const {profile} = useAuth();
 	const [selectedServices, setSelectedServices] = useState<number[]>([],);
 	const [totalCost, setTotalCost] = useState(0);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { data: profiles } = useProfileByGroup(1);
-	const { data: consultants } = useConsultantList();
+	const { data: consultants } = useProfileByGroup(2);
 	const { data: services } = useServiceList();
-
+	
+	
 	const currentDate = new Date(Date.now());
-
+	
 	const { id: idString } = useLocalSearchParams();
 	const id = Number.parseFloat(
 		typeof idString === "string" ? idString : idString?.[0],
-	);
-	const isUpdating = !!idString;
-
+		);
+		const isUpdating = !!idString;
+		
 	const { mutate: insertOrder } = useInsertOrder();
-
+	const { mutate: updateOrder } = useUpdateOrder();
+	const { data: updatingOrder } = useOrder(id);
+	const { data: serviceByOrder } = useServicesByOrder(id) as {
+		data: ServiceByOrderItem[];
+	};
 	const { mutate: insertServiceByOrder } = useInsertServiceByOrder();
-
+	const { mutate: deleteServiceByOrder } = useDeleteServiceByOrder();
 
 	const initializeSelectedServices = (
 		serviceByOrder: ServiceByOrderItem[],
@@ -82,25 +82,30 @@ const CreateOrderScreen = () => {
 		setTotalCost(initialTotalCost);
 	};
 
+	useEffect(() => {
+		if (updatingOrder && serviceByOrder) {
+			initializeSelectedServices(serviceByOrder);
+		}
+	}, [updatingOrder, serviceByOrder]);
 
 	const router = useRouter();
 
 	const onSubmit = () => {
 		setIsLoading(true);
+		if (isUpdating) {
+			onUpdate();
+		} else {
 			onCreate();
+		}
 	};
 
 	const onCreate = async () => {
-		if (!profileId || !consultantId || !totalCost || !currentDate) {
-			console.log(profileId);
-			console.log(consultantId);
-			console.log(totalCost);
-			console.log(currentDate);
+		if (!totalCost || !currentDate) {
 			console.error("Some required values are missing.");
 			return;
 		}
 		insertOrder(
-			{ profileId, consultantId, currentDate, totalCost },
+			{ profileId: profile.id, currentDate, totalCost },
 			{
 				onSuccess: (newOrder) => {
 					const orderId = newOrder.id;
@@ -111,6 +116,33 @@ const CreateOrderScreen = () => {
 				},
 			},
 		);
+	};
+
+	const onUpdate = async () => {
+		deleteServiceByOrder(
+			id, 
+			{
+			onSuccess: async () => {
+				updateOrder(
+					{ id, totalCost },
+					{
+						onSuccess: async () => {
+							const orderId = id;
+							selectedServices.forEach((serviceId) => {
+								insertServiceByOrder({ orderId, serviceId });
+							});
+							router.back();
+						}
+					},
+				);
+			},
+			onError: (error) => {
+				setIsLoading(false);
+				console.error("Failed to delete order:", error);
+			},
+			}
+		)
+		
 	};
 
 	const toggleServiceSelection = (serviceId: number) => {
@@ -141,22 +173,29 @@ const CreateOrderScreen = () => {
 		return <ActivityIndicator />;
 	}
 
-	const itemsConsultant = consultants.map((consultant) => ({
-		label: `${consultant.profiles.first_name} ${consultant.profiles.second_name}`,
-		value: consultant.id.toString(),
-	}));
-
-	const itemsProfiles = profiles.map((profile) => ({
-		label: `${profile.first_name} ${profile.second_name}`,
-		value: profile.id.toString(),
-	}));
-
 
 	return (
 		<View style={styles.container}>
 			<Stack.Screen
 				options={{
 					title: isUpdating ? `Update Order #${id}` : "Create Order",
+					headerLeft: () => (
+						<Link href="/(user)/order/" asChild>
+								<Pressable>
+									{({ pressed }) => (
+										<Feather
+											name="chevron-left"
+											size={25}
+											color={Colors.light.tint}
+											style={{
+												opacity: pressed ? 0.5 : 1,
+												marginRight: 15,
+											}}
+										/>
+									)}
+								</Pressable>
+							</Link>
+					),
 				}}
 			/>
 			<View style={[styles.container, { opacity: isLoading ? 0.2 : 1, pointerEvents: isLoading ? 'none' : 'auto' }]}>
@@ -164,6 +203,7 @@ const CreateOrderScreen = () => {
 				<FlatList
 					data={services}
 					numColumns={2}
+					columnWrapperStyle = {{ padding: 5}}
 					renderItem={({ item }) => {
 						return (
 							<View style={styles.flatView}>
@@ -185,7 +225,7 @@ const CreateOrderScreen = () => {
 				<Text style={styles.title}>Total Cost is: {totalCost} </Text>
 				<Button
 				color={Colors.light.tint}
-					text="Create"
+					text={isUpdating ? "Update" : "Create"}
 					onPress={onSubmit}
 				/>
 			</View>
