@@ -32,7 +32,7 @@ const orderListItem = ({ order }: orderListItemProps) => {
 					}
 				</Text>
 				<Text style={styles.text}>
-    			<Text style={{ fontWeight: 'bold' }}>Consultant:</Text>{" "}
+    			<Text style={{ fontWeight: 'bold' }}>Client:</Text>{" "}
     				{profile ? profile.first_name : '~'}{" "}
     				{profile ? profile.second_name : ''}
 				</Text>
