@@ -22,34 +22,6 @@ export default function OrderScreen() {
 
 	return (
 		<View style={{ backgroundColor: 'white', flex: 1 }}>
-			<View style={styles.seacrhButton}>
-				<TextInput
-					placeholder="Search"
-					clearButtonMode="always"
-					style={styles.searchBox}
-					autoCapitalize="none"
-					value={inputValue}
-					autoCorrect={false}
-					onChangeText={() => { }}
-				/>
-				<View>
-					<Pressable
-						onPress={() => {
-						}}
-					>
-						{({ pressed }) => (
-							<Feather
-								name="sliders"
-								size={25}
-								color={Colors.light.tint}
-								style={{
-									opacity: pressed ? 0.5 : 1,
-								}}
-							/>
-						)}
-					</Pressable>
-				</View>
-			</View>
 			<FlatList
 				data={order}
 				numColumns={1}
