@@ -112,7 +112,7 @@ const CreateOrderScreen = () => {
 					selectedServices.forEach((serviceId) => {
 						insertServiceByOrder({ orderId, serviceId });
 					});
-					router.back();
+					router.replace("/(user)/order");
 				},
 			},
 		);
